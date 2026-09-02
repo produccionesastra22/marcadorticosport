@@ -1,117 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="../assets/firebase.js"></script>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent!important}
-body{font-family:Montserrat,Arial,sans-serif;color:#fff}.board{position:absolute;inset:7vh 5vw;display:flex;flex-direction:column;justify-content:center;gap:28px}
-.header{text-align:center;text-transform:uppercase;letter-spacing:4px;font-size:clamp(14px,1.5vw,24px);font-weight:800;opacity:.9}
-.teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:30px}.team{text-align:center}
-.name{font-size:clamp(24px,4vw,64px);font-weight:900;line-height:1.05;text-transform:uppercase}.score{font-size:clamp(52px,8vw,120px);font-weight:900;line-height:1;margin-top:8px}
-.vs{font-size:clamp(18px,2vw,32px);font-weight:800;opacity:.55}.slots{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}
-.slot{width:clamp(30px,3vw,52px);height:clamp(30px,3vw,52px);border:2px solid rgba(255,255,255,.35);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:clamp(15px,1.5vw,25px);font-weight:900;background:rgba(0,0,0,.12)}
-.goal{background:rgba(53,208,127,.25);border-color:#35d07f}.miss{background:rgba(233,84,103,.22);border-color:#e95467}
-.footer{text-align:center;font-size:clamp(10px,1vw,16px);letter-spacing:2px;opacity:.6;text-transform:uppercase}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent!important}body{font-family:Inter,Arial,sans-serif;color:#fff}.board{position:absolute;left:5vw;right:5vw;top:7vh;bottom:7vh;display:flex;flex-direction:column;justify-content:center;gap:18px;text-shadow:0 3px 12px #000b}.eyebrow{text-align:center;font-size:clamp(10px,1vw,18px);letter-spacing:3px;font-weight:900;opacity:.78}.scoreline{display:grid;grid-template-columns:1fr auto 1fr;gap:3vw;align-items:center}.team{text-align:center;min-width:0}.name{font-size:clamp(22px,3.4vw,60px);font-weight:900;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.score{font-size:clamp(58px,8vw,120px);font-weight:900;line-height:.9;margin-top:5px}.dash{font-size:clamp(18px,2vw,30px);font-weight:900;opacity:.4}.series{display:flex;justify-content:center;gap:clamp(5px,.7vw,12px);margin-top:12px;min-height:clamp(28px,3vw,52px)}.kick{width:clamp(27px,2.7vw,48px);height:clamp(27px,2.7vw,48px);border-radius:50%;border:2px solid rgba(255,255,255,.28);display:grid;place-items:center;background:rgba(0,0,0,.18);font-size:clamp(12px,1.2vw,21px);font-weight:900}.kick.goal{background:rgba(45,190,120,.32);border-color:#35d07f}.kick.miss{background:rgba(235,75,100,.25);border-color:#ff6378}.kick.pending{opacity:.35}.current{outline:2px solid #fff;outline-offset:3px;opacity:1}.turn{text-align:center;font-size:clamp(10px,1vw,17px);font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:.88}.result{text-align:center;font-size:clamp(9px,.9vw,15px);opacity:.58;letter-spacing:1.5px;text-transform:uppercase}
 </style></head><body>
-<div class="board"><div class="header">MODO PENALES</div><div class="teams">
-<div class="team"><div class="name" id="n1">LOCAL</div><div class="score" id="s1">0</div><div class="slots" id="k1"></div></div>
-<div class="vs">VS</div>
-<div class="team"><div class="name" id="n2">VISITANTE</div><div class="score" id="s2">0</div><div class="slots" id="k2"></div></div>
-</div><div class="footer" id="footer">Serie de penales</div></div>
+<div class="board"><div class="eyebrow">TANDA DE PENALES</div><div class="scoreline"><div class="team"><div class="name" id="n1">LOCAL</div><div class="score" id="s1">0</div><div class="series" id="k1"></div></div><div class="dash">—</div><div class="team"><div class="name" id="n2">VISITANTE</div><div class="score" id="s2">0</div><div class="series" id="k2"></div></div></div><div class="turn" id="turn">SIGUIENTE · LOCAL</div><div class="result" id="result">SERIE DE 5</div></div>
 <script>
-// ASTRA · Firebase bootstrap
-(() => {
-  const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
-    authDomain: "astraprods.firebaseapp.com",
-    databaseURL: "https://astraprods-default-rtdb.firebaseio.com",
-    projectId: "astraprods"
-  };
-
-  const defaults = {
-    team1Name: "LOCAL", team2Name: "VISITANTE",
-    team1Logo: "", team2Logo: "", score1: 0, score2: 0,
-    timer: {phase:"first",baseSeconds:0,running:false,startedAt:0,extraMinutes:0,extraActive:false},
-    penalties: {active:false,team1Name:"LOCAL",team2Name:"VISITANTE",kicks1:[null,null,null,null,null],kicks2:[null,null,null,null,null],visibleKicks:5},
-    layout: {
-      name1:{x:10,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"left"},
-      name2:{x:60,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"right"},
-      score1:{x:28,y:48,w:15,h:12,fontSize:6,color:"#ffffff",fontWeight:900,align:"center"},
-      score2:{x:57,y:48,w:15,h:12,fontSize:6,color:"#ffffff",fontWeight:900,align:"center"},
-      clock:{x:40,y:20,w:20,h:10,fontSize:5,color:"#ffffff",fontWeight:900,align:"center"},
-      extra:{x:46,y:30,w:8,h:6,fontSize:2.2,color:"#ffffff",fontWeight:800,align:"center"},
-      logo1:{x:5,y:35,w:12,h:12,fontSize:1,color:"#ffffff",fontWeight:700,align:"center"},
-      logo2:{x:83,y:35,w:12,h:12,fontSize:1,color:"#ffffff",fontWeight:700,align:"center"}
-    }
-  };
-
-  const params = new URLSearchParams(location.search);
-  const matchId = params.get("match") || "default";
-
-  if (!window.firebase) throw new Error("Firebase SDK no cargado.");
-  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-
-  const auth = firebase.auth();
-  const db = firebase.database();
-  const ref = db.ref("marcadorSimple/" + matchId);
-  let state = JSON.parse(JSON.stringify(defaults));
-  let offset = 0;
-
-  const $ = id => document.getElementById(id);
-  const pad = n => String(n).padStart(2,"0");
-  const serverNow = () => Date.now() + offset;
-
-  function seconds() {
-    if (!state.timer.running) return Math.max(0, Number(state.timer.baseSeconds)||0);
-    return Math.max(0,
-      (Number(state.timer.baseSeconds)||0) +
-      Math.floor((serverNow()-(Number(state.timer.startedAt)||0))/1000)
-    );
-  }
-  const fmt = s => {
-    s = Math.max(0, Math.floor(s));
-    return `${pad(Math.floor(s/60))}:${pad(s%60)}`;
-  };
-  const save = patch => ref.update(patch);
-
-  ref.on("value", snap => {
-    const d = snap.val() || {};
-    state = {
-      ...defaults, ...d,
-      timer:{...defaults.timer,...(d.timer||{})},
-      penalties:{...defaults.penalties,...(d.penalties||{})},
-      layout:{...defaults.layout,...(d.layout||{})}
-    };
-    if (window.renderApp) window.renderApp();
-  });
-
-  db.ref(".info/serverTimeOffset").on("value", s => offset = Number(s.val()||0));
-
-  window.ASTRA = {
-    $, db, auth, ref, defaults, save, seconds, fmt, serverNow,
-    getState: () => state,
-    get offset(){ return offset; }
-  };
-})();
-
-</script><script>
-const $=window.ASTRA.$, defaults=window.ASTRA.defaults;
-function renderApp(){
- const state=window.ASTRA.getState();
- const p=state.penalties||defaults.penalties, v=Math.max(5,Math.min(10,Number(p.visibleKicks)||5));
- const a=Array.isArray(p.kicks1)?p.kicks1:[],b=Array.isArray(p.kicks2)?p.kicks2:[];
- $("n1").textContent=p.team1Name||state.team1Name||"LOCAL"; $("n2").textContent=p.team2Name||state.team2Name||"VISITANTE";
- $("s1").textContent=a.filter(x=>x==="goal").length; $("s2").textContent=b.filter(x=>x==="goal").length;
- const draw=(id,arr)=>$(id).innerHTML=Array.from({length:v},(_,i)=>{
-   const x=arr[i],c=x==="goal"?"goal":x==="miss"?"miss":"",m=x==="goal"?"✓":x==="miss"?"×":String(i+1);
-   return `<div class="slot ${c}">${m}</div>`;
- }).join("");
- draw("k1",a);draw("k2",b);
- const total=Math.max(a.filter(Boolean).length,b.filter(Boolean).length);
- $("footer").textContent=total?`Serie de penales · ${total} lanzamiento${total===1?"":"s"}`:"Serie de penales";
-}
-renderApp();
+function nextTurn(p){const a=p.kicks1||[],b=p.kicks2||[],total=a.filter(Boolean).length+b.filter(Boolean).length;return {total,target:total%2===0?0:1,round:Math.floor(total/2)+1}}
+function renderApp(){const s=window.ASTRA.getState(),p={...window.ASTRA.defaults.penalties,...(s.penalties||{})},v=Math.max(5,Math.min(10,Number(p.visibleKicks)||5)),a=Array.isArray(p.kicks1)?p.kicks1:[],b=Array.isArray(p.kicks2)?p.kicks2:[],n=nextTurn(p);$("n1").textContent=p.team1Name||s.team1Name||'LOCAL';$("n2").textContent=p.team2Name||s.team2Name||'VISITANTE';$("s1").textContent=a.filter(x=>x==='goal').length;$("s2").textContent=b.filter(x=>x==='goal').length;draw('k1',a,0,v,n);draw('k2',b,1,v,n);const name=n.target===0?$("n1").textContent:$("n2").textContent;$("turn").textContent=n.total<10?`SIGUIENTE · ${name} · LANZAMIENTO ${n.round}`:'MUERTE SÚBITA';$("result").textContent=`${a.filter(Boolean).length+b.filter(Boolean).length} LANZAMIENTOS · SERIE ${v}`}
+function draw(id,arr,team,v,n){$(id).innerHTML=Array.from({length:v},(_,i)=>{const x=arr[i],cl=x==='goal'?'goal':x==='miss'?'miss':'pending',m=x==='goal'?'✓':x==='miss'?'×':i+1,current=!x&&n.target===team&&n.round===i+1?' current':'';return `<div class="kick ${cl}${current}">${m}</div>`}).join('')}
+window.renderApp=renderApp;renderApp();
 </script></body></html>
