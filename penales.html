@@ -94,14 +94,14 @@
 
 </script><script>
 const auth=window.ASTRA.auth,save=window.ASTRA.save,defaultsA=window.ASTRA.defaults;
-function renderApp(){const s=window.ASTRA.state,p={...defaultsA.penalties,...(s.penalties||{})},v=Math.max(5,Math.min(10,Number(p.visibleKicks)||5)),a=Array.isArray(p.kicks1)?p.kicks1:[],b=Array.isArray(p.kicks2)?p.kicks2:[];
+function renderApp(){const s=window.ASTRA.getState(),p={...defaultsA.penalties,...(s.penalties||{})},v=Math.max(5,Math.min(10,Number(p.visibleKicks)||5)),a=Array.isArray(p.kicks1)?p.kicks1:[],b=Array.isArray(p.kicks2)?p.kicks2:[];
 $("team1").value=p.team1Name||s.team1Name||"LOCAL";$("team2").value=p.team2Name||s.team2Name||"VISITANTE";$("title1").textContent=$("team1").value;$("title2").textContent=$("team2").value;
 $("score1").textContent=a.filter(x=>x==="goal").length;$("score2").textContent=b.filter(x=>x==="goal").length;$("rounds").textContent=Math.max(a.filter(Boolean).length,b.filter(Boolean).length);
 const draw=(id,arr,key)=>{$(id).innerHTML=Array.from({length:v},(_,i)=>{const x=arr[i],status=x==="goal"?"GOL":x==="miss"?"FALLÓ":"Pendiente";return `<div class="kick"><b>#${i+1}</b><div class="status">${status}</div><div class="actions"><button class="goal" data-k="${key}" data-i="${i}" data-v="goal">✓</button><button class="miss" data-k="${key}" data-i="${i}" data-v="miss">×</button><button class="secondary" data-k="${key}" data-i="${i}" data-v="clear">—</button></div></div>`}).join("");
-$(id).querySelectorAll("[data-k]").forEach(btn=>btn.onclick=()=>{const arr=[...(Array.isArray(window.ASTRA.state.penalties?.[btn.dataset.k])?window.ASTRA.state.penalties[btn.dataset.k]:[])];while(arr.length<v)arr.push(null);arr[Number(btn.dataset.i)]=btn.dataset.v==="clear"?null:btn.dataset.v;save({["penalties/"+btn.dataset.k]:arr})})};draw("kicks1",a,"kicks1");draw("kicks2",b,"kicks2");}
+$(id).querySelectorAll("[data-k]").forEach(btn=>btn.onclick=()=>{const cur=window.ASTRA.getState();const arr=[...(Array.isArray(cur.penalties?.[btn.dataset.k])?cur.penalties[btn.dataset.k]:[])];while(arr.length<v)arr.push(null);arr[Number(btn.dataset.i)]=btn.dataset.v==="clear"?null:btn.dataset.v;save({["penalties/"+btn.dataset.k]:arr})})};draw("kicks1",a,"kicks1");draw("kicks2",b,"kicks2");}
 $("team1").onchange=e=>save({"penalties/team1Name":e.target.value.trim()||"LOCAL"});$("team2").onchange=e=>save({"penalties/team2Name":e.target.value.trim()||"VISITANTE"});
-$("add").onclick=()=>{const p=window.ASTRA.state.penalties||defaultsA.penalties;save({"penalties/visibleKicks":Math.min(10,Math.max(5,Number(p.visibleKicks)||5)+1)})};
-$("reset").onclick=()=>save({penalties:{...defaultsA.penalties,team1Name:window.ASTRA.state.team1Name||"LOCAL",team2Name:window.ASTRA.state.team2Name||"VISITANTE"}});
+$("add").onclick=()=>{const p=window.ASTRA.getState().penalties||defaultsA.penalties;save({"penalties/visibleKicks":Math.min(10,Math.max(5,Number(p.visibleKicks)||5)+1)})};
+$("reset").onclick=()=>{const s=window.ASTRA.getState();save({penalties:{...defaultsA.penalties,team1Name:s.team1Name||"LOCAL",team2Name:s.team2Name||"VISITANTE"}})};
 const match=new URLSearchParams(location.search).get("match")||"default",overlayUrl=()=>new URL("overlays/penales.html?match="+encodeURIComponent(match),location.href).href;
 $("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
 $("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(match);
