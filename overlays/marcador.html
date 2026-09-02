@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent!important}
+body{font-family:Montserrat,Arial,sans-serif;color:#fff}
+#stage{position:relative;width:100vw;height:100vh;background:transparent!important}
+.stage-el{position:absolute;white-space:nowrap;font-family:Montserrat,Arial,sans-serif;font-weight:800;text-transform:uppercase;line-height:1}
+.stage-el img{display:block;width:100%;height:100%;object-fit:contain}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="stage-el" id="el_name1">LOCAL</div>
+  <div class="stage-el" id="el_name2">VISITANTE</div>
+  <div class="stage-el" id="el_score1">0</div>
+  <div class="stage-el" id="el_score2">0</div>
+  <div class="stage-el" id="el_clock">00:00</div>
+  <div class="stage-el" id="el_extra"></div>
+  <div class="stage-el" id="el_logo1"><img id="img_logo1"></div>
+  <div class="stage-el" id="el_logo2"><img id="img_logo2"></div>
+</div>
+<script src="../assets/firebase.js"></script>
+<script>
+const layoutDefaults = defaults.layout;
+function applyLayout(){
+  const layout={...layoutDefaults,...(state.layout||{})};
+  Object.keys(layoutDefaults).forEach(k=>{
+    const el=$("el_"+k); if(!el)return;
+    const s={...layoutDefaults[k],...(layout[k]||{})};
+    el.style.left=s.x+"%"; el.style.top=s.y+"%";
+    el.style.width=s.w+"%"; el.style.height=s.h+"%";
+    el.style.fontSize=s.fontSize+"vw"; el.style.color=s.color;
+    el.style.fontWeight=s.fontWeight; el.style.textAlign=s.align;
+    el.style.display=(k.startsWith("logo") && !(k==="logo1"?state.team1Logo:state.team2Logo))?"none":"block";
+  });
+}
+function renderApp(){
+  $("el_name1").textContent=state.team1Name||"LOCAL";
+  $("el_name2").textContent=state.team2Name||"VISITANTE";
+  $("el_score1").textContent=state.score1||0;
+  $("el_score2").textContent=state.score2||0;
+  $("el_clock").textContent=fmt(seconds());
+  const ex=Number(state.timer.extraMinutes||0);
+  $("el_extra").textContent=state.timer.extraActive&&ex>0?`+${ex}`:"";
+  $("el_extra").style.display=state.timer.extraActive&&ex>0?"block":"none";
+  $("img_logo1").src=state.team1Logo||"";
+  $("img_logo2").src=state.team2Logo||"";
+  applyLayout();
+}
+setInterval(()=>{renderApp()},1000);
+renderApp();
+</script>
+</body>
+</html>
