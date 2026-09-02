@@ -106,8 +106,10 @@ body{font-family:Montserrat,Arial,sans-serif;color:#fff}
 
 </script>
 <script>
+const $=window.ASTRA.$, defaults=window.ASTRA.defaults, fmt=window.ASTRA.fmt, seconds=window.ASTRA.seconds;
 const layoutDefaults = defaults.layout;
 function applyLayout(){
+  const state=window.ASTRA.getState();
   const layout={...layoutDefaults,...(state.layout||{})};
   Object.keys(layoutDefaults).forEach(k=>{
     const el=$("el_"+k); if(!el)return;
@@ -120,6 +122,7 @@ function applyLayout(){
   });
 }
 function renderApp(){
+  const state=window.ASTRA.getState();
   $("el_name1").textContent=state.team1Name||"LOCAL";
   $("el_name2").textContent=state.team2Name||"VISITANTE";
   $("el_score1").textContent=state.score1||0;
