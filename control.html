@@ -1,97 +1,295 @@
-<!DOCTYPE html>
-<html lang="es"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ASTRA · Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,sans-serif;background:#070a10;color:#fff}
-body:before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 15% 15%,rgba(75,130,255,.18),transparent 28%),radial-gradient(circle at 85% 20%,rgba(130,80,255,.12),transparent 30%),linear-gradient(135deg,#080b12,#101521 50%,#090c12)}
-.wrap{width:min(1180px,94vw);margin:auto;padding:34px 0 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}
-.eyebrow{font-size:10px;letter-spacing:3px;color:#6f8fcf;font-weight:900}.title{font-size:clamp(28px,4vw,52px);font-weight:900;letter-spacing:-2px}.sub{color:#7f8ba0;font-size:13px;margin-top:8px}
-.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.card{border:1px solid #252b38;border-radius:18px;background:#11151dcc;padding:18px;box-shadow:0 20px 60px #0004}.card h2{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#aeb8ca;margin:0 0 15px}
-.teams{display:grid;grid-template-columns:1fr 1fr;gap:12px}.label{font-size:10px;color:#8e98aa;margin-bottom:6px;display:block}
-input,select{height:42px;border:1px solid #303848;border-radius:11px;background:#090c11;color:#fff;padding:8px 11px;outline:none;width:100%;font:inherit}input:focus,select:focus{border-color:#4b82ff}
-.scoregrid{display:grid;grid-template-columns:1fr 70px 1fr;align-items:center;gap:10px;margin-top:18px}.score{text-align:center;font-size:64px;font-weight:900}.score button{width:100%;height:38px;border:0;border-radius:10px;background:#252d3c;color:#fff;font-size:22px;cursor:pointer}.vs{text-align:center;color:#687388;font-weight:900}
-.timer{text-align:center;font-size:68px;font-weight:900;letter-spacing:2px;font-variant-numeric:tabular-nums;margin:8px 0}.state{text-align:center;color:#8e98aa;font-size:11px;margin-bottom:14px}
-.buttons{display:grid;grid-template-columns:1fr 1fr;gap:9px}button{border:0;border-radius:11px;height:42px;background:#4b82ff;color:#fff;font-weight:900;cursor:pointer}button.secondary{background:#252c39}button.danger{background:#7b2938}
-.row{display:flex;gap:9px;margin-top:9px}.row>*{flex:1}.small{font-size:10px;color:#7f8ba0;line-height:1.5}.links{display:grid;gap:9px}.linkrow{display:flex;gap:8px}.linkrow input{font-size:11px}.status{font-size:11px;color:#8e98aa}.ok{color:#35d07f}
-.preview{position:relative;width:100%;aspect-ratio:16/9;background:#000;border:1px solid #252b38;border-radius:12px;overflow:hidden;margin-bottom:12px}.preview .stage-el{position:absolute;white-space:nowrap;font-family:Montserrat;font-weight:800;text-transform:uppercase;line-height:1}.preview img{display:block;width:100%;height:100%;object-fit:contain}
-.login{position:fixed;inset:0;background:#070a10;display:none;align-items:center;justify-content:center;padding:20px}.loginbox{width:360px;background:#141923;border:1px solid #252b38;border-radius:20px;padding:24px}.loginbox h1{margin:0 0 5px}.loginbox p{font-size:11px;color:#8e98aa;margin-bottom:16px}.loginbox input{margin-bottom:9px}.error{display:none;color:#ff7a89;font-size:11px;margin-top:10px}
-@media(max-width:850px){.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.wrap{padding-top:22px}}
-</style></head><body>
-<div class="wrap" id="app">
-<div class="top"><div><div class="eyebrow">ASTRA PRODS · MATCH CONTROL</div><div class="title">Panel de operación</div><div class="sub">Marcador, cronómetro, diseño y enlaces de OBS en un solo lugar.</div></div>
-<div class="status">● <span id="connection">Conectando…</span></div></div>
-<div class="grid">
-<section class="card"><h2>Partido</h2>
-<div class="teams"><div><label class="label">Local</label><input id="team1" placeholder="LOCAL"></div><div><label class="label">Visitante</label><input id="team2" placeholder="VISITANTE"></div></div>
-<div class="scoregrid"><div class="score"><button data-score="score1" data-delta="-1">−</button><div id="s1">0</div><button data-score="score1" data-delta="1">+</button></div><div class="vs">VS</div><div class="score"><button data-score="score2" data-delta="-1">−</button><div id="s2">0</div><button data-score="score2" data-delta="1">+</button></div></div>
+*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;background:#080b11;color:#f6f8fc;font-family:Inter,system-ui,sans-serif}
+body{overflow-x:hidden}.app{min-height:100vh;display:grid;grid-template-columns:64px minmax(0,1fr)}
+.rail{position:sticky;top:0;height:100vh;background:#0d1119;border-right:1px solid #202735;display:flex;flex-direction:column;align-items:center;padding:10px 7px;z-index:5}
+.brand{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#5b8cff,#6c4dff);font-weight:900;box-shadow:0 8px 24px #315fff33;margin-bottom:18px}
+.nav{display:grid;gap:7px;width:100%}.nav button{position:relative;width:50px;height:50px;border:0;background:transparent;color:#7f8ba0;border-radius:13px;font-size:19px;cursor:pointer}.nav button:hover,.nav button.active{background:#1a2130;color:#fff}.nav button.active:before{content:"";position:absolute;left:-7px;top:14px;width:3px;height:22px;border-radius:3px;background:#5b8cff}
+.rail-bottom{margin-top:auto;display:grid;gap:7px}.rail-bottom button{width:50px;height:42px;border:1px solid #242c3a;background:#111722;color:#aab5c7;border-radius:11px;cursor:pointer}
+.main{min-width:0;padding:16px 18px 24px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.heading{min-width:0}.eyebrow{font-size:9px;letter-spacing:2px;color:#6e8fd4;font-weight:800}.title{font:800 22px/1.1 Montserrat,sans-serif;letter-spacing:-.5px;margin-top:4px}.sub{font-size:11px;color:#778399;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-actions{display:flex;align-items:center;gap:7px}.pill{display:flex;align-items:center;gap:7px;border:1px solid #252e3d;background:#101620;border-radius:20px;padding:7px 10px;font-size:10px;color:#9ca8ba;white-space:nowrap}.dot{width:7px;height:7px;border-radius:50%;background:#f0ad4e}.dot.ok{background:#35d07f}.btn{border:0;border-radius:10px;background:#4e7fff;color:#fff;height:36px;padding:0 12px;font-weight:800;font-size:11px;cursor:pointer}.btn.secondary{background:#1a2130;color:#cbd4e3}.btn.danger{background:#762d3c}.btn:active{transform:translateY(1px)}
+.view{display:none}.view.active{display:block}.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#10151e;border:1px solid #222b39;border-radius:15px;padding:14px;box-shadow:0 12px 40px #0003}.card.full{grid-column:1/-1}.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:11px}.card h2{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:#aeb8c9;margin:0}.hint{font-size:9px;color:#68758a}
+label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{width:100%;height:37px;border:1px solid #2b3545;border-radius:9px;background:#090d14;color:#f5f7fb;padding:0 9px;outline:0;font:600 11px Inter}input:focus,select:focus{border-color:#4e7fff;box-shadow:0 0 0 2px #4e7fff18}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:8px}.scoreboard{display:grid;grid-template-columns:1fr 52px 1fr;align-items:center;gap:8px;margin-top:10px}.scorebox{text-align:center}.scorebox .num{font:900 52px/1 Montserrat}.scorebox button{width:100%;height:30px;border:0;border-radius:8px;background:#1c2432;color:#fff;font-size:18px;font-weight:900;cursor:pointer}.scorebox button:hover{background:#273248}.vs{text-align:center;color:#566176;font-size:10px;font-weight:900}
+.timerbox{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px}.timer{font:900 48px/1 Montserrat;letter-spacing:1px;font-variant-numeric:tabular-nums}.timer-state{font-size:9px;color:#78859a;margin-top:4px}.timer-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}.timer-actions button{height:34px}.quick{display:flex;gap:6px;margin-top:7px}.quick input{height:34px}.quick .btn{height:34px;padding:0 9px}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.kpi .item{background:#0b1017;border:1px solid #202936;border-radius:10px;text-align:center;padding:10px 4px}.kpi b{display:block;font:800 20px Montserrat}.kpi span{font-size:8px;color:#68758a}
+.link{display:flex;gap:6px;margin-top:7px}.link input{font-size:9px;color:#9aa7ba}.link .btn{height:34px;min-width:66px}.row{display:flex;gap:7px;margin-top:8px}.row>*{flex:1}
+.preview-wrap{background:#080b10;border:1px solid #202936;border-radius:11px;padding:8px}.preview{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#131b28,#090d14);border-radius:7px;overflow:hidden}.preview:after{content:"LIVE PREVIEW · 16:9";position:absolute;right:7px;bottom:5px;font-size:7px;letter-spacing:1px;color:#59677c}.stage-el{position:absolute;white-space:nowrap;font-family:Montserrat;font-weight:800;text-transform:uppercase;line-height:1;cursor:grab;user-select:none}.stage-el.dragging{cursor:grabbing;outline:1px dashed #70a0ff;outline-offset:2px}.stage-el img{width:100%;height:100%;object-fit:contain}.design-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:9px;margin-top:9px}.control-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.control-grid .wide{grid-column:1/-1}.range{display:grid;grid-template-columns:1fr 54px;gap:7px;align-items:center}.range input[type=range]{height:auto;padding:0}.range output{height:30px;border:1px solid #293344;border-radius:8px;background:#0a0f16;display:grid;place-items:center;font-size:9px;color:#aeb8ca}
+.swatches{display:flex;gap:6px;flex-wrap:wrap}.swatch{width:24px;height:24px;border-radius:7px;border:2px solid #354052;cursor:pointer}.savebar{display:flex;gap:7px;margin-top:9px}.savebar .btn{flex:1}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);opacity:0;background:#161e2b;border:1px solid #303c50;border-radius:10px;padding:9px 13px;font-size:10px;pointer-events:none;transition:.2s;z-index:20}.toast.show{opacity:1;transform:translateX(-50%)}
+.login{position:fixed;inset:0;background:#06090eec;display:none;place-items:center;padding:18px;z-index:50}.loginbox{width:min(360px,100%);background:#111721;border:1px solid #293344;border-radius:18px;padding:20px;box-shadow:0 30px 100px #0009}.loginbox h1{font:800 20px Montserrat;margin:0}.loginbox p{font-size:10px;color:#7c899d;line-height:1.5}.loginbox input{margin-top:7px}.loginbox .btn{width:100%;margin-top:8px}.error{display:none;color:#ff788a;font-size:10px;margin-top:8px}
+@media(max-width:760px){.app{grid-template-columns:58px 1fr}.rail{padding:9px 5px}.rail button{width:46px}.main{padding:12px}.cards{grid-template-columns:1fr}.card.full{grid-column:auto}.design-grid{grid-template-columns:1fr}.top .sub{display:none}.title{font-size:19px}.top-actions .btn{display:none}}
+@media(min-width:761px) and (max-width:980px){.cards{grid-template-columns:1fr}.design-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="rail">
+  <div class="brand">A</div>
+  <nav class="nav">
+    <button class="active" data-tab="match" title="Partido">⚽</button>
+    <button data-tab="design" title="Diseño">✦</button>
+    <button data-tab="obs" title="OBS">▣</button>
+  </nav>
+  <div class="rail-bottom"><button id="openPen" title="Penales">🥅</button><button id="logout" title="Cerrar sesión">↪</button></div>
+</aside>
+<main class="main">
+<header class="top">
+  <div class="heading"><div class="eyebrow">ASTRA PRODS · MATCH CONTROL</div><div class="title" id="pageTitle">Partido</div><div class="sub">Panel compacto · pensado para acoplarlo al lateral de OBS</div></div>
+  <div class="top-actions"><div class="pill"><i class="dot" id="dot"></i><span id="connection">Conectando…</span></div><button class="btn secondary" id="openOverlay">↗ Overlay</button></div>
+</header>
+
+<section class="view active" id="view-match">
+<div class="cards">
+  <section class="card">
+    <div class="card-head"><h2>Marcador</h2><span class="hint">cambios instantáneos</span></div>
+    <div class="teams"><div><label>LOCAL</label><input id="team1" placeholder="LOCAL"></div><div><label>VISITANTE</label><input id="team2" placeholder="VISITANTE"></div></div>
+    <div class="scoreboard">
+      <div class="scorebox"><button data-score="score1" data-delta="1">+</button><div class="num" id="s1">0</div><button data-score="score1" data-delta="-1">−</button></div>
+      <div class="vs">VS</div>
+      <div class="scorebox"><button data-score="score2" data-delta="1">+</button><div class="num" id="s2">0</div><button data-score="score2" data-delta="-1">−</button></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Cronómetro</h2><span class="hint" id="timerState">1T · detenido</span></div>
+    <div class="timerbox"><div><div class="timer" id="timer">00:00</div><div class="timer-state">hora sincronizada con Firebase</div></div><button class="btn" id="start">▶</button></div>
+    <div class="timer-actions"><button class="btn secondary" id="pause">⏸ Pausar</button><button class="btn secondary" id="half2">2T ▶</button><button class="btn secondary" id="set0">00:00</button><button class="btn secondary" id="set45">45:00</button></div>
+    <div class="quick"><input id="customMinutes" type="number" min="0" placeholder="Min"><input id="customSeconds" type="number" min="0" max="59" placeholder="Seg"><button class="btn" id="setCustom">Fijar</button></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Tiempo añadido</h2><span class="hint" id="extraStatus">Sin activar</span></div>
+    <div class="quick"><input id="extraMinutes" type="number" min="1" value="5"><button class="btn" id="activateExtra">⏱ Activar</button><button class="btn secondary" id="clearExtra">×</button></div>
+    <div class="row"><button class="btn danger" id="finish">■ Finalizar partido</button><button class="btn secondary" id="reset">↻ Reiniciar</button></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Accesos rápidos</h2></div>
+    <div class="row"><button class="btn secondary" id="goDesign">✦ Diseñar overlay</button><button class="btn secondary" id="goObs">▣ Links OBS</button></div>
+    <div class="row"><button class="btn secondary" id="openPen2">🥅 Control de penales</button></div>
+  </section>
+</div>
 </section>
-<section class="card"><h2>Cronómetro</h2><div class="timer" id="timer">00:00</div><div class="state" id="timerState">1T · detenido</div>
-<div class="buttons"><button id="start">▶ Iniciar</button><button class="secondary" id="pause">⏸ Pausar</button><button class="secondary" id="half2">2T ▶</button><button class="danger" id="finish">■ Finalizar</button></div>
-<div class="row"><input id="customMinutes" type="number" min="0" placeholder="Minutos"><input id="customSeconds" type="number" min="0" max="59" placeholder="Segundos"><button id="setCustom">Fijar</button></div>
-<div class="row"><button class="secondary" id="set0">00:00</button><button class="secondary" id="set45">45:00</button></div></section>
-<section class="card"><h2>Tiempo extra</h2><div class="teams"><div><label class="label">Minutos</label><input id="extraMinutes" type="number" min="1" value="5"></div><div><label class="label">Estado</label><div class="state" id="extraStatus" style="height:42px;border:1px solid #303848;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0">Sin activar</div></div></div>
-<div class="row"><button id="activateExtra">⏱ Activar</button><button class="secondary" id="clearExtra">× Desactivar</button></div></section>
-<section class="card"><h2>Overlay / OBS</h2><div class="links"><div><label class="label">Marcador</label><div class="linkrow"><input id="obsLink" readonly><button id="copyObs">Copiar</button></div></div><div><label class="label">Penales</label><div class="linkrow"><input id="penLink" readonly><button id="copyPen">Copiar</button></div></div></div><div class="row"><button class="secondary" id="openPen">⚽ Control de penales</button><button class="secondary" id="openOverlay">📺 Abrir overlay</button></div></section>
-<section class="card" style="grid-column:1/-1"><h2>Diseñador visual</h2><div class="preview" id="preview"><div class="stage-el" id="pv_name1">LOCAL</div><div class="stage-el" id="pv_name2">VISITANTE</div><div class="stage-el" id="pv_score1">0</div><div class="stage-el" id="pv_score2">0</div><div class="stage-el" id="pv_clock">00:00</div><div class="stage-el" id="pv_extra"></div><div class="stage-el" id="pv_logo1"><img id="pv_img_logo1"></div><div class="stage-el" id="pv_logo2"><img id="pv_img_logo2"></div></div>
-<div class="teams"><div><label class="label">Elemento</label><select id="target"><option value="name1">Nombre local</option><option value="name2">Nombre visitante</option><option value="score1">Marcador local</option><option value="score2">Marcador visitante</option><option value="clock">Cronómetro</option><option value="extra">Tiempo añadido</option><option value="logo1">Logo local</option><option value="logo2">Logo visitante</option></select></div><div><label class="label">Color</label><input id="color" type="color"></div></div>
-<div class="teams" style="margin-top:10px"><input id="x" type="number" step=".1" placeholder="X %"><input id="y" type="number" step=".1" placeholder="Y %"><input id="w" type="number" step=".1" placeholder="Ancho %"><input id="h" type="number" step=".1" placeholder="Alto %"></div>
-<div class="teams" style="margin-top:10px"><input id="font" type="number" step=".1" placeholder="Tamaño vw"><select id="weight"><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option><option>900</option></select><select id="align"><option value="left">Izquierda</option><option value="center">Centro</option><option value="right">Derecha</option></select><button id="saveLayout">✓ Guardar diseño</button></div>
-<div style="margin-top:10px"><label class="label">Logo local — URL</label><input id="logo1"><label class="label" style="margin-top:9px">Logo visitante — URL</label><input id="logo2"></div>
+
+<section class="view" id="view-design">
+<div class="cards">
+<section class="card full">
+  <div class="card-head"><h2>Diseñador</h2><span class="hint">arrastrá elementos en la previsualización</span></div>
+  <div class="preview-wrap"><div class="preview" id="preview">
+    <div class="stage-el" id="pv_name1">LOCAL</div><div class="stage-el" id="pv_name2">VISITANTE</div><div class="stage-el" id="pv_score1">0</div><div class="stage-el" id="pv_score2">0</div><div class="stage-el" id="pv_clock">00:00</div><div class="stage-el" id="pv_extra"></div>
+    <div class="stage-el" id="pv_logo1"><img id="pv_img_logo1"></div><div class="stage-el" id="pv_logo2"><img id="pv_img_logo2"></div>
+  </div></div>
+  <div class="design-grid">
+    <div class="control-grid">
+      <div class="wide"><label>Elemento seleccionado</label><select id="target"><option value="name1">Nombre local</option><option value="name2">Nombre visitante</option><option value="score1">Marcador local</option><option value="score2">Marcador visitante</option><option value="clock">Cronómetro</option><option value="extra">Tiempo añadido</option><option value="logo1">Logo local</option><option value="logo2">Logo visitante</option></select></div>
+      <div class="range"><label>X · posición horizontal<input id="rx" type="range" min="0" max="100" step=".1"></label><output id="ox">0%</output></div>
+      <div class="range"><label>Y · posición vertical<input id="ry" type="range" min="0" max="100" step=".1"></label><output id="oy">0%</output></div>
+      <div class="range"><label>Ancho<input id="rw" type="range" min="1" max="100" step=".1"></label><output id="ow">0%</output></div>
+      <div class="range"><label>Alto<input id="rh" type="range" min="1" max="100" step=".1"></label><output id="oh">0%</output></div>
+      <div class="range"><label>Tamaño<input id="rf" type="range" min=".5" max="12" step=".1"></label><output id="of">0vw</output></div>
+      <div><label>Peso</label><select id="weight"><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option><option>900</option></select></div>
+      <div><label>Alineación</label><select id="align"><option value="left">Izq.</option><option value="center">Centro</option><option value="right">Der.</option></select></div>
+      <div class="wide"><label>Color</label><div class="swatches" id="swatches"><button class="swatch" data-color="#ffffff" style="background:#fff"></button><button class="swatch" data-color="#000000" style="background:#000"></button><button class="swatch" data-color="#4e7fff" style="background:#4e7fff"></button><button class="swatch" data-color="#35d07f" style="background:#35d07f"></button><button class="swatch" data-color="#ffcf4d" style="background:#ffcf4d"></button><button class="swatch" data-color="#ff6077" style="background:#ff6077"></button></div></div>
+    </div>
+    <div>
+      <div class="control-grid">
+        <div class="wide"><label>Logo local · URL directa</label><input id="logo1"></div>
+        <div class="wide"><label>Logo visitante · URL directa</label><input id="logo2"></div>
+      </div>
+      <div class="savebar"><button class="btn" id="saveLayout">✓ Guardar diseño</button><button class="btn secondary" id="resetLayout">↻ Restablecer</button></div>
+      <div class="hint" style="margin-top:8px;line-height:1.5">Consejo: seleccioná un elemento y arrastralo. Los cambios se ven en vivo; guardalos cuando estés conforme.</div>
+    </div>
+  </div>
 </section>
-<section class="card" style="grid-column:1/-1"><div class="row"><button class="secondary" id="reset">⟲ Reiniciar partido</button><button class="danger" id="logout">Cerrar sesión</button></div></section>
-</div></div>
-<div class="login" id="login"><div class="loginbox"><h1>Control del marcador</h1><p>Iniciá sesión con la cuenta autorizada de Firebase.</p><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button id="loginBtn" style="width:100%">Entrar</button><div class="error" id="error"></div></div></div>
-<script src="../assets/firebase.js"></script><script>
-const auth=window.ASTRA.auth, defaultsA=window.ASTRA.defaults;
+</div>
+</section>
+
+<section class="view" id="view-obs">
+<div class="cards">
+<section class="card full"><div class="card-head"><h2>OBS · Browser Sources</h2><span class="hint">usá estos links como fuentes de navegador</span></div>
+<label>Overlay marcador</label><div class="link"><input id="obsLink" readonly><button class="btn" id="copyObs">Copiar</button></div>
+<label style="margin-top:10px">Overlay penales</label><div class="link"><input id="penLink" readonly><button class="btn" id="copyPen">Copiar</button></div>
+<div class="row"><button class="btn" id="openOverlay2">↗ Abrir marcador</button><button class="btn secondary" id="openPen2b">↗ Abrir penales</button></div></section>
+<section class="card"><div class="card-head"><h2>Estado</h2></div><div class="kpi"><div class="item"><b id="kScore">0–0</b><span>MARCADOR</span></div><div class="item"><b id="kClock">00:00</b><span>RELOJ</span></div><div class="item"><b id="kPhase">1T</b><span>FASE</span></div></div></section>
+<section class="card"><div class="card-head"><h2>Partido</h2></div><div class="hint" style="line-height:1.6">El ID actual se conserva en la URL. Compartí el mismo enlace de control y los overlays con el mismo parámetro <b>match</b> para mantener todo sincronizado.</div></section>
+</div>
+</section>
+</main>
+</div>
+
+<div class="toast" id="toast">Guardado</div>
+<div class="login" id="login"><div class="loginbox"><h1>ASTRA Control</h1><p>Iniciá sesión con la cuenta autorizada de Firebase para editar el partido.</p><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button class="btn" id="loginBtn">Entrar</button><div class="error" id="error"></div></div></div>
+
+<script>
+// ASTRA · Firebase bootstrap
+(() => {
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
+    authDomain: "astraprods.firebaseapp.com",
+    databaseURL: "https://astraprods-default-rtdb.firebaseio.com",
+    projectId: "astraprods"
+  };
+
+  const defaults = {
+    team1Name: "LOCAL", team2Name: "VISITANTE",
+    team1Logo: "", team2Logo: "", score1: 0, score2: 0,
+    timer: {phase:"first",baseSeconds:0,running:false,startedAt:0,extraMinutes:0,extraActive:false},
+    penalties: {active:false,team1Name:"LOCAL",team2Name:"VISITANTE",kicks1:[null,null,null,null,null],kicks2:[null,null,null,null,null],visibleKicks:5},
+    layout: {
+      name1:{x:10,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"left"},
+      name2:{x:60,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"right"},
+      score1:{x:28,y:48,w:15,h:12,fontSize:6,color:"#ffffff",fontWeight:900,align:"center"},
+      score2:{x:57,y:48,w:15,h:12,fontSize:6,color:"#ffffff",fontWeight:900,align:"center"},
+      clock:{x:40,y:20,w:20,h:10,fontSize:5,color:"#ffffff",fontWeight:900,align:"center"},
+      extra:{x:46,y:30,w:8,h:6,fontSize:2.2,color:"#ffffff",fontWeight:800,align:"center"},
+      logo1:{x:5,y:35,w:12,h:12,fontSize:1,color:"#ffffff",fontWeight:700,align:"center"},
+      logo2:{x:83,y:35,w:12,h:12,fontSize:1,color:"#ffffff",fontWeight:700,align:"center"}
+    }
+  };
+
+  const params = new URLSearchParams(location.search);
+  const matchId = params.get("match") || "default";
+
+  if (!window.firebase) throw new Error("Firebase SDK no cargado.");
+  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+
+  const auth = firebase.auth();
+  const db = firebase.database();
+  const ref = db.ref("marcadorSimple/" + matchId);
+  let state = JSON.parse(JSON.stringify(defaults));
+  let offset = 0;
+
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2,"0");
+  const serverNow = () => Date.now() + offset;
+
+  function seconds() {
+    if (!state.timer.running) return Math.max(0, Number(state.timer.baseSeconds)||0);
+    return Math.max(0,
+      (Number(state.timer.baseSeconds)||0) +
+      Math.floor((serverNow()-(Number(state.timer.startedAt)||0))/1000)
+    );
+  }
+  const fmt = s => {
+    s = Math.max(0, Math.floor(s));
+    return `${pad(Math.floor(s/60))}:${pad(s%60)}`;
+  };
+  const save = patch => ref.update(patch);
+
+  ref.on("value", snap => {
+    const d = snap.val() || {};
+    state = {
+      ...defaults, ...d,
+      timer:{...defaults.timer,...(d.timer||{})},
+      penalties:{...defaults.penalties,...(d.penalties||{})},
+      layout:{...defaults.layout,...(d.layout||{})}
+    };
+    if (window.renderApp) window.renderApp();
+  });
+
+  db.ref(".info/serverTimeOffset").on("value", s => offset = Number(s.val()||0));
+
+  window.ASTRA = {
+    $, db, auth, ref, defaults, save, seconds, fmt, serverNow,
+    getState: () => state,
+    get offset(){ return offset; }
+  };
+})();
+
 const {save,fmt,seconds}=window.ASTRA;
-function setVal(id,v){if(document.activeElement!==$(id))$(id).value=v??""}
+const $=window.ASTRA.$, defaultsA=window.ASTRA.defaults;
+let selectedColor="#fff", drag=null;
+
+function toast(msg="Guardado"){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),1200)}
+function phase(t){return t.phase==="second"?"2T":t.phase==="finished"?"FINAL":t.phase==="firstEnded"?"DESCANSO":"1T"}
 function renderApp(){
- const s=window.ASTRA.state,t=s.timer;
- $("s1").textContent=s.score1||0;$("s2").textContent=s.score2||0;$("timer").textContent=fmt(seconds());
- $("team1").value=s.team1Name||"LOCAL";$("team2").value=s.team2Name||"VISITANTE";
- const phase=t.phase==="second"?"2T":t.phase==="finished"?"FINAL":t.phase==="firstEnded"?"DESCANSO":"1T";
- $("timerState").textContent=phase+" · "+(t.running?"corriendo":"detenido");
- const ex=Number(t.extraMinutes||0);$("extraStatus").textContent=t.extraActive&&ex?`ACTIVO · +${ex} min`:"Sin activar";
- $("logo1").value=s.team1Logo||"";$("logo2").value=s.team2Logo||"";
- renderPreview(); window.ASTRA.state=s;
+  const s=window.ASTRA.getState(), t=s.timer||{};
+  $("s1").textContent=s.score1||0;$("s2").textContent=s.score2||0;
+  $("team1").value=s.team1Name||"LOCAL";$("team2").value=s.team2Name||"VISITANTE";
+  $("timer").textContent=fmt(seconds());$("timerState").textContent=phase(t)+" · "+(t.running?"corriendo":"detenido");
+  $("extraStatus").textContent=t.extraActive&&Number(t.extraMinutes)>0?`ACTIVO · +${t.extraMinutes} min`:"Sin activar";
+  $("logo1").value=s.team1Logo||"";$("logo2").value=s.team2Logo||"";
+  $("kScore").textContent=`${s.score1||0}–${s.score2||0}`;$("kClock").textContent=fmt(seconds());$("kPhase").textContent=phase(t);
+  renderPreview(false);
 }
-function renderPreview(){
- const s=window.ASTRA.state, layout={...defaultsA.layout,...(s.layout||{})}, box=$("preview"), bw=box.clientWidth||1;
- $("pv_name1").textContent=s.team1Name||"LOCAL";$("pv_name2").textContent=s.team2Name||"VISITANTE";$("pv_score1").textContent=s.score1||0;$("pv_score2").textContent=s.score2||0;$("pv_clock").textContent=fmt(seconds());
+function getLayout(k){return {...defaultsA.layout[k],...((window.ASTRA.getState().layout||{})[k]||{})}}
+function applyElement(k, q, prefix="pv_"){
+ const e=$(prefix+k);if(!e)return;
+ e.style.left=q.x+"%";e.style.top=q.y+"%";e.style.width=q.w+"%";e.style.height=q.h+"%";
+ e.style.fontSize=q.fontSize+"vw";e.style.color=q.color;e.style.fontWeight=q.fontWeight;e.style.textAlign=q.align;
+ const s=window.ASTRA.getState(); e.style.display=(k.startsWith("logo")&&!(k==="logo1"?s.team1Logo:s.team2Logo))?"none":"block";
+}
+function renderPreview(loadEditor=true){
+ const s=window.ASTRA.getState();
+ $("pv_name1").textContent=s.team1Name||"LOCAL";$("pv_name2").textContent=s.team2Name||"VISITANTE";
+ $("pv_score1").textContent=s.score1||0;$("pv_score2").textContent=s.score2||0;$("pv_clock").textContent=fmt(seconds());
  const ex=Number(s.timer.extraMinutes||0);$("pv_extra").textContent=s.timer.extraActive&&ex?`+${ex}`:"";
  $("pv_img_logo1").src=s.team1Logo||"";$("pv_img_logo2").src=s.team2Logo||"";
- Object.keys(defaultsA.layout).forEach(k=>{const e=$("pv_"+k);if(!e)return;const q={...defaultsA.layout[k],...(layout[k]||{})};e.style.left=q.x+"%";e.style.top=q.y+"%";e.style.width=q.w+"%";e.style.height=q.h+"%";e.style.fontSize=(q.fontSize/100*bw)+"px";e.style.color=q.color;e.style.fontWeight=q.fontWeight;e.style.textAlign=q.align;e.style.display=(k.startsWith("logo")&&!(k==="logo1"?s.team1Logo:s.team2Logo))?"none":"block"});
- loadLayoutEditor();
+ Object.keys(defaultsA.layout).forEach(k=>applyElement(k,getLayout(k)));
+ if(loadEditor)loadEditor();
 }
-function loadLayoutEditor(){const k=$("target").value,s=({...defaultsA.layout[k],...(window.ASTRA.state.layout||{})[k]||{}});$("x").value=s.x;$("y").value=s.y;$("w").value=s.w;$("h").value=s.h;$("font").value=s.fontSize;$("weight").value=s.fontWeight;$("color").value=s.color;$("align").value=s.align}
-function timerSave(p){return save({timer:{...window.ASTRA.state.timer,...p}})}
-$("team1").onchange=e=>save({team1Name:e.target.value.trim()});$("team2").onchange=e=>save({team2Name:e.target.value.trim()});
+function loadEditor(){
+ const k=$("target").value,q=getLayout(k);
+ [["rx","x"],["ry","y"],["rw","w"],["rh","h"],["rf","fontSize"]].forEach(([id,key])=>{$(id).value=q[key]});
+ $("ox").value=q.x+"%";$("oy").value=q.y+"%";$("ow").value=q.w+"%";$("oh").value=q.h+"%";$("of").value=q.fontSize+"vw";
+ $("weight").value=q.fontWeight;$("align").value=q.align;selectedColor=q.color||"#ffffff";
+}
+function updateEditor(){
+ const k=$("target").value,q=getLayout(k);
+ q.x=Number($("rx").value);q.y=Number($("ry").value);q.w=Number($("rw").value);q.h=Number($("rh").value);q.fontSize=Number($("rf").value);q.fontWeight=Number($("weight").value);q.align=$("align").value;q.color=selectedColor;
+ $("ox").value=q.x+"%";$("oy").value=q.y+"%";$("ow").value=q.w+"%";$("oh").value=q.h+"%";$("of").value=q.fontSize+"vw";applyElement(k,q);
+}
+["rx","ry","rw","rh","rf"].forEach(id=>$(id).oninput=updateEditor);
+$("weight").onchange=updateEditor;$("align").onchange=updateEditor;
+$("target").onchange=loadEditor;
+document.querySelectorAll(".swatch").forEach(b=>b.onclick=()=>{selectedColor=b.dataset.color;updateEditor()});
+$("saveLayout").onclick=async()=>{const k=$("target").value,q=getLayout(k);await save({["layout/"+k]:q});toast("Diseño guardado ✓")};
+$("resetLayout").onclick=async()=>{await save({["layout/"+$("target").value]:defaultsA.layout[$("target").value]});toast("Elemento restablecido");};
+$("team1").onchange=e=>save({team1Name:e.target.value.trim()||"LOCAL"});
+$("team2").onchange=e=>save({team2Name:e.target.value.trim()||"VISITANTE"});
 $("logo1").onchange=e=>save({team1Logo:e.target.value.trim()});$("logo2").onchange=e=>save({team2Logo:e.target.value.trim()});
-document.querySelectorAll("[data-score]").forEach(b=>b.onclick=()=>{const k=b.dataset.score;save({[k]:Math.max(0,Number(window.ASTRA.state[k]||0)+Number(b.dataset.delta))})});
-$("start").onclick=()=>{const t=window.ASTRA.state.timer;if(!t.running&&t.phase!=="finished"&&t.phase!=="firstEnded")timerSave({running:true,startedAt:Date.now()+window.ASTRA.offset})};
-$("pause").onclick=()=>{const t=window.ASTRA.state.timer;if(t.running)timerSave({running:false,baseSeconds:seconds(),startedAt:0})};
-$("half2").onclick=()=>timerSave({phase:"second",baseSeconds:2700,extraMinutes:0,extraActive:false,running:true,startedAt:Date.now()});
+document.querySelectorAll("[data-score]").forEach(b=>b.onclick=()=>{const k=b.dataset.score;save({[k]:Math.max(0,Number(window.ASTRA.getState()[k]||0)+Number(b.dataset.delta))})});
+function timerSave(p){return save({timer:{...window.ASTRA.getState().timer,...p}})}
+$("start").onclick=()=>{const t=window.ASTRA.getState().timer;if(!t.running&&t.phase!=="finished")timerSave({running:true,startedAt:window.ASTRA.serverNow()})};
+$("pause").onclick=()=>{const t=window.ASTRA.getState().timer;if(t.running)timerSave({running:false,baseSeconds:seconds(),startedAt:0})};
+$("half2").onclick=()=>timerSave({phase:"second",baseSeconds:2700,extraMinutes:0,extraActive:false,running:true,startedAt:window.ASTRA.serverNow()});
 $("finish").onclick=()=>timerSave({phase:"finished",baseSeconds:seconds(),running:false,startedAt:0});
 $("set0").onclick=()=>timerSave({phase:"first",baseSeconds:0,running:false,startedAt:0});
 $("set45").onclick=()=>timerSave({phase:"first",baseSeconds:2700,running:false,startedAt:0});
-$("setCustom").onclick=()=>timerSave({baseSeconds:Math.max(0,Number($("customMinutes").value)||0)*60+Math.max(0,Number($("customSeconds").value)||0),running:false,startedAt:0});
+$("setCustom").onclick=()=>timerSave({baseSeconds:Math.max(0,Number($("customMinutes").value)||0)*60+Math.max(0,Math.min(59,Number($("customSeconds").value)||0)),running:false,startedAt:0});
 $("activateExtra").onclick=()=>timerSave({extraMinutes:Math.max(1,Number($("extraMinutes").value)||5),extraActive:true});
 $("clearExtra").onclick=()=>timerSave({extraMinutes:0,extraActive:false});
-$("reset").onclick=()=>save({score1:0,score2:0,timer:{...defaultsA.timer},team1Name:window.ASTRA.state.team1Name||"LOCAL",team2Name:window.ASTRA.state.team2Name||"VISITANTE"});
-$("target").onchange=loadLayoutEditor;
-$("saveLayout").onclick=()=>save({["layout/"+$("target").value]:{x:Number($("x").value)||0,y:Number($("y").value)||0,w:Number($("w").value)||1,h:Number($("h").value)||1,fontSize:Number($("font").value)||1,fontWeight:Number($("weight").value)||400,color:$("color").value,align:$("align").value}});
-function urls(){const u=new URL(location.href),base=u.origin+u.pathname.replace(/control\.html$/,"");const match=new URLSearchParams(location.search).get("match")||"default";$("obsLink").value=base+"overlays/marcador.html?match="+encodeURIComponent(match);$("penLink").value=base+"overlays/penales.html?match="+encodeURIComponent(match)}
-function copy(id,btn){navigator.clipboard?.writeText($(id).value);const old=btn.textContent;btn.textContent="✓ Copiado";setTimeout(()=>btn.textContent=old,1200)}
-$("copyObs").onclick=e=>copy("obsLink",e.target);$("copyPen").onclick=e=>copy("penLink",e.target);
-$("openOverlay").onclick=()=>location.href=$("obsLink").value;$("openPen").onclick=()=>{const u=new URL("penales.html",location.href);u.searchParams.set("match",new URLSearchParams(location.search).get("match")||"default");location.href=u.href};
-$("logout").onclick=()=>auth.signOut();
-$("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value);$("error").style.display="none"}catch(e){$("error").textContent="Correo o contraseña incorrectos.";$("error").style.display="block"}};
-auth.onAuthStateChanged(user=>{$("login").style.display=user?"none":"flex";if(!user)return;});
-db.ref(".info/connected").on("value",s=>{$("connection").textContent=s.val()?"Conectado":"Sin conexión";$("connection").className=s.val()?"ok":""});
-window.addEventListener("resize",renderPreview);urls();
-</script></body></html>
+$("reset").onclick=()=>save({score1:0,score2:0,timer:{...defaultsA.timer}});
+function urls(){const u=new URL(location.href),base=u.href.split("?")[0].replace(/control\.html$/,"");const m=new URLSearchParams(location.search).get("match")||"default";$("obsLink").value=base+"overlays/marcador.html?match="+encodeURIComponent(m);$("penLink").value=base+"overlays/penales.html?match="+encodeURIComponent(m)}
+function copy(id){navigator.clipboard?.writeText($(id).value);toast("Link copiado ✓")}
+$("copyObs").onclick=()=>copy("obsLink");$("copyPen").onclick=()=>copy("penLink");
+function openOverlay(){location.href=$("obsLink").value}
+function openPen(){const u=new URL("penales.html",location.href);u.searchParams.set("match",new URLSearchParams(location.search).get("match")||"default");location.href=u.href}
+$("openOverlay").onclick=openOverlay;$("openOverlay2").onclick=openOverlay;$("openPen").onclick=openPen;$("openPen2").onclick=openPen;$("openPen2b").onclick=openPen;
+function tab(name){document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+name));$("pageTitle").textContent={match:"Partido",design:"Diseño del overlay",obs:"OBS · Browser Sources"}[name]||"Partido";if(name==="design")renderPreview(true)}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+$("goDesign").onclick=()=>tab("design");$("goObs").onclick=()=>tab("obs");
+$("logout").onclick=()=>window.ASTRA.auth.signOut();
+$("loginBtn").onclick=async()=>{try{await window.ASTRA.auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value);$("error").style.display="none"}catch(e){$("error").textContent="No se pudo iniciar sesión.";$("error").style.display="block"}};
+window.renderApp=renderApp;
+window.ASTRA.auth.onAuthStateChanged(user=>{$("login").style.display=user?"none":"grid";});
+window.ASTRA.db.ref(".info/connected").on("value",s=>{const ok=!!s.val();$("connection").textContent=ok?"Conectado":"Sin conexión";$("dot").className="dot"+(ok?" ok":"")});
+$("preview").addEventListener("pointerdown",e=>{
+ const el=e.target.closest(".stage-el");if(!el)return;const k=el.id.replace("pv_",""),r=$("preview").getBoundingClientRect(),q=getLayout(k);
+ drag={k,r,startX:e.clientX,startY:e.clientY,x:q.x,y:q.y,pointer:e.pointerId};el.classList.add("dragging");el.setPointerCapture?.(e.pointerId);
+});
+$("preview").addEventListener("pointermove",e=>{if(!drag)return;const dx=(e.clientX-drag.startX)/drag.r.width*100,dy=(e.clientY-drag.startY)/drag.r.height*100,q=getLayout(drag.k);q.x=Math.max(0,Math.min(100-q.w,drag.x+dx));q.y=Math.max(0,Math.min(100-q.h,drag.y+dy));applyElement(drag.k,q);if($("target").value===drag.k){$("rx").value=q.x;$("ry").value=q.y;updateEditor()}});
+$("preview").addEventListener("pointerup",e=>{if(drag){document.getElementById("pv_"+drag.k)?.classList.remove("dragging");drag=null}});
+urls();renderApp();loadEditor();setInterval(()=>{renderApp()},500);
+</script>
+</body></html>
