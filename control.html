@@ -204,7 +204,7 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
   db.ref(".info/serverTimeOffset").on("value", s => offset=Number(s.val()||0));
 
   window.ASTRA = {
-    $, db, auth, ref, defaults, save, seconds, fmt, serverNow,
+    $, db, auth, ref, defaults, save, seconds, fmt, serverNow, startListen,
     getState: () => state,
     get offset(){ return offset; }
   };
@@ -288,7 +288,7 @@ $("goDesign").onclick=()=>tab("design");$("goObs").onclick=()=>tab("obs");
 $("logout").onclick=()=>window.ASTRA.auth.signOut();
 $("loginBtn").onclick=async()=>{try{await window.ASTRA.auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value);$("error").style.display="none"}catch(e){$("error").textContent="No se pudo iniciar sesión.";$("error").style.display="block"}};
 window.renderApp=renderApp;
-window.ASTRA.auth.onAuthStateChanged(user=>{$("login").style.display=user?"none":"grid";if(user)startListen();});
+window.ASTRA.auth.onAuthStateChanged(user=>{$("login").style.display=user?"none":"grid";if(user)window.ASTRA.startListen();});
 window.ASTRA.db.ref(".info/connected").on("value",s=>{const ok=!!s.val();$("connection").textContent=ok?"Conectado":"Sin conexión";$("dot").className="dot"+(ok?" ok":"")});
 $("preview").addEventListener("pointerdown",e=>{
  const el=e.target.closest(".stage-el");if(!el)return;const k=el.id.replace("pv_",""),r=$("preview").getBoundingClientRect(),q=getLayout(k);
