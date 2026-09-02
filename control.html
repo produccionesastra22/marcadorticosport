@@ -197,6 +197,8 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
     }, err=>{
       const box=document.getElementById("error");
       if(box){box.textContent=err.code==="PERMISSION_DENIED"?"Firebase rechazó el acceso a este UUID.":err.message;box.style.display="block";}
+      const t=document.getElementById("toast");
+      if(t){t.textContent="Error de lectura: "+(err.code||err.message||"Firebase");t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),3000);}
     });
   }
   db.ref(".info/serverTimeOffset").on("value", s => offset=Number(s.val()||0));
