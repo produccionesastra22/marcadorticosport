@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASTRA · Live Graphics</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#070a10;color:#fff;font-family:Inter,system-ui,sans-serif}
+body:before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 15% 10%,rgba(75,130,255,.22),transparent 30%),radial-gradient(circle at 85% 20%,rgba(130,80,255,.14),transparent 30%),linear-gradient(135deg,#080b12,#101521 50%,#090c12)}
+.wrap{width:min(1100px,92vw);margin:auto;padding:8vh 0}.eyebrow{font-size:11px;letter-spacing:4px;color:#6f8fcf;font-weight:900}.title{font-size:clamp(42px,7vw,82px);font-weight:900;letter-spacing:-4px;margin-top:12px}.sub{color:#8e98aa;max-width:620px;line-height:1.7;margin-top:10px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:42px}.card{display:block;text-decoration:none;color:#fff;background:#11151dcc;border:1px solid #252b38;border-radius:20px;padding:25px;transition:.2s;box-shadow:0 20px 60px #0004}.card:hover{transform:translateY(-4px);border-color:#4b82ff}.icon{font-size:34px}.name{font-size:20px;font-weight:900;margin-top:15px}.desc{font-size:11px;color:#8e98aa;margin-top:7px;line-height:1.5}.footer{margin-top:35px;font-size:10px;color:#596579}@media(max-width:700px){.cards{grid-template-columns:1fr}.wrap{padding-top:50px}}
+</style></head><body><main class="wrap">
+<div class="eyebrow">ASTRA PRODUCCIONES · LIVE GRAPHICS</div><div class="title">Control central.</div><div class="sub">Seleccioná el módulo que necesitás. El sistema conserva Firebase, la identificación por partido y los overlays preparados para OBS.</div>
+<div class="cards">
+<a class="card" id="control"><div class="icon">⚽</div><div class="name">Control del marcador</div><div class="desc">Equipos, marcador, cronómetro, tiempo extra y diseñador visual.</div></a>
+<a class="card" id="penales"><div class="icon">🥅</div><div class="name">Modo penales</div><div class="desc">Tanda, muerte súbita, resultados y overlay independiente.</div></a>
+<a class="card" id="overlay"><div class="icon">📺</div><div class="name">Overlay marcador</div><div class="desc">Abrir directamente el Browser Source transparente para OBS.</div></a>
+<a class="card" id="overlayPen"><div class="icon">🎯</div><div class="name">Overlay penales</div><div class="desc">Browser Source transparente para la tanda de penales.</div></a>
+</div><div class="footer">GitHub Pages · index.html como entrada principal</div>
+</main><script>
+const $=id=>document.getElementById(id); const p=new URLSearchParams(location.search),m=p.get("match")||"default";
+$("control").href="control.html?match="+encodeURIComponent(m);$("penales").href="penales.html?match="+encodeURIComponent(m);
+$("overlay").href="overlays/marcador.html?match="+encodeURIComponent(m);$("overlayPen").href="overlays/penales.html?match="+encodeURIComponent(m);
+</script></body></html>

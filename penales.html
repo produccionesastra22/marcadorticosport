@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070a10;color:#fff;font-family:Inter,system-ui,sans-serif}.wrap{width:min(1000px,94vw);margin:auto;padding:35px 0}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.title{font-size:42px;font-weight:900}.sub,.small{color:#8e98aa;font-size:11px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:#151a23;border:1px solid #252b38;border-radius:16px;padding:16px}h2{font-size:13px;margin:0 0 12px;text-transform:uppercase}input{width:100%;height:40px;background:#090c11;color:#fff;border:1px solid #303848;border-radius:10px;padding:8px}button{height:38px;border:0;border-radius:9px;background:#4b82ff;color:#fff;font-weight:800;cursor:pointer}button.secondary{background:#252c39}button.danger{background:#7b2938}.teams{display:grid;grid-template-columns:1fr 1fr;gap:10px}.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}.stat{background:#0d1119;border:1px solid #252b38;border-radius:12px;padding:12px;text-align:center}.stat b{display:block;font-size:28px}.row{display:flex;gap:7px;margin-top:9px}.row>*{flex:1}.kick{display:grid;grid-template-columns:42px 1fr auto;gap:7px;align-items:center;margin:7px 0}.status{height:36px;border:1px solid #303848;border-radius:9px;background:#090c11;display:flex;align-items:center;padding:0 9px;font-size:11px;font-weight:800}.actions{display:flex;gap:4px}.actions button{min-width:38px;height:36px}.goal{background:#236d4c}.miss{background:#702b39}@media(max-width:700px){.grid{grid-template-columns:1fr}.title{font-size:30px}}
+.login{position:fixed;inset:0;background:#070a10;display:none;align-items:center;justify-content:center}.loginbox{width:340px;background:#141923;border:1px solid #252b38;border-radius:18px;padding:22px}.loginbox input{margin:5px 0}.loginbox button{width:100%;margin-top:8px}
+</style></head><body><div class="wrap" id="app">
+<div class="top"><div><div class="title">Modo penales</div><div class="sub">Control independiente · Firebase sincronizado · muerte súbita hasta 10 lanzamientos</div></div><button class="secondary" id="back">← Marcador</button></div>
+<div class="teams"><input id="team1" placeholder="LOCAL"><input id="team2" placeholder="VISITANTE"></div>
+<div class="summary"><div class="stat"><b id="score1">0</b><span>Local</span></div><div class="stat"><b id="rounds">0</b><span>Lanzamientos</span></div><div class="stat"><b id="score2">0</b><span>Visitante</span></div></div>
+<div class="grid"><section class="card"><h2 id="title1">LOCAL</h2><div id="kicks1"></div></section><section class="card"><h2 id="title2">VISITANTE</h2><div id="kicks2"></div></section></div>
+<div class="row"><button id="add">+ Agregar lanzamiento</button><button class="danger" id="reset">↺ Reiniciar tanda</button></div>
+<div class="row"><button id="overlay">📺 Abrir overlay de penales</button><button class="secondary" id="copy">Copiar link OBS</button></div>
+<input id="link" readonly style="margin-top:8px;width:100%">
+</div><div class="login" id="login"><div class="loginbox"><h2>Control de penales</h2><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button id="loginBtn">Entrar</button></div></div>
+<script src="../assets/firebase.js"></script><script>
+const auth=window.ASTRA.auth,save=window.ASTRA.save,defaultsA=window.ASTRA.defaults;
+function renderApp(){const s=window.ASTRA.state,p={...defaultsA.penalties,...(s.penalties||{})},v=Math.max(5,Math.min(10,Number(p.visibleKicks)||5)),a=Array.isArray(p.kicks1)?p.kicks1:[],b=Array.isArray(p.kicks2)?p.kicks2:[];
+$("team1").value=p.team1Name||s.team1Name||"LOCAL";$("team2").value=p.team2Name||s.team2Name||"VISITANTE";$("title1").textContent=$("team1").value;$("title2").textContent=$("team2").value;
+$("score1").textContent=a.filter(x=>x==="goal").length;$("score2").textContent=b.filter(x=>x==="goal").length;$("rounds").textContent=Math.max(a.filter(Boolean).length,b.filter(Boolean).length);
+const draw=(id,arr,key)=>{$(id).innerHTML=Array.from({length:v},(_,i)=>{const x=arr[i],status=x==="goal"?"GOL":x==="miss"?"FALLÓ":"Pendiente";return `<div class="kick"><b>#${i+1}</b><div class="status">${status}</div><div class="actions"><button class="goal" data-k="${key}" data-i="${i}" data-v="goal">✓</button><button class="miss" data-k="${key}" data-i="${i}" data-v="miss">×</button><button class="secondary" data-k="${key}" data-i="${i}" data-v="clear">—</button></div></div>`}).join("");
+$(id).querySelectorAll("[data-k]").forEach(btn=>btn.onclick=()=>{const arr=[...(Array.isArray(window.ASTRA.state.penalties?.[btn.dataset.k])?window.ASTRA.state.penalties[btn.dataset.k]:[])];while(arr.length<v)arr.push(null);arr[Number(btn.dataset.i)]=btn.dataset.v==="clear"?null:btn.dataset.v;save({["penalties/"+btn.dataset.k]:arr})})};draw("kicks1",a,"kicks1");draw("kicks2",b,"kicks2");}
+$("team1").onchange=e=>save({"penalties/team1Name":e.target.value.trim()||"LOCAL"});$("team2").onchange=e=>save({"penalties/team2Name":e.target.value.trim()||"VISITANTE"});
+$("add").onclick=()=>{const p=window.ASTRA.state.penalties||defaultsA.penalties;save({"penalties/visibleKicks":Math.min(10,Math.max(5,Number(p.visibleKicks)||5)+1)})};
+$("reset").onclick=()=>save({penalties:{...defaultsA.penalties,team1Name:window.ASTRA.state.team1Name||"LOCAL",team2Name:window.ASTRA.state.team2Name||"VISITANTE"}});
+const match=new URLSearchParams(location.search).get("match")||"default",overlayUrl=()=>new URL("overlays/penales.html?match="+encodeURIComponent(match),location.href).href;
+$("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
+$("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(match);
+$("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){}};
+auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex"});
+</script></body></html>

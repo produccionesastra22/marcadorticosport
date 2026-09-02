@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,sans-serif;background:#070a10;color:#fff}
+body:before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 15% 15%,rgba(75,130,255,.18),transparent 28%),radial-gradient(circle at 85% 20%,rgba(130,80,255,.12),transparent 30%),linear-gradient(135deg,#080b12,#101521 50%,#090c12)}
+.wrap{width:min(1180px,94vw);margin:auto;padding:34px 0 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}
+.eyebrow{font-size:10px;letter-spacing:3px;color:#6f8fcf;font-weight:900}.title{font-size:clamp(28px,4vw,52px);font-weight:900;letter-spacing:-2px}.sub{color:#7f8ba0;font-size:13px;margin-top:8px}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.card{border:1px solid #252b38;border-radius:18px;background:#11151dcc;padding:18px;box-shadow:0 20px 60px #0004}.card h2{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#aeb8ca;margin:0 0 15px}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:12px}.label{font-size:10px;color:#8e98aa;margin-bottom:6px;display:block}
+input,select{height:42px;border:1px solid #303848;border-radius:11px;background:#090c11;color:#fff;padding:8px 11px;outline:none;width:100%;font:inherit}input:focus,select:focus{border-color:#4b82ff}
+.scoregrid{display:grid;grid-template-columns:1fr 70px 1fr;align-items:center;gap:10px;margin-top:18px}.score{text-align:center;font-size:64px;font-weight:900}.score button{width:100%;height:38px;border:0;border-radius:10px;background:#252d3c;color:#fff;font-size:22px;cursor:pointer}.vs{text-align:center;color:#687388;font-weight:900}
+.timer{text-align:center;font-size:68px;font-weight:900;letter-spacing:2px;font-variant-numeric:tabular-nums;margin:8px 0}.state{text-align:center;color:#8e98aa;font-size:11px;margin-bottom:14px}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:9px}button{border:0;border-radius:11px;height:42px;background:#4b82ff;color:#fff;font-weight:900;cursor:pointer}button.secondary{background:#252c39}button.danger{background:#7b2938}
+.row{display:flex;gap:9px;margin-top:9px}.row>*{flex:1}.small{font-size:10px;color:#7f8ba0;line-height:1.5}.links{display:grid;gap:9px}.linkrow{display:flex;gap:8px}.linkrow input{font-size:11px}.status{font-size:11px;color:#8e98aa}.ok{color:#35d07f}
+.preview{position:relative;width:100%;aspect-ratio:16/9;background:#000;border:1px solid #252b38;border-radius:12px;overflow:hidden;margin-bottom:12px}.preview .stage-el{position:absolute;white-space:nowrap;font-family:Montserrat;font-weight:800;text-transform:uppercase;line-height:1}.preview img{display:block;width:100%;height:100%;object-fit:contain}
+.login{position:fixed;inset:0;background:#070a10;display:none;align-items:center;justify-content:center;padding:20px}.loginbox{width:360px;background:#141923;border:1px solid #252b38;border-radius:20px;padding:24px}.loginbox h1{margin:0 0 5px}.loginbox p{font-size:11px;color:#8e98aa;margin-bottom:16px}.loginbox input{margin-bottom:9px}.error{display:none;color:#ff7a89;font-size:11px;margin-top:10px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.wrap{padding-top:22px}}
+</style></head><body>
+<div class="wrap" id="app">
+<div class="top"><div><div class="eyebrow">ASTRA PRODS · MATCH CONTROL</div><div class="title">Panel de operación</div><div class="sub">Marcador, cronómetro, diseño y enlaces de OBS en un solo lugar.</div></div>
+<div class="status">● <span id="connection">Conectando…</span></div></div>
+<div class="grid">
+<section class="card"><h2>Partido</h2>
+<div class="teams"><div><label class="label">Local</label><input id="team1" placeholder="LOCAL"></div><div><label class="label">Visitante</label><input id="team2" placeholder="VISITANTE"></div></div>
+<div class="scoregrid"><div class="score"><button data-score="score1" data-delta="-1">−</button><div id="s1">0</div><button data-score="score1" data-delta="1">+</button></div><div class="vs">VS</div><div class="score"><button data-score="score2" data-delta="-1">−</button><div id="s2">0</div><button data-score="score2" data-delta="1">+</button></div></div>
+</section>
+<section class="card"><h2>Cronómetro</h2><div class="timer" id="timer">00:00</div><div class="state" id="timerState">1T · detenido</div>
+<div class="buttons"><button id="start">▶ Iniciar</button><button class="secondary" id="pause">⏸ Pausar</button><button class="secondary" id="half2">2T ▶</button><button class="danger" id="finish">■ Finalizar</button></div>
+<div class="row"><input id="customMinutes" type="number" min="0" placeholder="Minutos"><input id="customSeconds" type="number" min="0" max="59" placeholder="Segundos"><button id="setCustom">Fijar</button></div>
+<div class="row"><button class="secondary" id="set0">00:00</button><button class="secondary" id="set45">45:00</button></div></section>
+<section class="card"><h2>Tiempo extra</h2><div class="teams"><div><label class="label">Minutos</label><input id="extraMinutes" type="number" min="1" value="5"></div><div><label class="label">Estado</label><div class="state" id="extraStatus" style="height:42px;border:1px solid #303848;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0">Sin activar</div></div></div>
+<div class="row"><button id="activateExtra">⏱ Activar</button><button class="secondary" id="clearExtra">× Desactivar</button></div></section>
+<section class="card"><h2>Overlay / OBS</h2><div class="links"><div><label class="label">Marcador</label><div class="linkrow"><input id="obsLink" readonly><button id="copyObs">Copiar</button></div></div><div><label class="label">Penales</label><div class="linkrow"><input id="penLink" readonly><button id="copyPen">Copiar</button></div></div></div><div class="row"><button class="secondary" id="openPen">⚽ Control de penales</button><button class="secondary" id="openOverlay">📺 Abrir overlay</button></div></section>
+<section class="card" style="grid-column:1/-1"><h2>Diseñador visual</h2><div class="preview" id="preview"><div class="stage-el" id="pv_name1">LOCAL</div><div class="stage-el" id="pv_name2">VISITANTE</div><div class="stage-el" id="pv_score1">0</div><div class="stage-el" id="pv_score2">0</div><div class="stage-el" id="pv_clock">00:00</div><div class="stage-el" id="pv_extra"></div><div class="stage-el" id="pv_logo1"><img id="pv_img_logo1"></div><div class="stage-el" id="pv_logo2"><img id="pv_img_logo2"></div></div>
+<div class="teams"><div><label class="label">Elemento</label><select id="target"><option value="name1">Nombre local</option><option value="name2">Nombre visitante</option><option value="score1">Marcador local</option><option value="score2">Marcador visitante</option><option value="clock">Cronómetro</option><option value="extra">Tiempo añadido</option><option value="logo1">Logo local</option><option value="logo2">Logo visitante</option></select></div><div><label class="label">Color</label><input id="color" type="color"></div></div>
+<div class="teams" style="margin-top:10px"><input id="x" type="number" step=".1" placeholder="X %"><input id="y" type="number" step=".1" placeholder="Y %"><input id="w" type="number" step=".1" placeholder="Ancho %"><input id="h" type="number" step=".1" placeholder="Alto %"></div>
+<div class="teams" style="margin-top:10px"><input id="font" type="number" step=".1" placeholder="Tamaño vw"><select id="weight"><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option><option>900</option></select><select id="align"><option value="left">Izquierda</option><option value="center">Centro</option><option value="right">Derecha</option></select><button id="saveLayout">✓ Guardar diseño</button></div>
+<div style="margin-top:10px"><label class="label">Logo local — URL</label><input id="logo1"><label class="label" style="margin-top:9px">Logo visitante — URL</label><input id="logo2"></div>
+</section>
+<section class="card" style="grid-column:1/-1"><div class="row"><button class="secondary" id="reset">⟲ Reiniciar partido</button><button class="danger" id="logout">Cerrar sesión</button></div></section>
+</div></div>
+<div class="login" id="login"><div class="loginbox"><h1>Control del marcador</h1><p>Iniciá sesión con la cuenta autorizada de Firebase.</p><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button id="loginBtn" style="width:100%">Entrar</button><div class="error" id="error"></div></div></div>
+<script src="../assets/firebase.js"></script><script>
+const auth=window.ASTRA.auth, defaultsA=window.ASTRA.defaults;
+const {save,fmt,seconds}=window.ASTRA;
+function setVal(id,v){if(document.activeElement!==$(id))$(id).value=v??""}
+function renderApp(){
+ const s=window.ASTRA.state,t=s.timer;
+ $("s1").textContent=s.score1||0;$("s2").textContent=s.score2||0;$("timer").textContent=fmt(seconds());
+ $("team1").value=s.team1Name||"LOCAL";$("team2").value=s.team2Name||"VISITANTE";
+ const phase=t.phase==="second"?"2T":t.phase==="finished"?"FINAL":t.phase==="firstEnded"?"DESCANSO":"1T";
+ $("timerState").textContent=phase+" · "+(t.running?"corriendo":"detenido");
+ const ex=Number(t.extraMinutes||0);$("extraStatus").textContent=t.extraActive&&ex?`ACTIVO · +${ex} min`:"Sin activar";
+ $("logo1").value=s.team1Logo||"";$("logo2").value=s.team2Logo||"";
+ renderPreview(); window.ASTRA.state=s;
+}
+function renderPreview(){
+ const s=window.ASTRA.state, layout={...defaultsA.layout,...(s.layout||{})}, box=$("preview"), bw=box.clientWidth||1;
+ $("pv_name1").textContent=s.team1Name||"LOCAL";$("pv_name2").textContent=s.team2Name||"VISITANTE";$("pv_score1").textContent=s.score1||0;$("pv_score2").textContent=s.score2||0;$("pv_clock").textContent=fmt(seconds());
+ const ex=Number(s.timer.extraMinutes||0);$("pv_extra").textContent=s.timer.extraActive&&ex?`+${ex}`:"";
+ $("pv_img_logo1").src=s.team1Logo||"";$("pv_img_logo2").src=s.team2Logo||"";
+ Object.keys(defaultsA.layout).forEach(k=>{const e=$("pv_"+k);if(!e)return;const q={...defaultsA.layout[k],...(layout[k]||{})};e.style.left=q.x+"%";e.style.top=q.y+"%";e.style.width=q.w+"%";e.style.height=q.h+"%";e.style.fontSize=(q.fontSize/100*bw)+"px";e.style.color=q.color;e.style.fontWeight=q.fontWeight;e.style.textAlign=q.align;e.style.display=(k.startsWith("logo")&&!(k==="logo1"?s.team1Logo:s.team2Logo))?"none":"block"});
+ loadLayoutEditor();
+}
+function loadLayoutEditor(){const k=$("target").value,s=({...defaultsA.layout[k],...(window.ASTRA.state.layout||{})[k]||{}});$("x").value=s.x;$("y").value=s.y;$("w").value=s.w;$("h").value=s.h;$("font").value=s.fontSize;$("weight").value=s.fontWeight;$("color").value=s.color;$("align").value=s.align}
+function timerSave(p){return save({timer:{...window.ASTRA.state.timer,...p}})}
+$("team1").onchange=e=>save({team1Name:e.target.value.trim()});$("team2").onchange=e=>save({team2Name:e.target.value.trim()});
+$("logo1").onchange=e=>save({team1Logo:e.target.value.trim()});$("logo2").onchange=e=>save({team2Logo:e.target.value.trim()});
+document.querySelectorAll("[data-score]").forEach(b=>b.onclick=()=>{const k=b.dataset.score;save({[k]:Math.max(0,Number(window.ASTRA.state[k]||0)+Number(b.dataset.delta))})});
+$("start").onclick=()=>{const t=window.ASTRA.state.timer;if(!t.running&&t.phase!=="finished"&&t.phase!=="firstEnded")timerSave({running:true,startedAt:Date.now()+window.ASTRA.offset})};
+$("pause").onclick=()=>{const t=window.ASTRA.state.timer;if(t.running)timerSave({running:false,baseSeconds:seconds(),startedAt:0})};
+$("half2").onclick=()=>timerSave({phase:"second",baseSeconds:2700,extraMinutes:0,extraActive:false,running:true,startedAt:Date.now()});
+$("finish").onclick=()=>timerSave({phase:"finished",baseSeconds:seconds(),running:false,startedAt:0});
+$("set0").onclick=()=>timerSave({phase:"first",baseSeconds:0,running:false,startedAt:0});
+$("set45").onclick=()=>timerSave({phase:"first",baseSeconds:2700,running:false,startedAt:0});
+$("setCustom").onclick=()=>timerSave({baseSeconds:Math.max(0,Number($("customMinutes").value)||0)*60+Math.max(0,Number($("customSeconds").value)||0),running:false,startedAt:0});
+$("activateExtra").onclick=()=>timerSave({extraMinutes:Math.max(1,Number($("extraMinutes").value)||5),extraActive:true});
+$("clearExtra").onclick=()=>timerSave({extraMinutes:0,extraActive:false});
+$("reset").onclick=()=>save({score1:0,score2:0,timer:{...defaultsA.timer},team1Name:window.ASTRA.state.team1Name||"LOCAL",team2Name:window.ASTRA.state.team2Name||"VISITANTE"});
+$("target").onchange=loadLayoutEditor;
+$("saveLayout").onclick=()=>save({["layout/"+$("target").value]:{x:Number($("x").value)||0,y:Number($("y").value)||0,w:Number($("w").value)||1,h:Number($("h").value)||1,fontSize:Number($("font").value)||1,fontWeight:Number($("weight").value)||400,color:$("color").value,align:$("align").value}});
+function urls(){const u=new URL(location.href),base=u.origin+u.pathname.replace(/control\.html$/,"");const match=new URLSearchParams(location.search).get("match")||"default";$("obsLink").value=base+"overlays/marcador.html?match="+encodeURIComponent(match);$("penLink").value=base+"overlays/penales.html?match="+encodeURIComponent(match)}
+function copy(id,btn){navigator.clipboard?.writeText($(id).value);const old=btn.textContent;btn.textContent="✓ Copiado";setTimeout(()=>btn.textContent=old,1200)}
+$("copyObs").onclick=e=>copy("obsLink",e.target);$("copyPen").onclick=e=>copy("penLink",e.target);
+$("openOverlay").onclick=()=>location.href=$("obsLink").value;$("openPen").onclick=()=>{const u=new URL("penales.html",location.href);u.searchParams.set("match",new URLSearchParams(location.search).get("match")||"default");location.href=u.href};
+$("logout").onclick=()=>auth.signOut();
+$("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value);$("error").style.display="none"}catch(e){$("error").textContent="Correo o contraseña incorrectos.";$("error").style.display="block"}};
+auth.onAuthStateChanged(user=>{$("login").style.display=user?"none":"flex";if(!user)return;});
+db.ref(".info/connected").on("value",s=>{$("connection").textContent=s.val()?"Conectado":"Sin conexión";$("connection").className=s.val()?"ok":""});
+window.addEventListener("resize",renderPreview);urls();
+</script></body></html>
