@@ -98,7 +98,9 @@ body{font-family:Montserrat,Arial,sans-serif;color:#fff}.board{position:absolute
 })();
 
 </script><script>
+const $=window.ASTRA.$, defaults=window.ASTRA.defaults;
 function renderApp(){
+ const state=window.ASTRA.getState();
  const p=state.penalties||defaults.penalties, v=Math.max(5,Math.min(10,Number(p.visibleKicks)||5));
  const a=Array.isArray(p.kicks1)?p.kicks1:[],b=Array.isArray(p.kicks2)?p.kicks2:[];
  $("n1").textContent=p.team1Name||state.team1Name||"LOCAL"; $("n2").textContent=p.team2Name||state.team2Name||"VISITANTE";
