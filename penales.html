@@ -77,7 +77,7 @@
   db.ref(".info/serverTimeOffset").on("value",s=>offset=Number(s.val()||0));
 
   window.ASTRA = {
-    $, db, auth, ref, defaults, save, seconds, fmt, serverNow,
+    $, db, auth, ref, defaults, save, seconds, fmt, serverNow, startListen,
     getState: () => state,
     get offset(){ return offset; }
   };
@@ -97,5 +97,5 @@ const match=new URLSearchParams(location.search).get("match")||"default",overlay
 $("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
 $("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(match);
 $("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){console.error(e);alert(e.code||"No se pudo iniciar sesión.");}};
-auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)startListen();});
+auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)window.ASTRA.startListen();});
 </script></body></html>
