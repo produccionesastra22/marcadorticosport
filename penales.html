@@ -96,6 +96,6 @@ $("reset").onclick=()=>{const s=window.ASTRA.getState();save({penalties:{...defa
 const match=new URLSearchParams(location.search).get("match")||"default",overlayUrl=()=>new URL("overlays/penales.html?match="+encodeURIComponent(match),location.href).href;
 $("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
 $("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(match);
-$("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){}};
+$("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){console.error(e);alert(e.code||"No se pudo iniciar sesión.");}};
 auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)startListen();});
 </script></body></html>
