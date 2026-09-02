@@ -69,6 +69,7 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
 
   <section class="card">
     <div class="card-head"><h2>Tiempo añadido</h2><span class="hint" id="extraStatus">Sin activar</span></div>
+    <div class="hint" style="line-height:1.5;margin-bottom:7px">Al activar, el cronómetro sigue corriendo normalmente y se muestra un contador de tiempo extra aparte que suma solo, sin detenerse ni reiniciarse automáticamente.</div>
     <div class="quick"><input id="extraMinutes" type="number" min="1" value="5"><button class="btn" id="activateExtra">⏱ Activar</button><button class="btn secondary" id="clearExtra">×</button></div>
     <div class="row"><button class="btn danger" id="finish">■ Finalizar partido</button><button class="btn secondary" id="reset">↻ Reiniciar</button></div>
   </section>
@@ -106,8 +107,9 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
         <div class="wide"><label>Logo local · URL directa</label><input id="logo1"></div>
         <div class="wide"><label>Logo visitante · URL directa</label><input id="logo2"></div>
       </div>
-      <div class="savebar"><button class="btn" id="saveLayout">✓ Guardar diseño</button><button class="btn secondary" id="resetLayout">↻ Restablecer</button></div>
-      <div class="hint" style="margin-top:8px;line-height:1.5">Consejo: seleccioná un elemento y arrastralo. Los cambios se ven en vivo; guardalos cuando estés conforme.</div>
+      <div class="savebar"><button class="btn" id="saveLayout">✓ Guardar elemento</button><button class="btn secondary" id="resetLayout">↻ Restablecer</button></div>
+      <div class="savebar"><button class="btn" id="saveAllLayout" style="background:#35d07f">✓✓ Guardar todo el diseño</button></div>
+      <div class="hint" style="margin-top:8px;line-height:1.5">Consejo: seleccioná un elemento y arrastralo. Los cambios se ven en vivo. "Guardar elemento" guarda solo lo seleccionado; "Guardar todo el diseño" guarda de una sola vez la posición de todos los elementos (incluidos los que arrastraste sin guardar todavía).</div>
     </div>
   </div>
 </section>
@@ -143,7 +145,7 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
   const defaults = {
     team1Name: "LOCAL", team2Name: "VISITANTE",
     team1Logo: "", team2Logo: "", score1: 0, score2: 0,
-    timer: {phase:"first",baseSeconds:0,running:false,startedAt:0,extraMinutes:0,extraActive:false},
+    timer: {phase:"first",baseSeconds:0,running:false,startedAt:0,extraMinutes:0,extraActive:false,extraStartSeconds:0},
     penalties: {active:false,team1Name:"LOCAL",team2Name:"VISITANTE",kicks1:[null,null,null,null,null],kicks2:[null,null,null,null,null],visibleKicks:5},
     layout: {
       name1:{x:10,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"left"},
@@ -184,6 +186,11 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
     s = Math.max(0, Math.floor(s));
     return `${pad(Math.floor(s/60))}:${pad(s%60)}`;
   };
+  function extraSeconds() {
+    const t = state.timer;
+    if (!t.extraActive) return 0;
+    return Math.max(0, seconds() - (Number(t.extraStartSeconds) || 0));
+  }
   const save = patch => ref.update(patch).catch(e=>{ const t=document.getElementById("toast"); if(t){t.textContent="Error: "+(e.code||"Firebase");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);} throw e; });
 
   let listening=false;
@@ -204,13 +211,13 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
   db.ref(".info/serverTimeOffset").on("value", s => offset=Number(s.val()||0));
 
   window.ASTRA = {
-    $, db, auth, ref, defaults, save, seconds, fmt, serverNow, startListen,
+    $, db, auth, ref, defaults, save, seconds, fmt, extraSeconds, serverNow, startListen,
     getState: () => state,
     get offset(){ return offset; }
   };
 })();
 
-const {save,fmt,seconds}=window.ASTRA;
+const {save,fmt,seconds,extraSeconds}=window.ASTRA;
 const $=window.ASTRA.$, defaultsA=window.ASTRA.defaults;
 let selectedColor="#fff", drag=null;
 let draftLayout={}; // cambios de diseño aún no guardados: tienen prioridad sobre lo que llega de Firebase
@@ -221,8 +228,9 @@ function renderApp(){
   const s=window.ASTRA.getState(), t=s.timer||{};
   $("s1").textContent=s.score1||0;$("s2").textContent=s.score2||0;
   $("team1").value=s.team1Name||"LOCAL";$("team2").value=s.team2Name||"VISITANTE";
-  $("timer").textContent=fmt(seconds());$("timerState").textContent=phase(t)+" · "+(t.running?"corriendo":"detenido");
-  $("extraStatus").textContent=t.extraActive&&Number(t.extraMinutes)>0?`ACTIVO · +${t.extraMinutes} min`:"Sin activar";
+  $("timer").textContent=fmt(seconds());
+  $("timerState").textContent=phase(t)+" · "+(t.running?"corriendo":"detenido")+(t.extraActive?" · TIEMPO EXTRA +"+fmt(extraSeconds()):"");
+  $("extraStatus").textContent=t.extraActive?`ACTIVO · +${fmt(extraSeconds())}`+(Number(t.extraMinutes)>0?` (anunciado +${t.extraMinutes}′)`:""):"Sin activar";
   $("logo1").value=s.team1Logo||"";$("logo2").value=s.team2Logo||"";
   $("kScore").textContent=`${s.score1||0}–${s.score2||0}`;$("kClock").textContent=fmt(seconds());$("kPhase").textContent=phase(t);
   renderPreview(false);
@@ -238,7 +246,7 @@ function renderPreview(loadEditor=true){
  const s=window.ASTRA.getState();
  $("pv_name1").textContent=s.team1Name||"LOCAL";$("pv_name2").textContent=s.team2Name||"VISITANTE";
  $("pv_score1").textContent=s.score1||0;$("pv_score2").textContent=s.score2||0;$("pv_clock").textContent=fmt(seconds());
- const ex=Number(s.timer.extraMinutes||0);$("pv_extra").textContent=s.timer.extraActive&&ex?`+${ex}`:"";
+ $("pv_extra").textContent=s.timer.extraActive?`+${fmt(extraSeconds())}`:"";
  $("pv_img_logo1").src=s.team1Logo||"";$("pv_img_logo2").src=s.team2Logo||"";
  Object.keys(defaultsA.layout).forEach(k=>applyElement(k,getLayout(k)));
  if(loadEditor)loadEditor();
@@ -260,6 +268,7 @@ $("weight").onchange=updateEditor;$("align").onchange=updateEditor;
 $("target").onchange=loadEditor;
 document.querySelectorAll(".swatch").forEach(b=>b.onclick=()=>{selectedColor=b.dataset.color;updateEditor()});
 $("saveLayout").onclick=async()=>{const k=$("target").value,q=getLayout(k);await save({["layout/"+k]:q});delete draftLayout[k];toast("Diseño guardado ✓")};
+$("saveAllLayout").onclick=async()=>{const patch={};Object.keys(defaultsA.layout).forEach(k=>{patch["layout/"+k]=getLayout(k)});await save(patch);draftLayout={};toast("Todo el diseño guardado ✓")};
 $("resetLayout").onclick=async()=>{const k=$("target").value;delete draftLayout[k];await save({["layout/"+k]:defaultsA.layout[k]});applyElement(k,defaultsA.layout[k]);loadEditor();toast("Elemento restablecido");};
 $("team1").onchange=e=>save({team1Name:e.target.value.trim()||"LOCAL"});
 $("team2").onchange=e=>save({team2Name:e.target.value.trim()||"VISITANTE"});
@@ -273,8 +282,8 @@ $("finish").onclick=()=>timerSave({phase:"finished",baseSeconds:seconds(),runnin
 $("set0").onclick=()=>timerSave({phase:"first",baseSeconds:0,running:false,startedAt:0});
 $("set45").onclick=()=>timerSave({phase:"first",baseSeconds:2700,running:false,startedAt:0});
 $("setCustom").onclick=()=>timerSave({baseSeconds:Math.max(0,Number($("customMinutes").value)||0)*60+Math.max(0,Math.min(59,Number($("customSeconds").value)||0)),running:false,startedAt:0});
-$("activateExtra").onclick=()=>timerSave({extraMinutes:Math.max(1,Number($("extraMinutes").value)||5),extraActive:true});
-$("clearExtra").onclick=()=>timerSave({extraMinutes:0,extraActive:false});
+$("activateExtra").onclick=()=>timerSave({extraMinutes:Math.max(1,Number($("extraMinutes").value)||5),extraActive:true,extraStartSeconds:seconds()});
+$("clearExtra").onclick=()=>timerSave({extraMinutes:0,extraActive:false,extraStartSeconds:0});
 $("reset").onclick=()=>save({score1:0,score2:0,timer:{...defaultsA.timer}});
 function urls(){const u=new URL(location.href),base=u.href.split("?")[0].replace(/control\.html$/,"");const m=new URLSearchParams(location.search).get("match")||"default";$("obsLink").value=base+"overlays/marcador.html?match="+encodeURIComponent(m);$("penLink").value=base+"overlays/penales.html?match="+encodeURIComponent(m)}
 function copy(id){navigator.clipboard?.writeText($(id).value);toast("Link copiado ✓")}
