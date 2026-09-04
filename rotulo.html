@@ -1,70 +1,399 @@
 <!DOCTYPE html>
-<html lang="es"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ASTRA · Rótulo</title>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <style>
-*{box-sizing:border-box}body{margin:0;background:#070a10;color:#fff;font-family:Inter,system-ui,sans-serif}
-.wrap{width:min(560px,94vw);margin:auto;padding:35px 0}
-.title{font-size:32px;font-weight:900;margin-bottom:16px}
-.card{background:#151a23;border:1px solid #252b38;border-radius:16px;padding:16px;margin-bottom:12px}
-label{display:block;font-size:10px;color:#8e98aa;margin:0 0 4px}
-input,select{width:100%;height:38px;background:#090c11;color:#fff;border:1px solid #303848;border-radius:8px;padding:0 8px;font-size:13px;margin-bottom:10px}
-input[type=color]{padding:2px;height:38px}
-button{height:44px;border:0;border-radius:10px;background:#4b82ff;color:#fff;font-weight:800;cursor:pointer;font-size:14px}
-button.secondary{background:#252c39}button.toggle{background:#35d07f}button.toggle.off{background:#7b2938}
-.row{display:flex;gap:7px;margin-top:9px}.row>*{flex:1}
-.login{position:fixed;inset:0;background:#070a10;display:none;align-items:center;justify-content:center}
-.loginbox{width:340px;background:#141923;border:1px solid #252b38;border-radius:18px;padding:22px}
-.loginbox input{margin:5px 0}.loginbox button{width:100%;margin-top:8px}
-</style></head><body>
-<div class="wrap" id="app">
-<div class="title">Rótulo en pantalla</div>
-<div class="card">
-<label>Nombre</label><input id="name" placeholder="Nombre completo">
-<label>Cargo / descripción</label><input id="cargo" placeholder="Periodista deportivo">
-<div style="display:flex;gap:10px">
-<div style="flex:1"><label>Color principal</label><input id="color1" type="color" value="#4e7fff"></div>
-<div style="flex:1"><label>Color secundario</label><input id="color2" type="color" value="#0d1119"></div>
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    min-height:100%;
+    background:#000;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.wrap{
+    width:min(600px,94vw);
+    margin:auto;
+    padding:25px 0;
+}
+
+h1{
+    margin:0 0 5px;
+    font-size:28px;
+}
+
+.subtitle{
+    color:#777;
+    font-size:12px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:#0b0b0b;
+    border:1px solid #202020;
+    padding:16px;
+    margin-bottom:10px;
+}
+
+label{
+    display:block;
+    color:#888;
+    font-size:11px;
+    margin:10px 0 5px;
+}
+
+input,select{
+    width:100%;
+    height:40px;
+    background:#000;
+    color:#fff;
+    border:1px solid #303030;
+    padding:0 10px;
+    border-radius:5px;
+    outline:none;
+}
+
+input:focus,select:focus{
+    border-color:#555;
+}
+
+input[type=color]{
+    padding:3px;
+}
+
+.row{
+    display:flex;
+    gap:8px;
+    margin-top:8px;
+}
+
+.row>*{
+    flex:1;
+}
+
+button{
+    height:42px;
+    border:0;
+    border-radius:5px;
+    background:#fff;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button.secondary{
+    background:#181818;
+    color:#fff;
+    border:1px solid #292929;
+}
+
+button.off{
+    background:#401111;
+    color:#fff;
+}
+
+.status{
+    font-size:11px;
+    color:#777;
+    margin-top:8px;
+}
+
+#link{
+    margin-top:8px;
+}
+
+.login{
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+}
+
+.loginbox{
+    width:min(350px,90vw);
+    background:#0b0b0b;
+    border:1px solid #252525;
+    padding:22px;
+}
+
+.loginbox h2{
+    margin:0 0 15px;
+    font-size:20px;
+}
+
+.loginbox input{
+    margin-bottom:8px;
+}
+
+.loginbox button{
+    width:100%;
+    margin-top:5px;
+}
+
+#error{
+    color:#e55;
+    font-size:11px;
+    margin-top:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+    <h1>RÓTULO</h1>
+    <div class="subtitle">Control de identificación en pantalla</div>
+
+    <div class="card">
+
+        <label>NOMBRE</label>
+        <input id="name" placeholder="Nombre completo">
+
+        <label>CARGO / DESCRIPCIÓN</label>
+        <input id="cargo" placeholder="Periodista deportivo">
+
+        <label>COLOR PRINCIPAL</label>
+        <input id="color1" type="color" value="#4e7fff">
+
+        <label>COLOR SECUNDARIO</label>
+        <input id="color2" type="color" value="#111111">
+
+        <label>FUENTE</label>
+        <select id="font">
+            <option value="Arial">Arial</option>
+            <option value="Helvetica">Helvetica</option>
+            <option value="Verdana">Verdana</option>
+        </select>
+
+        <div class="status" id="status">Esperando conexión...</div>
+
+    </div>
+
+    <div class="row">
+        <button id="toggleShow">MOSTRAR</button>
+    </div>
+
+    <div class="row">
+        <button class="secondary" id="overlay">ABRIR OVERLAY</button>
+        <button class="secondary" id="copy">COPIAR LINK OBS</button>
+    </div>
+
+    <input id="link" readonly>
+
+    <div class="row">
+        <button class="secondary" id="back">← VOLVER AL CONTROL</button>
+    </div>
+
 </div>
-<label>Fuente</label><select id="font"><option value="Montserrat">Montserrat</option><option value="Inter">Inter</option><option value="LT Wave">LT Wave</option></select>
+
+<div class="login" id="login">
+    <div class="loginbox">
+        <h2>ACCESO</h2>
+        <input id="email" type="email" placeholder="Correo">
+        <input id="password" type="password" placeholder="Contraseña">
+        <button id="loginBtn">ENTRAR</button>
+        <div id="error"></div>
+    </div>
 </div>
-<div class="row"><button class="toggle" id="toggleShow">📺 Mostrar en overlay</button></div>
-<div class="row"><button class="secondary" id="overlay">Abrir overlay</button><button class="secondary" id="copy">Copiar link OBS</button><button class="secondary" id="back">← Marcador</button></div>
-<input id="link" readonly style="margin-top:8px;width:100%">
-</div>
-<div class="login" id="login"><div class="loginbox"><h2>Control de rótulo</h2><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button id="loginBtn">Entrar</button></div></div>
+
 <script>
 (() => {
-  const FIREBASE_CONFIG={apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",authDomain:"astraprods.firebaseapp.com",databaseURL:"https://astraprods-default-rtdb.firebaseio.com",projectId:"astraprods"};
-  const params=new URLSearchParams(location.search),matchId=params.get("match")||"default";
-  if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
-  const auth=firebase.auth(),db=firebase.database(),ref=db.ref("rotulo/"+matchId);
-  const defaults={name:"",cargo:"",color1:"#4e7fff",color2:"#0d1119",font:"Montserrat",visible:false,updatedAt:0};
-  let state={...defaults};
-  const $=id=>document.getElementById(id);
-  const save=p=>ref.update(p).catch(e=>{console.error(e);alert(e.code||"Error de Firebase")});
 
-  function render(){
-    $("name").value=state.name||"";$("cargo").value=state.cargo||"";$("color1").value=state.color1||"#4e7fff";$("color2").value=state.color2||"#0d1119";$("font").value=state.font||"Montserrat";
-    $("toggleShow").textContent=state.visible?"🔴 Ocultar del overlay":"📺 Mostrar en overlay";
+const FIREBASE_CONFIG={
+    apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
+    authDomain:"astraprods.firebaseapp.com",
+    databaseURL:"https://astraprods-default-rtdb.firebaseio.com",
+    projectId:"astraprods"
+};
+
+const params=new URLSearchParams(location.search);
+const matchId=params.get("match")||"default";
+
+if(!firebase.apps.length){
+    firebase.initializeApp(FIREBASE_CONFIG);
+}
+
+const auth=firebase.auth();
+const db=firebase.database();
+const ref=db.ref("rotulo/"+matchId);
+
+const defaults={
+    name:"",
+    cargo:"",
+    color1:"#4e7fff",
+    color2:"#111111",
+    font:"Arial",
+    visible:false,
+    updatedAt:0
+};
+
+let state={...defaults};
+let listening=false;
+let saveTimer=null;
+
+const $=id=>document.getElementById(id);
+
+function save(data){
+    clearTimeout(saveTimer);
+
+    saveTimer=setTimeout(()=>{
+        ref.update({
+            ...data,
+            updatedAt:firebase.database.ServerValue.TIMESTAMP
+        }).catch(err=>{
+            console.error(err);
+            $("status").textContent="Error de Firebase";
+        });
+    },120);
+}
+
+function render(){
+
+    $("name").value=state.name||"";
+    $("cargo").value=state.cargo||"";
+    $("color1").value=state.color1||"#4e7fff";
+    $("color2").value=state.color2||"#111111";
+    $("font").value=state.font||"Arial";
+
+    $("toggleShow").textContent=
+        state.visible ? "OCULTAR DEL AIRE" : "MOSTRAR EN AIRE";
+
     $("toggleShow").classList.toggle("off",!!state.visible);
-  }
 
-  let listening=false;
-  function startListen(){
-    if(listening)return;listening=true;
-    ref.on("value",snap=>{state={...defaults,...(snap.val()||{})};render()},err=>{console.error(err);alert(err.code==="PERMISSION_DENIED"?"Firebase rechazó el acceso a este UUID.":err.message);});
-  }
+    $("status").textContent=
+        state.visible ? "● Rótulo EN AIRE" : "● Rótulo oculto";
+}
 
-  ["name","cargo","color1","color2","font"].forEach(id=>$(id).onchange=e=>save({[id]:e.target.value}));
-  $("toggleShow").onclick=()=>save({visible:!state.visible,updatedAt:Date.now()});
-  const overlayUrl=()=>new URL("overlays/rotulo.html?match="+encodeURIComponent(matchId),location.href).href;
-  $("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
-  $("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(matchId);
-  $("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){alert(e.code||"No se pudo iniciar sesión")}};
-  auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)startListen();});
+function startListen(){
+
+    if(listening)return;
+    listening=true;
+
+    ref.on("value",snap=>{
+
+        const data=snap.val()||{};
+
+        state={
+            ...defaults,
+            ...data
+        };
+
+        render();
+
+    },err=>{
+
+        console.error(err);
+        $("status").textContent="Error: "+err.message;
+
+    });
+}
+
+["name","cargo","color1","color2","font"].forEach(id=>{
+
+    $(id).addEventListener("change",e=>{
+
+        state[id]=e.target.value;
+
+        save({
+            [id]:e.target.value
+        });
+
+    });
+
+});
+
+$("toggleShow").onclick=()=>{
+
+    state.visible=!state.visible;
+
+    save({
+        visible:state.visible
+    });
+
+    render();
+
+};
+
+function overlayUrl(){
+
+    return new URL(
+        "overlays/overlays_rotulo.html?match="+
+        encodeURIComponent(matchId),
+        location.href
+    ).href;
+
+}
+
+$("link").value=overlayUrl();
+
+$("copy").onclick=async()=>{
+
+    try{
+
+        await navigator.clipboard.writeText($("link").value);
+        $("status").textContent="Link copiado ✓";
+
+    }catch(e){
+
+        $("link").select();
+        document.execCommand("copy");
+
+    }
+
+};
+
+$("overlay").onclick=()=>{
+    window.open(overlayUrl(),"_blank");
+};
+
+$("back").onclick=()=>{
+    location.href="control.html?match="+encodeURIComponent(matchId);
+};
+
+$("loginBtn").onclick=async()=>{
+
+    $("error").textContent="";
+
+    try{
+
+        await auth.signInWithEmailAndPassword(
+            $("email").value.trim(),
+            $("password").value
+        );
+
+    }catch(e){
+
+        $("error").textContent=e.code||"No se pudo iniciar sesión";
+
+    }
+
+};
+
+auth.onAuthStateChanged(user=>{
+
+    $("login").style.display=user?"none":"flex";
+
+    if(user){
+        startListen();
+    }
+
+});
+
 })();
-</script></body></html>
+</script>
+
+</body>
+</html>
