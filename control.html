@@ -40,7 +40,7 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
     <button data-tab="design" title="Diseño">✦</button>
     <button data-tab="obs" title="OBS">▣</button>
   </nav>
-  <div class="rail-bottom"><button id="openPen" title="Penales">🥅</button><button id="logout" title="Cerrar sesión">↪</button></div>
+  <div class="rail-bottom"><button id="openPen" title="Penales">🥅</button><button id="openLineups" title="Alineaciones">🧾</button><button id="openRotulo" title="Rótulo">🏷️</button><button id="logout" title="Cerrar sesión">↪</button></div>
 </aside>
 <main class="main">
 <header class="top">
@@ -291,6 +291,9 @@ $("copyObs").onclick=()=>copy("obsLink");$("copyPen").onclick=()=>copy("penLink"
 function openOverlay(){location.href=$("obsLink").value}
 function openPen(){const u=new URL("penales.html",location.href);u.searchParams.set("match",new URLSearchParams(location.search).get("match")||"default");location.href=u.href}
 $("openOverlay").onclick=openOverlay;$("openOverlay2").onclick=openOverlay;$("openPen").onclick=openPen;$("openPen2").onclick=openPen;$("openPen2b").onclick=openPen;
+function openLineups(){location.href="alineaciones.html?match="+encodeURIComponent(new URLSearchParams(location.search).get("match")||"default")}
+function openRotulo(){location.href="rotulo.html?match="+encodeURIComponent(new URLSearchParams(location.search).get("match")||"default")}
+$("openLineups").onclick=openLineups;$("openRotulo").onclick=openRotulo;
 function tab(name){document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+name));$("pageTitle").textContent={match:"Partido",design:"Diseño del overlay",obs:"OBS · Browser Sources"}[name]||"Partido";if(name==="design")renderPreview(true)}
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
 $("goDesign").onclick=()=>tab("design");$("goObs").onclick=()=>tab("obs");
