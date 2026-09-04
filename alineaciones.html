@@ -342,16 +342,13 @@ const FIREBASE_CONFIG={
     projectId:"astraprods"
 };
 
-const params=new URLSearchParams(location.search);
-const matchId=params.get("match")||"default";
-
 if(!firebase.apps.length){
     firebase.initializeApp(FIREBASE_CONFIG);
 }
 
 const auth=firebase.auth();
 const db=firebase.database();
-const ref=db.ref("alineaciones/"+matchId);
+const ref=db.ref("alineaciones");
 
 const emptyPlayers=()=>Array.from(
     {length:11},
@@ -702,8 +699,7 @@ $("uploadFile").addEventListener("change",async e=>{
 function overlayUrl(){
 
     return new URL(
-        "overlays/overlays_alineaciones.html?match="+
-        encodeURIComponent(matchId),
+        "overlays/overlays_alineaciones.html",
         location.href
     ).href;
 
@@ -736,9 +732,7 @@ $("overlay").onclick=()=>{
 };
 
 $("back").onclick=()=>{
-    location.href=
-        "control.html?match="+
-        encodeURIComponent(matchId);
+    location.href="control.html";
 };
 
 $("loginBtn").onclick=async()=>{
