@@ -46,18 +46,25 @@ button.secondary{background:#252c39}button.toggle{background:#35d07f}button.togg
   let state={...defaults};
   const $=id=>document.getElementById(id);
   const save=p=>ref.update(p).catch(e=>{console.error(e);alert(e.code||"Error de Firebase")});
+
   function render(){
     $("name").value=state.name||"";$("cargo").value=state.cargo||"";$("color1").value=state.color1||"#4e7fff";$("color2").value=state.color2||"#0d1119";$("font").value=state.font||"Montserrat";
     $("toggleShow").textContent=state.visible?"🔴 Ocultar del overlay":"📺 Mostrar en overlay";
     $("toggleShow").classList.toggle("off",!!state.visible);
   }
-  ref.on("value",snap=>{state={...defaults,...(snap.val()||{})};render()});
+
+  let listening=false;
+  function startListen(){
+    if(listening)return;listening=true;
+    ref.on("value",snap=>{state={...defaults,...(snap.val()||{})};render()},err=>{console.error(err);alert(err.code==="PERMISSION_DENIED"?"Firebase rechazó el acceso a este UUID.":err.message);});
+  }
+
   ["name","cargo","color1","color2","font"].forEach(id=>$(id).onchange=e=>save({[id]:e.target.value}));
   $("toggleShow").onclick=()=>save({visible:!state.visible,updatedAt:Date.now()});
   const overlayUrl=()=>new URL("overlays/rotulo.html?match="+encodeURIComponent(matchId),location.href).href;
   $("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
   $("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(matchId);
   $("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){alert(e.code||"No se pudo iniciar sesión")}};
-  auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex"});
+  auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)startListen();});
 })();
 </script></body></html>
