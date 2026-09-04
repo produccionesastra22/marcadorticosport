@@ -1,134 +1,779 @@
 <!DOCTYPE html>
-<html lang="es"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ASTRA · Alineaciones</title>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <style>
-*{box-sizing:border-box}body{margin:0;background:#070a10;color:#fff;font-family:Inter,system-ui,sans-serif}
-.wrap{width:min(1000px,94vw);margin:auto;padding:35px 0}
-.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px}
-.title{font-size:32px;font-weight:900}
-.sub,.small{color:#8e98aa;font-size:11px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.card{background:#151a23;border:1px solid #252b38;border-radius:16px;padding:16px}
-input{background:#090c11;color:#fff;border:1px solid #303848;border-radius:8px;padding:0 8px;font-size:13px}
-input.teamname{width:100%;height:44px;font-weight:800;font-size:15px;margin-bottom:12px}
-.player{display:flex;gap:7px;margin-bottom:6px}
-.player input.num{width:52px;height:38px;text-align:center;flex-shrink:0}
-.player input.name{flex:1;height:38px}
-button{height:44px;border:0;border-radius:10px;background:#4b82ff;color:#fff;font-weight:800;cursor:pointer;font-size:14px;padding:0 10px}
-button.secondary{background:#252c39}
-button.toggle{background:#35d07f}
-button.toggle.off{background:#7b2938}
-.row{display:flex;gap:7px;margin-top:9px}.row>*{flex:1}
-.excelcard{margin-top:14px}
-.filebtn{position:relative;overflow:hidden}
-.filebtn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.login{position:fixed;inset:0;background:#070a10;display:none;align-items:center;justify-content:center}
-.loginbox{width:340px;background:#141923;border:1px solid #252b38;border-radius:18px;padding:22px}
-.loginbox input{width:100%;height:44px;margin:5px 0}.loginbox button{width:100%;margin-top:8px}
-</style></head><body>
-<div class="wrap" id="app">
-<div class="top"><div><div class="title">Alineaciones</div><div class="sub">Número + nombre de cada titular · elegís cuándo sacarlo al aire</div></div><button class="secondary" id="back">← Marcador</button></div>
-<div class="grid">
-<section class="card"><input class="teamname" id="teamA" placeholder="Nombre equipo A"><div id="playersA"></div></section>
-<section class="card"><input class="teamname" id="teamB" placeholder="Nombre equipo B"><div id="playersB"></div></section>
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    min-height:100%;
+    background:#000;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.wrap{
+    width:min(1050px,95vw);
+    margin:auto;
+    padding:25px 0;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+}
+
+h1{
+    margin:0;
+    font-size:28px;
+}
+
+.sub{
+    color:#777;
+    font-size:11px;
+    margin-top:4px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.card{
+    background:#090909;
+    border:1px solid #202020;
+    padding:14px;
+}
+
+.teamname{
+    width:100%;
+    height:42px;
+    background:#000;
+    color:#fff;
+    border:1px solid #333;
+    padding:0 10px;
+    font-size:15px;
+    font-weight:bold;
+    outline:none;
+    margin-bottom:10px;
+}
+
+.player{
+    display:flex;
+    gap:6px;
+    margin-bottom:5px;
+}
+
+.player input{
+    height:35px;
+    background:#000;
+    color:#fff;
+    border:1px solid #282828;
+    outline:none;
+}
+
+.player input:focus{
+    border-color:#555;
+}
+
+.num{
+    width:50px;
+    text-align:center;
+}
+
+.name{
+    flex:1;
+    padding:0 8px;
+}
+
+button{
+    height:42px;
+    border:0;
+    border-radius:4px;
+    background:#fff;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+    padding:0 12px;
+}
+
+button.secondary{
+    background:#171717;
+    color:#fff;
+    border:1px solid #292929;
+}
+
+button.off{
+    background:#401111;
+    color:#fff;
+}
+
+.row{
+    display:flex;
+    gap:7px;
+    margin-top:8px;
+}
+
+.row>*{
+    flex:1;
+}
+
+.excel{
+    margin-top:10px;
+}
+
+.filebtn{
+    position:relative;
+    overflow:hidden;
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.filebtn input{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    cursor:pointer;
+}
+
+#link{
+    width:100%;
+    height:38px;
+    margin-top:8px;
+    background:#000;
+    color:#777;
+    border:1px solid #222;
+    padding:0 8px;
+}
+
+.status{
+    color:#777;
+    font-size:11px;
+    margin-top:8px;
+}
+
+.login{
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
+}
+
+.loginbox{
+    width:min(350px,90vw);
+    background:#090909;
+    border:1px solid #252525;
+    padding:22px;
+}
+
+.loginbox h2{
+    margin:0 0 15px;
+}
+
+.loginbox input{
+    width:100%;
+    height:42px;
+    background:#000;
+    color:#fff;
+    border:1px solid #303030;
+    padding:0 10px;
+    margin-bottom:8px;
+}
+
+.loginbox button{
+    width:100%;
+}
+
+#error{
+    color:#e55;
+    font-size:11px;
+    margin-top:8px;
+}
+
+@media(max-width:700px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .top{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+    <div class="top">
+        <div>
+            <h1>ALINEACIONES</h1>
+            <div class="sub">
+                Editá jugadores y decidí cuándo enviar las alineaciones al aire.
+            </div>
+        </div>
+
+        <button class="secondary" id="back">
+            ← MARCADOR
+        </button>
+    </div>
+
+    <div class="grid">
+
+        <section class="card">
+            <input
+                class="teamname"
+                id="teamA"
+                placeholder="EQUIPO A"
+            >
+            <div id="playersA"></div>
+        </section>
+
+        <section class="card">
+            <input
+                class="teamname"
+                id="teamB"
+                placeholder="EQUIPO B"
+            >
+            <div id="playersB"></div>
+        </section>
+
+    </div>
+
+    <div class="card excel">
+        <div class="sub">
+            Excel: <b>Equipo</b>, <b>Numero</b>, <b>Nombre</b>.
+            Se aceptan hasta 11 jugadores por equipo.
+        </div>
+
+        <div class="row">
+            <button class="secondary" id="downloadTemplate">
+                DESCARGAR PLANTILLA
+            </button>
+
+            <button class="secondary filebtn">
+                SUBIR PLANTILLA
+                <input
+                    type="file"
+                    id="uploadFile"
+                    accept=".xlsx,.xls,.csv"
+                >
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <button id="toggleShow">
+            MOSTRAR
+        </button>
+
+        <button class="secondary" id="overlay">
+            ABRIR OVERLAY
+        </button>
+
+        <button class="secondary" id="copy">
+            COPIAR LINK OBS
+        </button>
+    </div>
+
+    <input id="link" readonly>
+
+    <div class="status" id="status">
+        Esperando conexión...
+    </div>
+
 </div>
-<div class="card excelcard">
-<div class="sub" style="margin-bottom:8px">Plantilla Excel: columnas <b>Equipo</b> (A o B) · <b>Numero</b> · <b>Nombre</b>, una fila por jugador (hasta 11 por equipo). Descargá la plantilla, llenala y subila.</div>
-<div class="row">
-<button class="secondary" id="downloadTemplate">⬇ Descargar plantilla</button>
-<button class="filebtn">📤 Subir plantilla<input type="file" id="uploadFile" accept=".xlsx,.xls,.csv"></button>
+
+<div class="login" id="login">
+
+    <div class="loginbox">
+
+        <h2>ACCESO</h2>
+
+        <input
+            id="email"
+            type="email"
+            placeholder="Correo"
+        >
+
+        <input
+            id="password"
+            type="password"
+            placeholder="Contraseña"
+        >
+
+        <button id="loginBtn">
+            ENTRAR
+        </button>
+
+        <div id="error"></div>
+
+    </div>
+
 </div>
-</div>
-<div class="row" style="margin-top:14px"><button class="toggle" id="toggleShow">📺 Mostrar en overlay</button><button class="secondary" id="overlay">Abrir overlay</button><button class="secondary" id="copy">Copiar link OBS</button></div>
-<input id="link" readonly style="width:100%;height:38px;margin-top:8px">
-</div>
-<div class="login" id="login"><div class="loginbox"><h2>Control de alineaciones</h2><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button id="loginBtn">Entrar</button></div></div>
+
 <script>
 (() => {
-  const FIREBASE_CONFIG={apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",authDomain:"astraprods.firebaseapp.com",databaseURL:"https://astraprods-default-rtdb.firebaseio.com",projectId:"astraprods"};
-  const params=new URLSearchParams(location.search),matchId=params.get("match")||"default";
-  if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
-  const auth=firebase.auth(),db=firebase.database(),ref=db.ref("alineaciones/"+matchId);
-  const empty=()=>Array.from({length:11},()=>({num:"",name:""}));
-  const defaults={teamA:{name:"EQUIPO A",players:empty()},teamB:{name:"EQUIPO B",players:empty()},visible:false,updatedAt:0};
-  let state=JSON.parse(JSON.stringify(defaults));
-  const $=id=>document.getElementById(id);
-  const save=p=>ref.update(p).catch(e=>{console.error(e);alert(e.code||"Error de Firebase")});
 
-  function render(){
-    $("teamA").value=state.teamA?.name||"EQUIPO A";$("teamB").value=state.teamB?.name||"EQUIPO B";
-    const draw=(id,arr,key)=>{
-      $(id).innerHTML="";
-      (arr&&arr.length?arr:empty()).forEach((p,i)=>{
-        const row=document.createElement("div");row.className="player";
-        const num=document.createElement("input");num.className="num";num.placeholder="#";num.value=p?.num||"";
-        const name=document.createElement("input");name.className="name";name.placeholder="Jugador "+(i+1);name.value=p?.name||"";
-        const commit=()=>{const cur=[...(state[key]?.players||empty())];cur[i]={num:num.value,name:name.value};save({[key+"/players"]:cur})};
-        num.oninput=commit;name.oninput=commit;
-        row.appendChild(num);row.appendChild(name);$(id).appendChild(row);
-      });
+const FIREBASE_CONFIG={
+    apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
+    authDomain:"astraprods.firebaseapp.com",
+    databaseURL:"https://astraprods-default-rtdb.firebaseio.com",
+    projectId:"astraprods"
+};
+
+const params=new URLSearchParams(location.search);
+const matchId=params.get("match")||"default";
+
+if(!firebase.apps.length){
+    firebase.initializeApp(FIREBASE_CONFIG);
+}
+
+const auth=firebase.auth();
+const db=firebase.database();
+const ref=db.ref("alineaciones/"+matchId);
+
+const emptyPlayers=()=>Array.from(
+    {length:11},
+    ()=>({num:"",name:""})
+);
+
+const defaults={
+    teamA:{
+        name:"EQUIPO A",
+        players:emptyPlayers()
+    },
+    teamB:{
+        name:"EQUIPO B",
+        players:emptyPlayers()
+    },
+    visible:false,
+    updatedAt:0
+};
+
+let state=JSON.parse(JSON.stringify(defaults));
+let listening=false;
+let ignoreNextRender=false;
+
+const $=id=>document.getElementById(id);
+
+function save(data){
+
+    ref.update({
+        ...data,
+        updatedAt:firebase.database.ServerValue.TIMESTAMP
+    }).catch(err=>{
+
+        console.error(err);
+        $("status").textContent="Error de Firebase";
+
+    });
+
+}
+
+function normalizedTeam(team,defaultName){
+
+    return {
+        name:team?.name||defaultName,
+        players:Array.isArray(team?.players)
+            ? team.players
+            : emptyPlayers()
     };
-    draw("playersA",state.teamA?.players,"teamA");draw("playersB",state.teamB?.players,"teamB");
-    $("toggleShow").textContent=state.visible?"🔴 Ocultar del overlay":"📺 Mostrar en overlay";
-    $("toggleShow").classList.toggle("off",!!state.visible);
-  }
 
-  let listening=false;
-  function startListen(){
-    if(listening)return;listening=true;
+}
+
+function render(){
+
+    if(ignoreNextRender){
+        ignoreNextRender=false;
+        return;
+    }
+
+    $("teamA").value=state.teamA.name;
+    $("teamB").value=state.teamB.name;
+
+    drawPlayers(
+        "playersA",
+        state.teamA.players,
+        "teamA"
+    );
+
+    drawPlayers(
+        "playersB",
+        state.teamB.players,
+        "teamB"
+    );
+
+    $("toggleShow").textContent=
+        state.visible
+        ? "OCULTAR DEL AIRE"
+        : "MOSTRAR EN AIRE";
+
+    $("toggleShow").classList.toggle(
+        "off",
+        !!state.visible
+    );
+
+    $("status").textContent=
+        state.visible
+        ? "● Alineaciones EN AIRE"
+        : "● Alineaciones ocultas";
+}
+
+function drawPlayers(containerId,players,teamKey){
+
+    const container=$(containerId);
+    container.innerHTML="";
+
+    const list=players?.length
+        ? players
+        : emptyPlayers();
+
+    list.forEach((player,index)=>{
+
+        const row=document.createElement("div");
+        row.className="player";
+
+        const num=document.createElement("input");
+        num.className="num";
+        num.placeholder="#";
+        num.value=player?.num||"";
+
+        const name=document.createElement("input");
+        name.className="name";
+        name.placeholder="Jugador "+(index+1);
+        name.value=player?.name||"";
+
+        function commit(){
+
+            const current=JSON.parse(
+                JSON.stringify(
+                    state[teamKey]?.players||emptyPlayers()
+                )
+            );
+
+            current[index]={
+                num:num.value.trim(),
+                name:name.value.trim()
+            };
+
+            state[teamKey].players=current;
+
+            save({
+                [teamKey+"/players"]:current
+            });
+
+        }
+
+        /*
+         * IMPORTANTE:
+         * Guardamos al salir del campo.
+         * Ya no guardamos cada tecla.
+         */
+        num.addEventListener("blur",commit);
+        name.addEventListener("blur",commit);
+
+        row.appendChild(num);
+        row.appendChild(name);
+
+        container.appendChild(row);
+
+    });
+
+}
+
+function startListen(){
+
+    if(listening)return;
+    listening=true;
+
     ref.on("value",snap=>{
-      const d=snap.val()||{};
-      state={...defaults,...d,teamA:{...defaults.teamA,...(d.teamA||{})},teamB:{...defaults.teamB,...(d.teamB||{})}};
-      render();
-    },err=>{console.error(err);alert(err.code==="PERMISSION_DENIED"?"Firebase rechazó el acceso a este UUID.":err.message);});
-  }
 
-  $("teamA").onchange=e=>save({"teamA/name":e.target.value.trim()||"EQUIPO A"});
-  $("teamB").onchange=e=>save({"teamB/name":e.target.value.trim()||"EQUIPO B"});
-  $("toggleShow").onclick=()=>save({visible:!state.visible,updatedAt:Date.now()});
+        const data=snap.val()||{};
 
-  $("downloadTemplate").onclick=()=>{
-    const rows=[["Equipo","Numero","Nombre"]];
-    for(let i=1;i<=11;i++)rows.push(["A",i,""]);
-    for(let i=1;i<=11;i++)rows.push(["B",i,""]);
+        state={
+            ...defaults,
+            ...data,
+
+            teamA:normalizedTeam(
+                data.teamA,
+                "EQUIPO A"
+            ),
+
+            teamB:normalizedTeam(
+                data.teamB,
+                "EQUIPO B"
+            )
+        };
+
+        render();
+
+    },err=>{
+
+        console.error(err);
+        $("status").textContent="Error: "+err.message;
+
+    });
+
+}
+
+$("teamA").addEventListener("change",e=>{
+
+    const value=e.target.value.trim()||"EQUIPO A";
+
+    state.teamA.name=value;
+
+    save({
+        "teamA/name":value
+    });
+
+});
+
+$("teamB").addEventListener("change",e=>{
+
+    const value=e.target.value.trim()||"EQUIPO B";
+
+    state.teamB.name=value;
+
+    save({
+        "teamB/name":value
+    });
+
+});
+
+$("toggleShow").onclick=()=>{
+
+    state.visible=!state.visible;
+
+    save({
+        visible:state.visible
+    });
+
+    render();
+
+};
+
+$("downloadTemplate").onclick=()=>{
+
+    const rows=[
+        ["Equipo","Numero","Nombre"]
+    ];
+
+    for(let i=1;i<=11;i++){
+        rows.push(["A",i,""]);
+    }
+
+    for(let i=1;i<=11;i++){
+        rows.push(["B",i,""]);
+    }
+
     const ws=XLSX.utils.aoa_to_sheet(rows);
     const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,"Alineaciones");
-    XLSX.writeFile(wb,"plantilla_alineaciones.xlsx");
-  };
 
-  $("uploadFile").onchange=async e=>{
-    const file=e.target.files[0];if(!file)return;
+    XLSX.utils.book_append_sheet(
+        wb,
+        ws,
+        "Alineaciones"
+    );
+
+    XLSX.writeFile(
+        wb,
+        "plantilla_alineaciones.xlsx"
+    );
+
+};
+
+$("uploadFile").addEventListener("change",async e=>{
+
+    const file=e.target.files[0];
+
+    if(!file)return;
+
     try{
-      const buf=await file.arrayBuffer();
-      const wb=XLSX.read(buf,{type:"array"});
-      const ws=wb.Sheets[wb.SheetNames[0]];
-      const rows=XLSX.utils.sheet_to_json(ws,{header:1}).slice(1);
-      const teamAp=empty(),teamBp=empty();
-      rows.forEach(r=>{
-        const equipo=String(r[0]||"").trim().toUpperCase();
-        const num=String(r[1]??"").trim();
-        const name=String(r[2]||"").trim();
-        if(!name)return;
-        const arr=equipo==="B"?teamBp:teamAp;
-        const idx=arr.findIndex(p=>!p.name);
-        if(idx!==-1)arr[idx]={num,name};
-      });
-      await save({"teamA/players":teamAp,"teamB/players":teamBp});
-      alert("Plantilla cargada ✓");
-    }catch(err){console.error(err);alert("No se pudo leer el archivo. Revisá que sea .xlsx/.xls/.csv con las columnas Equipo, Numero, Nombre.")}
-    e.target.value="";
-  };
 
-  const overlayUrl=()=>new URL("overlays/alineaciones.html?match="+encodeURIComponent(matchId),location.href).href;
-  $("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
-  $("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(matchId);
-  $("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){alert(e.code||"No se pudo iniciar sesión")}};
-  auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)startListen();});
+        const buffer=await file.arrayBuffer();
+
+        const wb=XLSX.read(
+            buffer,
+            {type:"array"}
+        );
+
+        const ws=wb.Sheets[
+            wb.SheetNames[0]
+        ];
+
+        const rows=XLSX.utils
+            .sheet_to_json(ws,{header:1})
+            .slice(1);
+
+        const teamA=emptyPlayers();
+        const teamB=emptyPlayers();
+
+        let indexA=0;
+        let indexB=0;
+
+        rows.forEach(row=>{
+
+            const team=String(
+                row[0]||""
+            ).trim().toUpperCase();
+
+            const num=String(
+                row[1]??""
+            ).trim();
+
+            const name=String(
+                row[2]||""
+            ).trim();
+
+            if(!name)return;
+
+            if(team==="B"){
+
+                if(indexB<11){
+                    teamB[indexB]={
+                        num,
+                        name
+                    };
+                    indexB++;
+                }
+
+            }else{
+
+                if(indexA<11){
+                    teamA[indexA]={
+                        num,
+                        name
+                    };
+                    indexA++;
+                }
+
+            }
+
+        });
+
+        state.teamA.players=teamA;
+        state.teamB.players=teamB;
+
+        await ref.update({
+            "teamA/players":teamA,
+            "teamB/players":teamB,
+            updatedAt:firebase.database.ServerValue.TIMESTAMP
+        });
+
+        render();
+
+        $("status").textContent=
+            "Plantilla cargada ✓";
+
+    }catch(err){
+
+        console.error(err);
+
+        $("status").textContent=
+            "No se pudo leer el archivo.";
+
+    }
+
+    e.target.value="";
+
+});
+
+function overlayUrl(){
+
+    return new URL(
+        "overlays/overlays_alineaciones.html?match="+
+        encodeURIComponent(matchId),
+        location.href
+    ).href;
+
+}
+
+$("link").value=overlayUrl();
+
+$("copy").onclick=async()=>{
+
+    try{
+
+        await navigator.clipboard.writeText(
+            $("link").value
+        );
+
+        $("status").textContent=
+            "Link copiado ✓";
+
+    }catch(e){
+
+        $("link").select();
+        document.execCommand("copy");
+
+    }
+
+};
+
+$("overlay").onclick=()=>{
+    window.open(overlayUrl(),"_blank");
+};
+
+$("back").onclick=()=>{
+    location.href=
+        "control.html?match="+
+        encodeURIComponent(matchId);
+};
+
+$("loginBtn").onclick=async()=>{
+
+    $("error").textContent="";
+
+    try{
+
+        await auth.signInWithEmailAndPassword(
+            $("email").value.trim(),
+            $("password").value
+        );
+
+    }catch(e){
+
+        $("error").textContent=
+            e.code||"No se pudo iniciar sesión";
+
+    }
+
+};
+
+auth.onAuthStateChanged(user=>{
+
+    $("login").style.display=
+        user?"none":"flex";
+
+    if(user){
+        startListen();
+    }
+
+});
+
 })();
-</script></body></html>
+</script>
+
+</body>
+</html>
