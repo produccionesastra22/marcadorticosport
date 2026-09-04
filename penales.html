@@ -5,27 +5,40 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#070a10;color:#fff;font-family:Inter,system-ui,sans-serif}.wrap{width:min(1000px,94vw);margin:auto;padding:35px 0}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}.title{font-size:42px;font-weight:900}.sub,.small{color:#8e98aa;font-size:11px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:#151a23;border:1px solid #252b38;border-radius:16px;padding:16px}.card.turn{border-color:#4e7fff;box-shadow:0 0 0 2px #4e7fff33}h2{font-size:13px;margin:0 0 4px;text-transform:uppercase;display:flex;align-items:center;gap:8px}.turnbadge{display:none;font-size:9px;letter-spacing:1px;background:#4e7fff;color:#fff;border-radius:20px;padding:3px 9px}.card.turn .turnbadge{display:inline-block}input{width:100%;height:44px;background:#090c11;color:#fff;border:1px solid #303848;border-radius:10px;padding:8px;font-size:15px}button{height:44px;border:0;border-radius:10px;background:#4b82ff;color:#fff;font-weight:800;cursor:pointer;font-size:14px}button.secondary{background:#252c39}button.danger{background:#7b2938}button:disabled{opacity:.4;cursor:not-allowed}.teams{display:grid;grid-template-columns:1fr 1fr;gap:10px}.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}.stat{background:#0d1119;border:1px solid #252b38;border-radius:12px;padding:12px;text-align:center}.stat b{display:block;font-size:28px}.row{display:flex;gap:7px;margin-top:9px}.row>*{flex:1}
-.banner{border-radius:14px;padding:14px 16px;margin-bottom:14px;font-weight:900;font-size:15px;text-align:center;background:#141b28;border:1px solid #253049;color:#9cb3ff;transition:.2s}
+*{box-sizing:border-box}body{margin:0;background:#070a10;color:#fff;font-family:Inter,system-ui,sans-serif}.wrap{width:min(760px,94vw);margin:auto;padding:35px 0}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}.title{font-size:38px;font-weight:900}.sub,.small{color:#8e98aa;font-size:11px}
+input{width:100%;height:44px;background:#090c11;color:#fff;border:1px solid #303848;border-radius:10px;padding:8px;font-size:15px}
+button{height:44px;border:0;border-radius:10px;background:#4b82ff;color:#fff;font-weight:800;cursor:pointer;font-size:14px}
+button.secondary{background:#252c39}button.danger{background:#7b2938}button:disabled{opacity:.35;cursor:not-allowed}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+.stat{background:#0d1119;border:1px solid #252b38;border-radius:12px;padding:12px;text-align:center}.stat b{display:block;font-size:28px}
+.row{display:flex;gap:7px;margin-top:9px}.row>*{flex:1}
+.banner{border-radius:14px;padding:16px;margin-bottom:14px;font-weight:900;font-size:17px;text-align:center;background:#141b28;border:1px solid #253049;color:#9cb3ff;transition:.2s}
 .banner.win{background:#123625;border-color:#35d07f;color:#8dfbc2}
-.kick{display:flex;align-items:center;gap:10px;margin:8px 0}
-.kicknum{width:26px;text-align:center;font-weight:900;color:#7c879b;font-size:13px;flex-shrink:0}
-.kickbtn{flex:1;height:52px;border-radius:12px;border:2px solid #2a3345;background:#141b28;color:#8892a3;font-size:14px;font-weight:900;letter-spacing:.3px;transition:.12s;display:flex;align-items:center;justify-content:center;gap:8px}
-.kickbtn:active{transform:scale(.98)}
-.kickbtn.next{border-color:#4e7fff;background:#111a2c;color:#cdd9ff}
-.kickbtn.goal{background:#236d4c;border-color:#35d07f;color:#fff}
-.kickbtn.miss{background:#702b39;border-color:#e95467;color:#fff}
-@media(max-width:700px){.grid{grid-template-columns:1fr}.title{font-size:30px}.kickbtn{height:56px;font-size:15px}}
+.bigactions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.big{height:96px;font-size:24px;border-radius:18px;letter-spacing:.5px}
+.big.goal{background:#1a5c3c;border:3px solid #35d07f;color:#fff}
+.big.goal:active{background:#217048}
+.big.miss{background:#5c2230;border:3px solid #e95467;color:#fff}
+.big.miss:active{background:#702b39}
+.history{margin-top:4px}
+.histrow{display:flex;align-items:center;gap:10px;margin:9px 0}
+.histrow>span:first-child{width:90px;font-weight:800;font-size:12px;color:#9aa5b8;flex-shrink:0}
+.histrow>div{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:32px;height:32px;border-radius:9px;background:#141b28;border:2px solid #2a3345;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#7c879b}
+.dot.goal{background:#236d4c;border-color:#35d07f;color:#fff}
+.dot.miss{background:#702b39;border-color:#e95467;color:#fff}
+@media(max-width:700px){.title{font-size:28px}.big{height:100px;font-size:22px}}
 .login{position:fixed;inset:0;background:#070a10;display:none;align-items:center;justify-content:center}.loginbox{width:340px;background:#141923;border:1px solid #252b38;border-radius:18px;padding:22px}.loginbox input{margin:5px 0}.loginbox button{width:100%;margin-top:8px}
 </style></head><body><div class="wrap" id="app">
-<div class="top"><div><div class="title">Modo penales</div><div class="sub">Control independiente · Firebase sincronizado · tocá una vez para GOL, otra vez para FALLÓ, otra vez para borrar</div></div><button class="secondary" id="back">← Marcador</button></div>
+<div class="top"><div><div class="title">Modo penales</div><div class="sub">Tocá GOL o FALLÓ para el equipo que tira — el turno se calcula solo</div></div><button class="secondary" id="back">← Marcador</button></div>
 <div class="banner" id="banner">Cargando…</div>
 <div class="teams"><input id="team1" placeholder="LOCAL"><input id="team2" placeholder="VISITANTE"></div>
 <div class="summary"><div class="stat"><b id="score1">0</b><span>Local</span></div><div class="stat"><b id="rounds">0</b><span>Lanzamientos</span></div><div class="stat"><b id="score2">0</b><span>Visitante</span></div></div>
-<div class="grid"><section class="card" id="card1"><h2><span id="title1">LOCAL</span> <span class="turnbadge">TURNO</span></h2><div id="kicks1"></div></section><section class="card" id="card2"><h2><span id="title2">VISITANTE</span> <span class="turnbadge">TURNO</span></h2><div id="kicks2"></div></section></div>
-<div class="row"><button class="secondary" id="undo">↺ Deshacer último toque</button><button id="add">+ Agregar lanzamiento</button></div>
-<div class="row"><button class="danger" id="reset">↺ Reiniciar tanda</button></div>
-<div class="row"><button id="overlay">📺 Abrir overlay de penales</button><button class="secondary" id="copy">Copiar link OBS</button></div>
+<div class="bigactions"><button class="big goal" id="btnGoal">✓ GOL</button><button class="big miss" id="btnMiss">✕ FALLÓ</button></div>
+<div class="row"><button class="secondary" id="undo">↺ Deshacer último</button><button class="danger" id="reset">↺ Reiniciar tanda</button></div>
+<div class="history"><div class="histrow"><span id="title1">LOCAL</span><div id="hist1"></div></div><div class="histrow"><span id="title2">VISITANTE</span><div id="hist2"></div></div></div>
+<div class="row" style="margin-top:16px"><button id="overlay">📺 Abrir overlay de penales</button><button class="secondary" id="copy">Copiar link OBS</button></div>
 <input id="link" readonly style="margin-top:8px;width:100%">
 </div><div class="login" id="login"><div class="loginbox"><h2>Control de penales</h2><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button id="loginBtn">Entrar</button></div></div>
 <script>
@@ -37,72 +50,32 @@
     databaseURL: "https://astraprods-default-rtdb.firebaseio.com",
     projectId: "astraprods"
   };
-
   const defaults = {
     team1Name: "LOCAL", team2Name: "VISITANTE",
     team1Logo: "", team2Logo: "", score1: 0, score2: 0,
     timer: {phase:"first",baseSeconds:0,running:false,startedAt:0,extraMinutes:0,extraActive:false,extraStartSeconds:0},
     penalties: {active:false,team1Name:"LOCAL",team2Name:"VISITANTE",kicks1:[null,null,null,null,null],kicks2:[null,null,null,null,null],visibleKicks:5},
-    layout: {
-      name1:{x:10,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"left"},
-      name2:{x:60,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"right"},
-      score1:{x:28,y:48,w:15,h:12,fontSize:6,color:"#ffffff",fontWeight:900,align:"center"},
-      score2:{x:57,y:48,w:15,h:12,fontSize:6,color:"#ffffff",fontWeight:900,align:"center"},
-      clock:{x:40,y:20,w:20,h:10,fontSize:5,color:"#ffffff",fontWeight:900,align:"center"},
-      extra:{x:46,y:30,w:8,h:6,fontSize:2.2,color:"#ffffff",fontWeight:800,align:"center"},
-      logo1:{x:5,y:35,w:12,h:12,fontSize:1,color:"#ffffff",fontWeight:700,align:"center"},
-      logo2:{x:83,y:35,w:12,h:12,fontSize:1,color:"#ffffff",fontWeight:700,align:"center"}
-    }
+    layout: {}
   };
-
   const params = new URLSearchParams(location.search);
   const matchId = params.get("match") || "default";
-
   if (!window.firebase) throw new Error("Firebase SDK no cargado.");
   if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-
   const auth = firebase.auth();
   const db = firebase.database();
   const ref = db.ref("marcadorSimple/" + matchId);
   let state = JSON.parse(JSON.stringify(defaults));
-  let offset = 0;
-
   const $ = id => document.getElementById(id);
-  const pad = n => String(n).padStart(2,"0");
-  const serverNow = () => Date.now() + offset;
-
-  function seconds() {
-    if (!state.timer.running) return Math.max(0, Number(state.timer.baseSeconds)||0);
-    return Math.max(0,
-      (Number(state.timer.baseSeconds)||0) +
-      Math.floor((serverNow()-(Number(state.timer.startedAt)||0))/1000)
-    );
-  }
-  const fmt = s => {
-    s = Math.max(0, Math.floor(s));
-    return `${pad(Math.floor(s/60))}:${pad(s%60)}`;
-  };
   const save = patch => ref.update(patch).catch(e=>{console.error(e);alert(e.code||"Error de Firebase");throw e});
-
   let listening=false;
-  function startListen(){if(listening)return;listening=true;ref.on("value",snap=>{const d=snap.val()||{};state={...defaults,...d,timer:{...defaults.timer,...(d.timer||{})},penalties:{...defaults.penalties,...(d.penalties||{})},layout:{...defaults.layout,...(d.layout||{})}};if(window.renderApp)window.renderApp()},err=>{console.error(err);alert(err.code==="PERMISSION_DENIED"?"Firebase rechazó el acceso a este UUID.":err.message);});}
-  db.ref(".info/serverTimeOffset").on("value",s=>offset=Number(s.val()||0));
-
-  window.ASTRA = {
-    $, db, auth, ref, defaults, save, seconds, fmt, serverNow, startListen,
-    getState: () => state,
-    get offset(){ return offset; }
-  };
+  function startListen(){if(listening)return;listening=true;ref.on("value",snap=>{const d=snap.val()||{};state={...defaults,...d,timer:{...defaults.timer,...(d.timer||{})},penalties:{...defaults.penalties,...(d.penalties||{})}};if(window.renderApp)window.renderApp()},err=>{console.error(err);alert(err.code==="PERMISSION_DENIED"?"Firebase rechazó el acceso a este UUID.":err.message);});}
+  window.ASTRA = { $, db, auth, ref, defaults, save, startListen, getState: () => state };
 })();
-
 </script><script>
 const auth=window.ASTRA.auth,save=window.ASTRA.save,defaultsA=window.ASTRA.defaults;
 let lastAction=null; // {key,i} para "deshacer"
 
-function nextState(x){ return x==="goal"?"miss":x==="miss"?null:"goal"; }
-function label(x){ return x==="goal"?"✓ GOL":x==="miss"?"✕ FALLÓ":"— vacío"; }
-
-// Determina si la serie ya está decidida (ganador matemático o empate resuelto tras rondas iguales)
+// Determina si la serie ya está decidida (ganador matemático o rondas iguales con marcador distinto)
 function winner(a,b,v){
   const taken=arr=>arr.filter(x=>x!=null).length;
   const goals=arr=>arr.filter(x=>x==="goal").length;
@@ -118,10 +91,9 @@ function renderApp(){
   const s=window.ASTRA.getState(),p={...defaultsA.penalties,...(s.penalties||{})},v=Math.max(5,Math.min(10,Number(p.visibleKicks)||5)),a=Array.isArray(p.kicks1)?p.kicks1:[],b=Array.isArray(p.kicks2)?p.kicks2:[];
   $("team1").value=p.team1Name||s.team1Name||"LOCAL";$("team2").value=p.team2Name||s.team2Name||"VISITANTE";$("title1").textContent=$("team1").value;$("title2").textContent=$("team2").value;
   $("score1").textContent=a.filter(x=>x==="goal").length;$("score2").textContent=b.filter(x=>x==="goal").length;$("rounds").textContent=Math.max(a.filter(Boolean).length,b.filter(Boolean).length);
-  const taken1=a.slice(0,v).filter(Boolean).length,taken2=b.slice(0,v).filter(Boolean).length,next1=a.slice(0,v).findIndex(x=>!x),next2=b.slice(0,v).findIndex(x=>!x);
+  const taken1=a.slice(0,v).filter(Boolean).length,taken2=b.slice(0,v).filter(Boolean).length;
   const teamTurn=taken1<=taken2?1:2;
   const w=winner(a,b,v);
-  $("card1").classList.toggle("turn",!w&&teamTurn===1&&next1!==-1);$("card2").classList.toggle("turn",!w&&teamTurn===2&&next2!==-1);
 
   const banner=$("banner");
   if(w){
@@ -129,29 +101,35 @@ function renderApp(){
     banner.textContent="🏆 Serie decidida: gana "+(w===1?$("team1").value:$("team2").value);
   } else {
     banner.className="banner";
-    const turnName=teamTurn===1?$("team1").value:$("team2").value;
-    const idx=(teamTurn===1?next1:next2)+1;
-    banner.textContent=idx>0?`Turno de ${turnName} · lanzamiento #${idx}`:"Serie de penales";
+    banner.textContent=`Turno de ${teamTurn===1?$("team1").value:$("team2").value} · lanzamiento #${Math.max(taken1,taken2)+1}`;
   }
+  $("btnGoal").disabled=!!w;$("btnMiss").disabled=!!w;
 
-  const draw=(id,arr,key,nextIdx)=>{
-    $(id).innerHTML=Array.from({length:v},(_,i)=>{
-      const x=arr[i];
-      const cls=x==="goal"?"goal":x==="miss"?"miss":i===nextIdx?"next":"";
-      return `<div class="kick"><div class="kicknum">#${i+1}</div><button class="kickbtn ${cls}" data-k="${key}" data-i="${i}">${label(x)}</button></div>`;
-    }).join("");
-    $(id).querySelectorAll("[data-k]").forEach(btn=>btn.onclick=()=>{
-      const cur=window.ASTRA.getState();const arr=[...(Array.isArray(cur.penalties?.[btn.dataset.k])?cur.penalties[btn.dataset.k]:[])];
-      while(arr.length<v)arr.push(null);
-      const i=Number(btn.dataset.i);
-      arr[i]=nextState(arr[i]);
-      lastAction={key:btn.dataset.k,i};
-      save({["penalties/"+btn.dataset.k]:arr});
-    });
-  };
-  draw("kicks1",a,"kicks1",next1);draw("kicks2",b,"kicks2",next2);
+  const drawHist=(id,arr)=>{$(id).innerHTML=Array.from({length:v},(_,i)=>{const x=arr[i],cls=x==="goal"?"goal":x==="miss"?"miss":"",m=x==="goal"?"✓":x==="miss"?"✕":(i+1);return `<div class="dot ${cls}">${m}</div>`}).join("")};
+  drawHist("hist1",a);drawHist("hist2",b);
   $("undo").disabled=!lastAction;
 }
+
+function applyResult(val){
+  const s=window.ASTRA.getState(),p={...defaultsA.penalties,...(s.penalties||{})};
+  let v=Math.max(5,Math.min(10,Number(p.visibleKicks)||5));
+  let a=[...(Array.isArray(p.kicks1)?p.kicks1:[])],b=[...(Array.isArray(p.kicks2)?p.kicks2:[])];
+  while(a.length<v)a.push(null);while(b.length<v)b.push(null);
+  if(winner(a,b,v))return;
+  const taken1=a.slice(0,v).filter(Boolean).length,taken2=b.slice(0,v).filter(Boolean).length;
+  const teamTurn=taken1<=taken2?1:2;
+  let arr=teamTurn===1?a:b,key=teamTurn===1?"kicks1":"kicks2";
+  let idx=arr.slice(0,v).findIndex(x=>!x);
+  const patch={};
+  if(idx===-1&&v<10){ v=v+1; patch["penalties/visibleKicks"]=v; while(arr.length<v)arr.push(null); idx=v-1; }
+  if(idx===-1)return; // límite de 10 lanzamientos alcanzado
+  arr[idx]=val;
+  patch["penalties/"+key]=arr;
+  lastAction={key,i:idx};
+  save(patch);
+}
+$("btnGoal").onclick=()=>applyResult("goal");
+$("btnMiss").onclick=()=>applyResult("miss");
 $("undo").onclick=()=>{
   if(!lastAction)return;
   const cur=window.ASTRA.getState();const arr=[...(Array.isArray(cur.penalties?.[lastAction.key])?cur.penalties[lastAction.key]:[])];
@@ -160,180 +138,11 @@ $("undo").onclick=()=>{
   lastAction=null;
 };
 $("team1").onchange=e=>save({"penalties/team1Name":e.target.value.trim()||"LOCAL"});$("team2").onchange=e=>save({"penalties/team2Name":e.target.value.trim()||"VISITANTE"});
-$("add").onclick=()=>{const p=window.ASTRA.getState().penalties||defaultsA.penalties;save({"penalties/visibleKicks":Math.min(10,Math.max(5,Number(p.visibleKicks)||5)+1)})};
 $("reset").onclick=()=>{const s=window.ASTRA.getState();lastAction=null;save({penalties:{...defaultsA.penalties,team1Name:s.team1Name||"LOCAL",team2Name:s.team2Name||"VISITANTE"}})};
 const match=new URLSearchParams(location.search).get("match")||"default",overlayUrl=()=>new URL("overlays/penales.html?match="+encodeURIComponent(match),location.href).href;
 $("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
 $("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(match);
 $("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){console.error(e);alert(e.code||"No se pudo iniciar sesión.");}};
 auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)window.ASTRA.startListen();});
-</script></body></html><!DOCTYPE html>
-<html lang="es"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<style>
-*{box-sizing:border-box}body{margin:0;background:#070a10;color:#fff;font-family:Inter,system-ui,sans-serif}.wrap{width:min(1000px,94vw);margin:auto;padding:35px 0}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}.title{font-size:42px;font-weight:900}.sub,.small{color:#8e98aa;font-size:11px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:#151a23;border:1px solid #252b38;border-radius:16px;padding:16px}.card.turn{border-color:#4e7fff;box-shadow:0 0 0 2px #4e7fff33}h2{font-size:13px;margin:0 0 4px;text-transform:uppercase;display:flex;align-items:center;gap:8px}.turnbadge{display:none;font-size:9px;letter-spacing:1px;background:#4e7fff;color:#fff;border-radius:20px;padding:3px 9px}.card.turn .turnbadge{display:inline-block}input{width:100%;height:44px;background:#090c11;color:#fff;border:1px solid #303848;border-radius:10px;padding:8px;font-size:15px}button{height:44px;border:0;border-radius:10px;background:#4b82ff;color:#fff;font-weight:800;cursor:pointer;font-size:14px}button.secondary{background:#252c39}button.danger{background:#7b2938}button:disabled{opacity:.4;cursor:not-allowed}.teams{display:grid;grid-template-columns:1fr 1fr;gap:10px}.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}.stat{background:#0d1119;border:1px solid #252b38;border-radius:12px;padding:12px;text-align:center}.stat b{display:block;font-size:28px}.row{display:flex;gap:7px;margin-top:9px}.row>*{flex:1}
-.banner{border-radius:14px;padding:14px 16px;margin-bottom:14px;font-weight:900;font-size:15px;text-align:center;background:#141b28;border:1px solid #253049;color:#9cb3ff;transition:.2s}
-.banner.win{background:#123625;border-color:#35d07f;color:#8dfbc2}
-.kick{display:flex;align-items:center;gap:10px;margin:8px 0}
-.kicknum{width:26px;text-align:center;font-weight:900;color:#7c879b;font-size:13px;flex-shrink:0}
-.kickbtn{flex:1;height:52px;border-radius:12px;border:2px solid #2a3345;background:#141b28;color:#8892a3;font-size:14px;font-weight:900;letter-spacing:.3px;transition:.12s;display:flex;align-items:center;justify-content:center;gap:8px}
-.kickbtn:active{transform:scale(.98)}
-.kickbtn.next{border-color:#4e7fff;background:#111a2c;color:#cdd9ff}
-.kickbtn.goal{background:#236d4c;border-color:#35d07f;color:#fff}
-.kickbtn.miss{background:#702b39;border-color:#e95467;color:#fff}
-@media(max-width:700px){.grid{grid-template-columns:1fr}.title{font-size:30px}.kickbtn{height:56px;font-size:15px}}
-.login{position:fixed;inset:0;background:#070a10;display:none;align-items:center;justify-content:center}.loginbox{width:340px;background:#141923;border:1px solid #252b38;border-radius:18px;padding:22px}.loginbox input{margin:5px 0}.loginbox button{width:100%;margin-top:8px}
-</style></head><body><div class="wrap" id="app">
-<div class="top"><div><div class="title">Modo penales</div><div class="sub">Control independiente · Firebase sincronizado · tocá una vez para GOL, otra vez para FALLÓ, otra vez para borrar</div></div><button class="secondary" id="back">← Marcador</button></div>
-<div class="banner" id="banner">Cargando…</div>
-<div class="teams"><input id="team1" placeholder="LOCAL"><input id="team2" placeholder="VISITANTE"></div>
-<div class="summary"><div class="stat"><b id="score1">0</b><span>Local</span></div><div class="stat"><b id="rounds">0</b><span>Lanzamientos</span></div><div class="stat"><b id="score2">0</b><span>Visitante</span></div></div>
-<div class="grid"><section class="card" id="card1"><h2><span id="title1">LOCAL</span> <span class="turnbadge">TURNO</span></h2><div id="kicks1"></div></section><section class="card" id="card2"><h2><span id="title2">VISITANTE</span> <span class="turnbadge">TURNO</span></h2><div id="kicks2"></div></section></div>
-<div class="row"><button class="secondary" id="undo">↺ Deshacer último toque</button><button id="add">+ Agregar lanzamiento</button></div>
-<div class="row"><button class="danger" id="reset">↺ Reiniciar tanda</button></div>
-<div class="row"><button id="overlay">📺 Abrir overlay de penales</button><button class="secondary" id="copy">Copiar link OBS</button></div>
-<input id="link" readonly style="margin-top:8px;width:100%">
-</div><div class="login" id="login"><div class="loginbox"><h2>Control de penales</h2><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button id="loginBtn">Entrar</button></div></div>
-<script>
-// ASTRA · Firebase bootstrap
-(() => {
-  const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
-    authDomain: "astraprods.firebaseapp.com",
-    databaseURL: "https://astraprods-default-rtdb.firebaseio.com",
-    projectId: "astraprods"
-  };
-
-  const defaults = {
-    team1Name: "LOCAL", team2Name: "VISITANTE",
-    team1Logo: "", team2Logo: "", score1: 0, score2: 0,
-    timer: {phase:"first",baseSeconds:0,running:false,startedAt:0,extraMinutes:0,extraActive:false,extraStartSeconds:0},
-    penalties: {active:false,team1Name:"LOCAL",team2Name:"VISITANTE",kicks1:[null,null,null,null,null],kicks2:[null,null,null,null,null],visibleKicks:5},
-    layout: {
-      name1:{x:10,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"left"},
-      name2:{x:60,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"right"},
-      score1:{x:28,y:48,w:15,h:12,fontSize:6,color:"#ffffff",fontWeight:900,align:"center"},
-      score2:{x:57,y:48,w:15,h:12,fontSize:6,color:"#ffffff",fontWeight:900,align:"center"},
-      clock:{x:40,y:20,w:20,h:10,fontSize:5,color:"#ffffff",fontWeight:900,align:"center"},
-      extra:{x:46,y:30,w:8,h:6,fontSize:2.2,color:"#ffffff",fontWeight:800,align:"center"},
-      logo1:{x:5,y:35,w:12,h:12,fontSize:1,color:"#ffffff",fontWeight:700,align:"center"},
-      logo2:{x:83,y:35,w:12,h:12,fontSize:1,color:"#ffffff",fontWeight:700,align:"center"}
-    }
-  };
-
-  const params = new URLSearchParams(location.search);
-  const matchId = params.get("match") || "default";
-
-  if (!window.firebase) throw new Error("Firebase SDK no cargado.");
-  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-
-  const auth = firebase.auth();
-  const db = firebase.database();
-  const ref = db.ref("marcadorSimple/" + matchId);
-  let state = JSON.parse(JSON.stringify(defaults));
-  let offset = 0;
-
-  const $ = id => document.getElementById(id);
-  const pad = n => String(n).padStart(2,"0");
-  const serverNow = () => Date.now() + offset;
-
-  function seconds() {
-    if (!state.timer.running) return Math.max(0, Number(state.timer.baseSeconds)||0);
-    return Math.max(0,
-      (Number(state.timer.baseSeconds)||0) +
-      Math.floor((serverNow()-(Number(state.timer.startedAt)||0))/1000)
-    );
-  }
-  const fmt = s => {
-    s = Math.max(0, Math.floor(s));
-    return `${pad(Math.floor(s/60))}:${pad(s%60)}`;
-  };
-  const save = patch => ref.update(patch).catch(e=>{console.error(e);alert(e.code||"Error de Firebase");throw e});
-
-  let listening=false;
-  function startListen(){if(listening)return;listening=true;ref.on("value",snap=>{const d=snap.val()||{};state={...defaults,...d,timer:{...defaults.timer,...(d.timer||{})},penalties:{...defaults.penalties,...(d.penalties||{})},layout:{...defaults.layout,...(d.layout||{})}};if(window.renderApp)window.renderApp()},err=>{console.error(err);alert(err.code==="PERMISSION_DENIED"?"Firebase rechazó el acceso a este UUID.":err.message);});}
-  db.ref(".info/serverTimeOffset").on("value",s=>offset=Number(s.val()||0));
-
-  window.ASTRA = {
-    $, db, auth, ref, defaults, save, seconds, fmt, serverNow, startListen,
-    getState: () => state,
-    get offset(){ return offset; }
-  };
-})();
-
-</script><script>
-const auth=window.ASTRA.auth,save=window.ASTRA.save,defaultsA=window.ASTRA.defaults;
-let lastAction=null; // {key,i} para "deshacer"
-
-function nextState(x){ return x==="goal"?"miss":x==="miss"?null:"goal"; }
-function label(x){ return x==="goal"?"✓ GOL":x==="miss"?"✕ FALLÓ":"— vacío"; }
-
-// Determina si la serie ya está decidida (ganador matemático o empate resuelto tras rondas iguales)
-function winner(a,b,v){
-  const taken=arr=>arr.filter(x=>x!=null).length;
-  const goals=arr=>arr.filter(x=>x==="goal").length;
-  const t1=taken(a),t2=taken(b),g1=goals(a),g2=goals(b);
-  const remain1=Math.max(0,v-t1),remain2=Math.max(0,v-t2);
-  if(g1>g2+remain2) return 1;
-  if(g2>g1+remain1) return 2;
-  if(t1>=v&&t2>=v&&t1===t2&&g1!==g2) return g1>g2?1:2;
-  return 0;
-}
-
-function renderApp(){
-  const s=window.ASTRA.getState(),p={...defaultsA.penalties,...(s.penalties||{})},v=Math.max(5,Math.min(10,Number(p.visibleKicks)||5)),a=Array.isArray(p.kicks1)?p.kicks1:[],b=Array.isArray(p.kicks2)?p.kicks2:[];
-  $("team1").value=p.team1Name||s.team1Name||"LOCAL";$("team2").value=p.team2Name||s.team2Name||"VISITANTE";$("title1").textContent=$("team1").value;$("title2").textContent=$("team2").value;
-  $("score1").textContent=a.filter(x=>x==="goal").length;$("score2").textContent=b.filter(x=>x==="goal").length;$("rounds").textContent=Math.max(a.filter(Boolean).length,b.filter(Boolean).length);
-  const taken1=a.slice(0,v).filter(Boolean).length,taken2=b.slice(0,v).filter(Boolean).length,next1=a.slice(0,v).findIndex(x=>!x),next2=b.slice(0,v).findIndex(x=>!x);
-  const teamTurn=taken1<=taken2?1:2;
-  const w=winner(a,b,v);
-  $("card1").classList.toggle("turn",!w&&teamTurn===1&&next1!==-1);$("card2").classList.toggle("turn",!w&&teamTurn===2&&next2!==-1);
-
-  const banner=$("banner");
-  if(w){
-    banner.className="banner win";
-    banner.textContent="🏆 Serie decidida: gana "+(w===1?$("team1").value:$("team2").value);
-  } else {
-    banner.className="banner";
-    const turnName=teamTurn===1?$("team1").value:$("team2").value;
-    const idx=(teamTurn===1?next1:next2)+1;
-    banner.textContent=idx>0?`Turno de ${turnName} · lanzamiento #${idx}`:"Serie de penales";
-  }
-
-  const draw=(id,arr,key,nextIdx)=>{
-    $(id).innerHTML=Array.from({length:v},(_,i)=>{
-      const x=arr[i];
-      const cls=x==="goal"?"goal":x==="miss"?"miss":i===nextIdx?"next":"";
-      return `<div class="kick"><div class="kicknum">#${i+1}</div><button class="kickbtn ${cls}" data-k="${key}" data-i="${i}">${label(x)}</button></div>`;
-    }).join("");
-    $(id).querySelectorAll("[data-k]").forEach(btn=>btn.onclick=()=>{
-      const cur=window.ASTRA.getState();const arr=[...(Array.isArray(cur.penalties?.[btn.dataset.k])?cur.penalties[btn.dataset.k]:[])];
-      while(arr.length<v)arr.push(null);
-      const i=Number(btn.dataset.i);
-      arr[i]=nextState(arr[i]);
-      lastAction={key:btn.dataset.k,i};
-      save({["penalties/"+btn.dataset.k]:arr});
-    });
-  };
-  draw("kicks1",a,"kicks1",next1);draw("kicks2",b,"kicks2",next2);
-  $("undo").disabled=!lastAction;
-}
-$("undo").onclick=()=>{
-  if(!lastAction)return;
-  const cur=window.ASTRA.getState();const arr=[...(Array.isArray(cur.penalties?.[lastAction.key])?cur.penalties[lastAction.key]:[])];
-  arr[lastAction.i]=null;
-  save({["penalties/"+lastAction.key]:arr});
-  lastAction=null;
-};
-$("team1").onchange=e=>save({"penalties/team1Name":e.target.value.trim()||"LOCAL"});$("team2").onchange=e=>save({"penalties/team2Name":e.target.value.trim()||"VISITANTE"});
-$("add").onclick=()=>{const p=window.ASTRA.getState().penalties||defaultsA.penalties;save({"penalties/visibleKicks":Math.min(10,Math.max(5,Number(p.visibleKicks)||5)+1)})};
-$("reset").onclick=()=>{const s=window.ASTRA.getState();lastAction=null;save({penalties:{...defaultsA.penalties,team1Name:s.team1Name||"LOCAL",team2Name:s.team2Name||"VISITANTE"}})};
-const match=new URLSearchParams(location.search).get("match")||"default",overlayUrl=()=>new URL("overlays/penales.html?match="+encodeURIComponent(match),location.href).href;
-$("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
-$("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(match);
-$("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){console.error(e);alert(e.code||"No se pudo iniciar sesión.");}};
-auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)window.ASTRA.startListen();});
+window.renderApp=renderApp;
 </script></body></html>
