@@ -27,6 +27,7 @@
   if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
   const auth=firebase.auth(),db=firebase.database(),ref=db.ref("rotulo/"+matchId);
   const $=id=>document.getElementById(id);
+
   function render(d){
     $("name").textContent=d.name||"";$("cargo").textContent=d.cargo||"";
     $("body").style.fontFamily=(d.font||"Montserrat")+",sans-serif";
@@ -37,8 +38,13 @@
     if(d.visible){ card.classList.remove("show"); void card.offsetWidth; requestAnimationFrame(()=>card.classList.add("show")); }
     else card.classList.remove("show");
   }
-  ref.on("value",snap=>render(snap.val()||{}));
-  auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex"});
+
+  let listening=false;
+  function startListen(){
+    if(listening)return;listening=true;
+    ref.on("value",snap=>render(snap.val()||{}),err=>console.error(err));
+  }
+  auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)startListen();});
   $("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("loginEmail").value.trim(),$("loginPassword").value)}catch(e){alert(e.code||"No se pudo iniciar sesión")}};
 })();
 </script></body></html>
