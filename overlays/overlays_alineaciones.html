@@ -310,13 +310,6 @@ const FIREBASE_CONFIG={
     projectId:"astraprods"
 };
 
-const params=new URLSearchParams(location.search);
-
-const matchId=
-    params.get("match")||
-    params.get("uuid")||
-    "default";
-
 if(!firebase.apps.length){
     firebase.initializeApp(FIREBASE_CONFIG);
 }
@@ -325,7 +318,7 @@ const auth=firebase.auth();
 const db=firebase.database();
 
 const ref=
-    db.ref("alineaciones/"+matchId);
+    db.ref("alineaciones");
 
 const $=id=>
     document.getElementById(id);
