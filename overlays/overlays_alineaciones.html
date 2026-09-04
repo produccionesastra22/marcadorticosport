@@ -35,7 +35,10 @@ body{font-family:Inter,sans-serif;color:#fff}
   if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
   const auth=firebase.auth(),db=firebase.database(),ref=db.ref("alineaciones/"+matchId);
   const $=id=>document.getElementById(id);
-  function draw(id,arr,side){$(id).innerHTML=(arr||[]).filter(n=>n&&n.trim()).map((n,i)=>`<div class="player" style="animation-delay:${i*70}ms">${side==="right"?`<span>${n}</span><span class="num">${i+1}</span>`:`<span class="num">${i+1}</span><span>${n}</span>`}</div>`).join("")}
+
+  function draw(id,arr,side){
+    $(id).innerHTML=(arr||[]).filter(p=>p&&p.name&&p.name.trim()).map((p,i)=>`<div class="player" style="animation-delay:${i*70}ms">${side==="right"?`<span>${p.name}</span><span class="num">${p.num||"-"}</span>`:`<span class="num">${p.num||"-"}</span><span>${p.name}</span>`}</div>`).join("");
+  }
   function render(state){
     $("nameA").textContent=state.teamA?.name||"EQUIPO A";$("nameB").textContent=state.teamB?.name||"EQUIPO B";
     const wrap=$("wrap");
@@ -45,8 +48,13 @@ body{font-family:Inter,sans-serif;color:#fff}
       requestAnimationFrame(()=>wrap.classList.add("show"));
     } else { wrap.classList.remove("show"); }
   }
-  ref.on("value",snap=>render(snap.val()||{}));
-  auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex"});
+
+  let listening=false;
+  function startListen(){
+    if(listening)return;listening=true;
+    ref.on("value",snap=>render(snap.val()||{}),err=>console.error(err));
+  }
+  auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)startListen();});
   $("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("loginEmail").value.trim(),$("loginPassword").value)}catch(e){alert(e.code||"No se pudo iniciar sesión")}};
 })();
 </script></body></html>
