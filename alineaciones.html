@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASTRA · Alineaciones</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070a10;color:#fff;font-family:Inter,system-ui,sans-serif}
+.wrap{width:min(1000px,94vw);margin:auto;padding:35px 0}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:10px}
+.title{font-size:32px;font-weight:900}
+.sub,.small{color:#8e98aa;font-size:11px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:#151a23;border:1px solid #252b38;border-radius:16px;padding:16px}
+input{width:100%;height:38px;background:#090c11;color:#fff;border:1px solid #303848;border-radius:8px;padding:0 8px;font-size:13px;margin-bottom:6px}
+input.teamname{height:44px;font-weight:800;font-size:15px;margin-bottom:12px}
+button{height:44px;border:0;border-radius:10px;background:#4b82ff;color:#fff;font-weight:800;cursor:pointer;font-size:14px}
+button.secondary{background:#252c39}
+button.toggle{background:#35d07f}
+button.toggle.off{background:#7b2938}
+.row{display:flex;gap:7px;margin-top:9px}.row>*{flex:1}
+.login{position:fixed;inset:0;background:#070a10;display:none;align-items:center;justify-content:center}
+.loginbox{width:340px;background:#141923;border:1px solid #252b38;border-radius:18px;padding:22px}
+.loginbox input{margin:5px 0}.loginbox button{width:100%;margin-top:8px}
+</style></head><body>
+<div class="wrap" id="app">
+<div class="top"><div><div class="title">Alineaciones</div><div class="sub">Editá los 11 titulares de cada equipo · se sincroniza con el overlay</div></div><button class="secondary" id="back">← Marcador</button></div>
+<div class="grid">
+<section class="card"><input class="teamname" id="teamA" placeholder="Nombre equipo A"><div id="playersA"></div></section>
+<section class="card"><input class="teamname" id="teamB" placeholder="Nombre equipo B"><div id="playersB"></div></section>
+</div>
+<div class="row"><button class="toggle" id="toggleShow">📺 Mostrar en overlay</button><button class="secondary" id="overlay">Abrir overlay</button><button class="secondary" id="copy">Copiar link OBS</button></div>
+<input id="link" readonly style="margin-top:8px;width:100%">
+</div>
+<div class="login" id="login"><div class="loginbox"><h2>Control de alineaciones</h2><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button id="loginBtn">Entrar</button></div></div>
+<script>
+(() => {
+  const FIREBASE_CONFIG={apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",authDomain:"astraprods.firebaseapp.com",databaseURL:"https://astraprods-default-rtdb.firebaseio.com",projectId:"astraprods"};
+  const params=new URLSearchParams(location.search),matchId=params.get("match")||"default";
+  if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
+  const auth=firebase.auth(),db=firebase.database(),ref=db.ref("alineaciones/"+matchId);
+  const empty=()=>Array.from({length:11},()=>"");
+  const defaults={teamA:{name:"EQUIPO A",players:empty()},teamB:{name:"EQUIPO B",players:empty()},visible:false,updatedAt:0};
+  let state=JSON.parse(JSON.stringify(defaults));
+  const $=id=>document.getElementById(id);
+  const save=p=>ref.update(p).catch(e=>{console.error(e);alert(e.code||"Error de Firebase")});
+  function render(){
+    $("teamA").value=state.teamA?.name||"EQUIPO A";$("teamB").value=state.teamB?.name||"EQUIPO B";
+    const draw=(id,arr)=>{$(id).innerHTML="";(arr&&arr.length?arr:empty()).forEach((v,i)=>{const inp=document.createElement("input");inp.placeholder="Jugador "+(i+1);inp.value=v||"";inp.oninput=e=>{const key=id==="playersA"?"teamA":"teamB";const cur=[...(state[key]?.players||empty())];cur[i]=e.target.value;save({[key+"/players"]:cur})};$(id).appendChild(inp)})};
+    draw("playersA",state.teamA?.players);draw("playersB",state.teamB?.players);
+    $("toggleShow").textContent=state.visible?"🔴 Ocultar del overlay":"📺 Mostrar en overlay";
+    $("toggleShow").classList.toggle("off",!!state.visible);
+  }
+  ref.on("value",snap=>{const d=snap.val()||{};state={...defaults,...d,teamA:{...defaults.teamA,...(d.teamA||{})},teamB:{...defaults.teamB,...(d.teamB||{})}};render()});
+  $("teamA").onchange=e=>save({"teamA/name":e.target.value.trim()||"EQUIPO A"});
+  $("teamB").onchange=e=>save({"teamB/name":e.target.value.trim()||"EQUIPO B"});
+  $("toggleShow").onclick=()=>save({visible:!state.visible,updatedAt:Date.now()});
+  const overlayUrl=()=>new URL("overlays/alineaciones.html?match="+encodeURIComponent(matchId),location.href).href;
+  $("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
+  $("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(matchId);
+  $("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){alert(e.code||"No se pudo iniciar sesión")}};
+  auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex"});
+})();
+</script></body></html>

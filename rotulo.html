@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASTRA · Rótulo</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070a10;color:#fff;font-family:Inter,system-ui,sans-serif}
+.wrap{width:min(560px,94vw);margin:auto;padding:35px 0}
+.title{font-size:32px;font-weight:900;margin-bottom:16px}
+.card{background:#151a23;border:1px solid #252b38;border-radius:16px;padding:16px;margin-bottom:12px}
+label{display:block;font-size:10px;color:#8e98aa;margin:0 0 4px}
+input,select{width:100%;height:38px;background:#090c11;color:#fff;border:1px solid #303848;border-radius:8px;padding:0 8px;font-size:13px;margin-bottom:10px}
+input[type=color]{padding:2px;height:38px}
+button{height:44px;border:0;border-radius:10px;background:#4b82ff;color:#fff;font-weight:800;cursor:pointer;font-size:14px}
+button.secondary{background:#252c39}button.toggle{background:#35d07f}button.toggle.off{background:#7b2938}
+.row{display:flex;gap:7px;margin-top:9px}.row>*{flex:1}
+.login{position:fixed;inset:0;background:#070a10;display:none;align-items:center;justify-content:center}
+.loginbox{width:340px;background:#141923;border:1px solid #252b38;border-radius:18px;padding:22px}
+.loginbox input{margin:5px 0}.loginbox button{width:100%;margin-top:8px}
+</style></head><body>
+<div class="wrap" id="app">
+<div class="title">Rótulo en pantalla</div>
+<div class="card">
+<label>Nombre</label><input id="name" placeholder="Nombre completo">
+<label>Cargo / descripción</label><input id="cargo" placeholder="Periodista deportivo">
+<div style="display:flex;gap:10px">
+<div style="flex:1"><label>Color principal</label><input id="color1" type="color" value="#4e7fff"></div>
+<div style="flex:1"><label>Color secundario</label><input id="color2" type="color" value="#0d1119"></div>
+</div>
+<label>Fuente</label><select id="font"><option value="Montserrat">Montserrat</option><option value="Inter">Inter</option><option value="LT Wave">LT Wave</option></select>
+</div>
+<div class="row"><button class="toggle" id="toggleShow">📺 Mostrar en overlay</button></div>
+<div class="row"><button class="secondary" id="overlay">Abrir overlay</button><button class="secondary" id="copy">Copiar link OBS</button><button class="secondary" id="back">← Marcador</button></div>
+<input id="link" readonly style="margin-top:8px;width:100%">
+</div>
+<div class="login" id="login"><div class="loginbox"><h2>Control de rótulo</h2><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button id="loginBtn">Entrar</button></div></div>
+<script>
+(() => {
+  const FIREBASE_CONFIG={apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",authDomain:"astraprods.firebaseapp.com",databaseURL:"https://astraprods-default-rtdb.firebaseio.com",projectId:"astraprods"};
+  const params=new URLSearchParams(location.search),matchId=params.get("match")||"default";
+  if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
+  const auth=firebase.auth(),db=firebase.database(),ref=db.ref("rotulo/"+matchId);
+  const defaults={name:"",cargo:"",color1:"#4e7fff",color2:"#0d1119",font:"Montserrat",visible:false,updatedAt:0};
+  let state={...defaults};
+  const $=id=>document.getElementById(id);
+  const save=p=>ref.update(p).catch(e=>{console.error(e);alert(e.code||"Error de Firebase")});
+  function render(){
+    $("name").value=state.name||"";$("cargo").value=state.cargo||"";$("color1").value=state.color1||"#4e7fff";$("color2").value=state.color2||"#0d1119";$("font").value=state.font||"Montserrat";
+    $("toggleShow").textContent=state.visible?"🔴 Ocultar del overlay":"📺 Mostrar en overlay";
+    $("toggleShow").classList.toggle("off",!!state.visible);
+  }
+  ref.on("value",snap=>{state={...defaults,...(snap.val()||{})};render()});
+  ["name","cargo","color1","color2","font"].forEach(id=>$(id).onchange=e=>save({[id]:e.target.value}));
+  $("toggleShow").onclick=()=>save({visible:!state.visible,updatedAt:Date.now()});
+  const overlayUrl=()=>new URL("overlays/rotulo.html?match="+encodeURIComponent(matchId),location.href).href;
+  $("link").value=overlayUrl();$("copy").onclick=()=>navigator.clipboard?.writeText($("link").value);$("overlay").onclick=()=>location.href=overlayUrl();
+  $("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(matchId);
+  $("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){alert(e.code||"No se pudo iniciar sesión")}};
+  auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex"});
+})();
+</script></body></html>
