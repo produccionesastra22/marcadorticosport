@@ -172,8 +172,6 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
   const ref = db.ref("marcadorSimple/" + matchId);
   let state = JSON.parse(JSON.stringify(defaults));
   let offset = 0;
-  let teamNamesDraft = null;
-  let teamNamesDirty = false;
 
   const $ = id => document.getElementById(id);
   const pad = n => String(n).padStart(2,"0");
@@ -225,6 +223,8 @@ const {save,fmt,seconds,extraSeconds}=window.ASTRA;
 const $=window.ASTRA.$, defaultsA=window.ASTRA.defaults;
 let selectedColor="#fff", drag=null;
 let draftLayout={}; // cambios de diseño aún no guardados: tienen prioridad sobre lo que llega de Firebase
+let teamNamesDraft=null;
+let teamNamesDirty=false;
 
 function toast(msg="Guardado"){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),1200)}
 function phase(t){return t.phase==="second"?"2T":t.phase==="finished"?"FINAL":t.phase==="firstEnded"?"DESCANSO":"1T"}
