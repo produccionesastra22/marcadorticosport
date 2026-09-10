@@ -53,6 +53,7 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
   <section class="card">
     <div class="card-head"><h2>Marcador</h2><span class="hint">cambios instantáneos</span></div>
     <div class="teams"><div><label>LOCAL</label><input id="team1" placeholder="LOCAL"></div><div><label>VISITANTE</label><input id="team2" placeholder="VISITANTE"></div></div>
+<div class="row" style="margin-top:8px"><button class="btn" id="saveTeams">✓ Confirmar nombres</button><span class="hint" id="teamDraftStatus" style="display:flex;align-items:center;justify-content:center">Los nombres no se envían hasta confirmar.</span></div>
     <div class="scoreboard">
       <div class="scorebox"><button data-score="score1" data-delta="1">+</button><div class="num" id="s1">0</div><button data-score="score1" data-delta="-1">−</button></div>
       <div class="vs">VS</div>
@@ -77,7 +78,8 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
   <section class="card">
     <div class="card-head"><h2>Accesos rápidos</h2></div>
     <div class="row"><button class="btn secondary" id="goDesign">✦ Diseñar overlay</button><button class="btn secondary" id="goObs">▣ Links OBS</button></div>
-    <div class="row"><button class="btn secondary" id="openPen2">🥅 Control de penales</button></div>
+    <div class="row"><button class="btn secondary" id="openPen2">🥅 Control de penales</button><button class="btn secondary" id="openNews">📰 Noticias / Lower Third</button></div>
+<div class="row"><button class="btn secondary" id="openLineupsQuick">🧾 Alineaciones</button><button class="btn secondary" id="openRotuloQuick">🏷️ Rótulo</button></div>
   </section>
 </div>
 </section>
@@ -170,6 +172,8 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
   const ref = db.ref("marcadorSimple/" + matchId);
   let state = JSON.parse(JSON.stringify(defaults));
   let offset = 0;
+  let teamNamesDraft = null;
+  let teamNamesDirty = false;
 
   const $ = id => document.getElementById(id);
   const pad = n => String(n).padStart(2,"0");
@@ -227,7 +231,14 @@ function phase(t){return t.phase==="second"?"2T":t.phase==="finished"?"FINAL":t.
 function renderApp(){
   const s=window.ASTRA.getState(), t=s.timer||{};
   $("s1").textContent=s.score1||0;$("s2").textContent=s.score2||0;
-  $("team1").value=s.team1Name||"LOCAL";$("team2").value=s.team2Name||"VISITANTE";
+  if(!teamNamesDraft){
+    teamNamesDraft={team1:s.team1Name||"LOCAL",team2:s.team2Name||"VISITANTE"};
+  }else if(!teamNamesDirty){
+    teamNamesDraft.team1=s.team1Name||"LOCAL";
+    teamNamesDraft.team2=s.team2Name||"VISITANTE";
+  }
+  $("team1").value=teamNamesDraft.team1;
+  $("team2").value=teamNamesDraft.team2;
   $("timer").textContent=fmt(seconds());
   $("timerState").textContent=phase(t)+" · "+(t.running?"corriendo":"detenido")+(t.extraActive?" · TIEMPO EXTRA +"+fmt(extraSeconds()):"");
   $("extraStatus").textContent=t.extraActive?`ACTIVO · +${fmt(extraSeconds())}`+(Number(t.extraMinutes)>0?` (anunciado +${t.extraMinutes}′)`:""):"Sin activar";
@@ -270,8 +281,35 @@ document.querySelectorAll(".swatch").forEach(b=>b.onclick=()=>{selectedColor=b.d
 $("saveLayout").onclick=async()=>{const k=$("target").value,q=getLayout(k);await save({["layout/"+k]:q});delete draftLayout[k];toast("Diseño guardado ✓")};
 $("saveAllLayout").onclick=async()=>{const patch={};Object.keys(defaultsA.layout).forEach(k=>{patch["layout/"+k]=getLayout(k)});await save(patch);draftLayout={};toast("Todo el diseño guardado ✓")};
 $("resetLayout").onclick=async()=>{const k=$("target").value;delete draftLayout[k];await save({["layout/"+k]:defaultsA.layout[k]});applyElement(k,defaultsA.layout[k]);loadEditor();toast("Elemento restablecido");};
-$("team1").onchange=e=>save({team1Name:e.target.value.trim()||"LOCAL"});
-$("team2").onchange=e=>save({team2Name:e.target.value.trim()||"VISITANTE"});
+$("team1").oninput=e=>{
+  if(!teamNamesDraft)teamNamesDraft={team1:"LOCAL",team2:"VISITANTE"};
+  teamNamesDraft.team1=e.target.value;
+  teamNamesDirty=true;
+  $("teamDraftStatus").textContent="Cambios pendientes · confirmá para enviar";
+};
+$("team2").oninput=e=>{
+  if(!teamNamesDraft)teamNamesDraft={team1:"LOCAL",team2:"VISITANTE"};
+  teamNamesDraft.team2=e.target.value;
+  teamNamesDirty=true;
+  $("teamDraftStatus").textContent="Cambios pendientes · confirmá para enviar";
+};
+$("saveTeams").onclick=async()=>{
+  const team1=String(teamNamesDraft?.team1||"").trim()||"LOCAL";
+  const team2=String(teamNamesDraft?.team2||"").trim()||"VISITANTE";
+  $("saveTeams").disabled=true;
+  try{
+    await save({team1Name:team1,team2Name:team2,"penalties/team1Name":team1,"penalties/team2Name":team2});
+    teamNamesDraft={team1,team2};
+    teamNamesDirty=false;
+    $("team1").value=team1;$("team2").value=team2;
+    $("teamDraftStatus").textContent="Nombres confirmados ✓";
+    toast("Nombres de equipos guardados ✓");
+  }catch(e){
+    $("teamDraftStatus").textContent="No se pudieron guardar los nombres";
+  }finally{
+    $("saveTeams").disabled=false;
+  }
+};
 $("logo1").onchange=e=>save({team1Logo:e.target.value.trim()});$("logo2").onchange=e=>save({team2Logo:e.target.value.trim()});
 document.querySelectorAll("[data-score]").forEach(b=>b.onclick=()=>{const k=b.dataset.score;save({[k]:Math.max(0,Number(window.ASTRA.getState()[k]||0)+Number(b.dataset.delta))})});
 function timerSave(p){return save({timer:{...window.ASTRA.getState().timer,...p}})}
@@ -293,7 +331,9 @@ function openPen(){const u=new URL("penales.html",location.href);u.searchParams.
 $("openOverlay").onclick=openOverlay;$("openOverlay2").onclick=openOverlay;$("openPen").onclick=openPen;$("openPen2").onclick=openPen;$("openPen2b").onclick=openPen;
 function openLineups(){location.href="alineaciones.html?match="+encodeURIComponent(new URLSearchParams(location.search).get("match")||"default")}
 function openRotulo(){location.href="rotulo.html?match="+encodeURIComponent(new URLSearchParams(location.search).get("match")||"default")}
+function openNews(){location.href="noticias.html?match="+encodeURIComponent(new URLSearchParams(location.search).get("match")||"default")}
 $("openLineups").onclick=openLineups;$("openRotulo").onclick=openRotulo;
+$("openLineupsQuick").onclick=openLineups;$("openRotuloQuick").onclick=openRotulo;$("openNews").onclick=openNews;
 function tab(name){document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+name));$("pageTitle").textContent={match:"Partido",design:"Diseño del overlay",obs:"OBS · Browser Sources"}[name]||"Partido";if(name==="design")renderPreview(true)}
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
 $("goDesign").onclick=()=>tab("design");$("goObs").onclick=()=>tab("obs");
