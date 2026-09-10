@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent!important;font-family:Inter,Arial,sans-serif}
+#wrap{position:absolute;left:5vw;right:5vw;bottom:8vh;transform:translateY(120%);opacity:0;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .25s ease}
+#wrap.show{transform:translateY(0);opacity:1}
+.card{background:#fff;color:#101522;border-radius:12px;overflow:hidden;box-shadow:0 18px 55px rgba(0,0,0,.24);border:1px solid rgba(10,20,35,.12)}
+.bar{height:8px;background:linear-gradient(90deg,#174ea6 0 72%,#d71920 72% 100%)}
+.body{padding:16px 22px 17px}.category{font-size:clamp(10px,1vw,15px);font-weight:900;letter-spacing:1.8px;color:#174ea6;text-transform:uppercase}.headline{font-size:clamp(24px,3.2vw,54px);font-weight:900;line-height:1.02;margin-top:5px;max-width:94%}.subtitle{font-size:clamp(12px,1.15vw,18px);font-weight:600;color:#667085;margin-top:7px;max-width:90%}
+#login{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:#06090e;color:#fff}.box{width:min(350px,90vw);background:#111721;border:1px solid #293344;border-radius:18px;padding:22px}.box input{width:100%;height:42px;margin:5px 0;background:#090d14;color:#fff;border:1px solid #303a4e;border-radius:9px;padding:0 10px}.box button{width:100%;height:42px;margin-top:8px;border:0;border-radius:9px;background:#4e7fff;color:#fff;font-weight:900}.error{font-size:11px;color:#ff7184;margin-top:8px}
+</style>
+</head>
+<body>
+<div id="login"><div class="box"><h2>ACCESO</h2><input id="loginEmail" type="email" placeholder="Correo"><input id="loginPassword" type="password" placeholder="Contraseña"><button id="loginBtn">ENTRAR</button><div class="error" id="error"></div></div></div>
+<div id="wrap"><div class="card"><div class="bar" id="bar"></div><div class="body"><div class="category" id="category"></div><div class="headline" id="headline"></div><div class="subtitle" id="subtitle"></div></div></div></div>
+<script>
+(() => {
+const C={apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",authDomain:"astraprods.firebaseapp.com",databaseURL:"https://astraprods-default-rtdb.firebaseio.com",projectId:"astraprods"};
+if(!firebase.apps.length)firebase.initializeApp(C);const auth=firebase.auth(),db=firebase.database(),ref=db.ref("noticiasLowerThird"),$=id=>document.getElementById(id);
+let visible=false,listening=false;
+function draw(d){
+$("category").textContent=d.category||"";$("headline").textContent=d.headline||"";$("subtitle").textContent=d.subtitle||"";
+const blue=d.blue||"#174ea6",red=d.red||"#d71920";$("bar").style.background=`linear-gradient(90deg,${blue} 0 72%,${red} 72% 100%)`;$("category").style.color=blue;
+const next=!!d.visible;if(next&&!visible){$("wrap").classList.remove("show");void $("wrap").offsetWidth;requestAnimationFrame(()=>$("wrap").classList.add("show"))}if(!next)$("wrap").classList.remove("show");visible=next;
+}
+function listen(){if(listening)return;listening=true;ref.on("value",s=>draw(s.val()||{}),e=>console.error(e))}
+auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"flex";if(u)listen()});
+$("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("loginEmail").value.trim(),$("loginPassword").value)}catch(e){$("error").textContent=e.code||"No se pudo iniciar sesión"}};
+})();
+</script>
+</body></html>
