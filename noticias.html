@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASTRA · Noticias</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080b11;color:#f7f9fc;font-family:Inter,Arial,sans-serif}
+.wrap{width:min(760px,94vw);margin:auto;padding:28px 0}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
+.eyebrow{font-size:9px;letter-spacing:2px;color:#7395df;font-weight:900}.title{font-size:28px;font-weight:900;margin-top:5px}.sub{font-size:11px;color:#778399;margin-top:5px}
+.card{background:#10151e;border:1px solid #252e3d;border-radius:16px;padding:16px;margin-bottom:10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+label{display:block;font-size:9px;color:#7e8ba0;margin-bottom:5px}input,select{width:100%;height:40px;background:#090d14;color:#fff;border:1px solid #2b3545;border-radius:9px;padding:0 10px;font:600 12px Inter}textarea{width:100%;min-height:90px;resize:vertical;background:#090d14;color:#fff;border:1px solid #2b3545;border-radius:9px;padding:10px;font:700 18px/1.25 Inter}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#4e7fff;box-shadow:0 0 0 2px #4e7fff18}.wide{grid-column:1/-1}
+.row{display:flex;gap:8px;margin-top:9px}.row>*{flex:1}button{height:42px;border:0;border-radius:10px;background:#4e7fff;color:#fff;font-weight:900;cursor:pointer;padding:0 13px}button.secondary{background:#1a2130;color:#dce4f1}button.danger{background:#702d3d}
+.preview{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#151d2a,#0a0e15);border:1px solid #252e3d;border-radius:12px;overflow:hidden;margin-top:10px}
+.preview-card{position:absolute;left:6%;right:6%;bottom:10%;background:#fff;color:#101522;border-radius:10px;overflow:hidden;box-shadow:0 12px 35px #0005}.bar{height:7px;background:linear-gradient(90deg,#174ea6 0 72%,#d71920 72% 100%)}.preview-body{padding:13px 18px}.preview-cat{font-size:9px;font-weight:900;letter-spacing:1.6px;color:#174ea6}.preview-title{font-size:clamp(16px,2.2vw,28px);font-weight:900;line-height:1.05;margin-top:4px}.preview-sub{font-size:11px;color:#667085;margin-top:5px}
+.status{font-size:10px;color:#8d99ab;margin-top:8px}.login{position:fixed;inset:0;background:#06090eec;display:none;place-items:center;padding:18px;z-index:20}.loginbox{width:min(360px,100%);background:#111721;border:1px solid #293344;border-radius:18px;padding:20px}.loginbox input{margin:5px 0}.loginbox button{width:100%;margin-top:8px}.error{font-size:11px;color:#ff7184;margin-top:8px;min-height:15px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.top{align-items:flex-start;flex-direction:column}.row{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="top"><div><div class="eyebrow">ASTRA PRODS · NEWS GRAPHICS</div><div class="title">Noticias / Lower Third</div><div class="sub">Titulares limpios para noticias, deportes, entrevistas y streaming.</div></div><button class="secondary" id="back">← Control</button></header>
+<section class="card">
+<div class="grid">
+<div class="wide"><label>ANTETÍTULO / CATEGORÍA</label><input id="category" placeholder="ÚLTIMA HORA · DEPORTES"></div>
+<div class="wide"><label>TITULAR</label><textarea id="headline" placeholder="Escribí aquí el título de la noticia"></textarea></div>
+<div class="wide"><label>BAJADA / SUBTÍTULO</label><input id="subtitle" placeholder="Información adicional o contexto"></div>
+<div><label>AZUL</label><input id="blue" type="color" value="#174ea6"></div>
+<div><label>ROJO</label><input id="red" type="color" value="#d71920"></div>
+</div>
+<div class="preview" id="preview"><div class="preview-card"><div class="bar" id="pbar"></div><div class="preview-body"><div class="preview-cat" id="pcat">ÚLTIMA HORA · DEPORTES</div><div class="preview-title" id="ptitle">Título de la noticia</div><div class="preview-sub" id="psub">Información adicional o contexto</div></div></div></div>
+<div class="status" id="status">Esperando conexión...</div>
+</section>
+<div class="row"><button id="show">MOSTRAR EN AIRE</button><button class="secondary" id="hide">OCULTAR</button></div>
+<div class="row"><button class="secondary" id="overlay">ABRIR OVERLAY</button><button class="secondary" id="copy">COPIAR LINK OBS</button></div>
+<input id="link" readonly style="width:100%;height:38px;margin-top:8px;background:#090d14;color:#9aa7ba;border:1px solid #252e3d;border-radius:9px;padding:0 10px">
+</main>
+<div class="login" id="login"><div class="loginbox"><h2>ACCESO</h2><input id="email" type="email" placeholder="Correo"><input id="password" type="password" placeholder="Contraseña"><button id="loginBtn">ENTRAR</button><div class="error" id="error"></div></div></div>
+<script>
+(() => {
+const FIREBASE_CONFIG={apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",authDomain:"astraprods.firebaseapp.com",databaseURL:"https://astraprods-default-rtdb.firebaseio.com",projectId:"astraprods"};
+if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
+const auth=firebase.auth(),db=firebase.database(),ref=db.ref("noticiasLowerThird");
+const defaults={category:"ÚLTIMA HORA · DEPORTES",headline:"",subtitle:"",blue:"#174ea6",red:"#d71920",visible:false,updatedAt:0};
+let state={...defaults},listening=false;const $=id=>document.getElementById(id);
+function save(patch){return ref.update({...patch,updatedAt:firebase.database.ServerValue.TIMESTAMP}).catch(e=>{console.error(e);$("status").textContent="Error de Firebase: "+(e.code||"lectura/escritura rechazada");throw e})}
+function render(){
+$("category").value=state.category||"";$("headline").value=state.headline||"";$("subtitle").value=state.subtitle||"";
+$("blue").value=state.blue||defaults.blue;$("red").value=state.red||defaults.red;
+$("pcat").textContent=state.category||"ÚLTIMA HORA · DEPORTES";$("ptitle").textContent=state.headline||"Título de la noticia";$("psub").textContent=state.subtitle||"Información adicional o contexto";
+$("pbar").style.background=`linear-gradient(90deg,${state.blue||defaults.blue} 0 72%,${state.red||defaults.red} 72% 100%)`;
+$("show").textContent=state.visible?"● EN AIRE":"MOSTRAR EN AIRE";$("status").textContent=state.visible?"● Lower third EN AIRE":"● Lower third oculto";
+}
+function listen(){if(listening)return;listening=true;ref.on("value",snap=>{state={...defaults,...(snap.val()||{})};render()},e=>{$("status").textContent="Firebase: "+(e.code||e.message)})}
+["category","headline","subtitle","blue","red"].forEach(id=>$(id).addEventListener("change",e=>save({[id]:e.target.value})));
+$("show").onclick=()=>save({visible:true});$("hide").onclick=()=>save({visible:false});
+function overlayUrl(){return new URL("overlays/noticias.html",location.href).href}
+$("link").value=overlayUrl();$("overlay").onclick=()=>window.open(overlayUrl(),"_blank");$("copy").onclick=async()=>{try{await navigator.clipboard.writeText($("link").value);$("status").textContent="Link copiado ✓"}catch(e){$("link").select();document.execCommand("copy")}};
+$("back").onclick=()=>location.href="control.html?match="+encodeURIComponent(new URLSearchParams(location.search).get("match")||"default");
+$("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){$("error").textContent=e.code||"No se pudo iniciar sesión"}};
+auth.onAuthStateChanged(u=>{$("login").style.display=u?"none":"grid";if(u)listen()});
+})();
+</script>
+</body></html>
