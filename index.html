@@ -13,9 +13,16 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradi
 <a class="card" id="penales"><div class="icon">🥅</div><div class="name">Modo penales</div><div class="desc">Tanda, muerte súbita, resultados y overlay independiente.</div></a>
 <a class="card" id="overlay"><div class="icon">📺</div><div class="name">Overlay marcador</div><div class="desc">Abrir directamente el Browser Source transparente para OBS.</div></a>
 <a class="card" id="overlayPen"><div class="icon">🎯</div><div class="name">Overlay penales</div><div class="desc">Browser Source transparente para la tanda de penales.</div></a>
+<a class="card" id="lineups"><div class="icon">🧾</div><div class="name">Alineaciones</div><div class="desc">Editá plantillas y enviá las alineaciones animadas al aire.</div></a>
+<a class="card" id="rotulo"><div class="icon">🏷️</div><div class="name">Rótulos</div><div class="desc">Nombre, cargo y lower third de identificación.</div></a>
+<a class="card" id="news"><div class="icon">📰</div><div class="name">Noticias · Lower Third</div><div class="desc">Titulares con diseño blanco, azul y rojo para noticias y streaming.</div></a>
 </div><div class="footer">GitHub Pages · index.html como entrada principal</div>
 </main><script>
 const $=id=>document.getElementById(id); const p=new URLSearchParams(location.search),m=p.get("match")||"default";
 $("control").href="control.html?match="+encodeURIComponent(m);$("penales").href="penales.html?match="+encodeURIComponent(m);
-$("overlay").href="overlays/marcador.html?match="+encodeURIComponent(m);$("overlayPen").href="overlays/penales.html?match="+encodeURIComponent(m);
+$("overlay").href="overlays/marcador.html?match="+encodeURIComponent(m);
+$("overlayPen").href="overlays/penales.html?match="+encodeURIComponent(m);
+$("lineups").href="alineaciones.html?match="+encodeURIComponent(m);
+$("rotulo").href="rotulo.html?match="+encodeURIComponent(m);
+$("news").href="noticias.html?match="+encodeURIComponent(m);
 </script></body></html>
