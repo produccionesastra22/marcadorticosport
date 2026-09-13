@@ -137,6 +137,9 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
 <div class="cards">
 <section class="card full"><div class="card-head"><h2>OBS · Browser Sources</h2><span class="hint">usá estos links como fuentes de navegador</span></div>
 <label>Overlay marcador</label><div class="link"><input id="obsLink" readonly><button class="btn" id="copyObs">Copiar</button></div>
+<label style="margin-top:10px">Overlay cuenta regresiva</label><div class="link"><input id="countdownLink" readonly><button class="btn" id="copyCountdown">Copiar</button></div>
+<label style="margin-top:10px">Overlay estadísticas</label><div class="link"><input id="statsLink" readonly><button class="btn" id="copyStats">Copiar</button></div>
+<label style="margin-top:10px">Overlay patrocinadores</label><div class="link"><input id="sponsorsLink" readonly><button class="btn" id="copySponsors">Copiar</button></div>
 <label style="margin-top:10px">Overlay penales</label><div class="link"><input id="penLink" readonly><button class="btn" id="copyPen">Copiar</button></div>
 <label style="margin-top:10px">Overlay alineaciones</label><div class="link"><input id="lineupsLink" readonly><button class="btn" id="copyLineups">Copiar</button></div>
 <label style="margin-top:10px">Overlay rótulo</label><div class="link"><input id="rotuloLink" readonly><button class="btn" id="copyRotulo">Copiar</button></div>
@@ -362,9 +365,9 @@ $("activateExtra").onclick=()=>timerSave({extraMinutes:Math.max(1,Number($("extr
 $("clearExtra").onclick=()=>timerSave({extraMinutes:0,extraActive:false,extraStartSeconds:0});
 document.querySelectorAll("[data-extra-min]").forEach(b=>b.onclick=()=>{$("extraMinutes").value=b.dataset.extraMin});
 $("reset").onclick=()=>save({score1:0,score2:0,timer:{...defaultsA.timer}});
-function urls(){const u=new URL(location.href),base=u.href.split("?")[0].replace(/control\.html$/,"");const m=encodeURIComponent(new URLSearchParams(location.search).get("match")||"default"),source=path=>base+path+"?match="+m;$("obsLink").value=source("overlays/marcador.html");$("penLink").value=source("overlays/penales.html");$("lineupsLink").value=source("overlays/overlays_alineaciones.html");$("rotuloLink").value=source("overlays/overlays_rotulo.html");$("newsLink").value=source("overlays/noticias.html")}
+function urls(){const u=new URL(location.href),base=u.href.split("?")[0].replace(/control\.html$/,"");const m=encodeURIComponent(new URLSearchParams(location.search).get("match")||"default"),source=path=>base+path+"?match="+m;$("obsLink").value=source("overlays/marcador.html");$("countdownLink").value=source("overlays/cuenta-regresiva.html");$("statsLink").value=source("overlays/estadisticas.html");$("sponsorsLink").value=source("overlays/patrocinadores.html");$("penLink").value=source("overlays/penales.html");$("lineupsLink").value=source("overlays/overlays_alineaciones.html");$("rotuloLink").value=source("overlays/overlays_rotulo.html");$("newsLink").value=source("overlays/noticias.html")}
 function copy(id){navigator.clipboard?.writeText($(id).value);toast("Link copiado ✓")}
-$("copyObs").onclick=()=>copy("obsLink");$("copyPen").onclick=()=>copy("penLink");$("copyLineups").onclick=()=>copy("lineupsLink");$("copyRotulo").onclick=()=>copy("rotuloLink");$("copyNews").onclick=()=>copy("newsLink");
+$("copyObs").onclick=()=>copy("obsLink");$("copyCountdown").onclick=()=>copy("countdownLink");$("copyStats").onclick=()=>copy("statsLink");$("copySponsors").onclick=()=>copy("sponsorsLink");$("copyPen").onclick=()=>copy("penLink");$("copyLineups").onclick=()=>copy("lineupsLink");$("copyRotulo").onclick=()=>copy("rotuloLink");$("copyNews").onclick=()=>copy("newsLink");
 function openOverlay(){location.href=$("obsLink").value}
 function openPen(){const u=new URL("penales.html",location.href);u.searchParams.set("match",new URLSearchParams(location.search).get("match")||"default");location.href=u.href}
 $("openOverlay").onclick=openOverlay;$("openOverlay2").onclick=openOverlay;$("openPen").onclick=openPen;$("openPen2").onclick=openPen;$("openPen2b").onclick=openPen;
