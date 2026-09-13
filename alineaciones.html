@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASTRA · Alineaciones</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    min-height:100%;
+    background:#000;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.wrap{
+    width:min(1050px,95vw);
+    margin:auto;
+    padding:25px 0;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+}
+
+h1{
+    margin:0;
+    font-size:28px;
+}
+
+.sub{
+    color:#777;
+    font-size:11px;
+    margin-top:4px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.card{
+    background:#090909;
+    border:1px solid #202020;
+    padding:14px;
+}
+
+.teamname{
+    width:100%;
+    height:42px;
+    background:#000;
+    color:#fff;
+    border:1px solid #333;
+    padding:0 10px;
+    font-size:15px;
+    font-weight:bold;
+    outline:none;
+    margin-bottom:10px;
+}
+
+.player{
+    display:flex;
+    gap:6px;
+    margin-bottom:5px;
+}
+
+.player input{
+    height:35px;
+    background:#000;
+    color:#fff;
+    border:1px solid #282828;
+    outline:none;
+}
+
+.player input:focus{
+    border-color:#555;
+}
+
+.num{
+    width:50px;
+    text-align:center;
+}
+
+.name{
+    flex:1;
+    padding:0 8px;
+}
+
+button{
+    height:42px;
+    border:0;
+    border-radius:4px;
+    background:#fff;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+    padding:0 12px;
+}
+
+button.secondary{
+    background:#171717;
+    color:#fff;
+    border:1px solid #292929;
+}
+
+button.off{
+    background:#401111;
+    color:#fff;
+}
+
+.row{
+    display:flex;
+    gap:7px;
+    margin-top:8px;
+}
+
+.row>*{
+    flex:1;
+}
+
+.excel{
+    margin-top:10px;
+}
+
+.filebtn{
+    position:relative;
+    overflow:hidden;
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.filebtn input{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    cursor:pointer;
+}
+
+#link{
+    width:100%;
+    height:38px;
+    margin-top:8px;
+    background:#000;
+    color:#777;
+    border:1px solid #222;
+    padding:0 8px;
+}
+
+.status{
+    color:#777;
+    font-size:11px;
+    margin-top:8px;
+}
+
+.login{
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
+}
+
+.loginbox{
+    width:min(350px,90vw);
+    background:#090909;
+    border:1px solid #252525;
+    padding:22px;
+}
+
+.loginbox h2{
+    margin:0 0 15px;
+}
+
+.loginbox input{
+    width:100%;
+    height:42px;
+    background:#000;
+    color:#fff;
+    border:1px solid #303030;
+    padding:0 10px;
+    margin-bottom:8px;
+}
+
+.loginbox button{
+    width:100%;
+}
+
+#error{
+    color:#e55;
+    font-size:11px;
+    margin-top:8px;
+}
+
+@media(max-width:700px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .top{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+}
+</style>
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+.wrap{position:relative}.wrap:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 0%,rgba(65,150,230,.15),transparent 34%),linear-gradient(135deg,transparent 0 48%,rgba(85,167,255,.035) 48% 49%,transparent 49% 100%);z-index:-1}.top{animation:alignDrop .55s cubic-bezier(.2,.8,.2,1) both}.grid{perspective:900px}.grid .card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(18,29,42,.96),rgba(10,17,25,.98));border-color:#30465d;box-shadow:0 20px 60px rgba(0,0,0,.24);animation:alignCard .65s cubic-bezier(.2,.8,.2,1) both}.grid .card:nth-child(2){animation-delay:.08s}.grid .card:before{content:"STARTING XI";display:block;color:#63b4ff;font-size:9px;font-weight:900;letter-spacing:2px;margin-bottom:12px}.teamname{background:#0a1119!important;border-color:#38506a!important}.player{padding:4px;border:1px solid transparent;border-radius:8px;transition:background .18s,border-color .18s,transform .18s}.player:hover{background:#17283a;border-color:#315675;transform:translateX(3px)}.player input{background:#0a1119!important;border-color:#2c4054!important;border-radius:7px}.excel{background:linear-gradient(145deg,#101c29,#0d141d);border-color:#2b4057;animation:alignCard .7s .16s both}.status{color:#75a6ce}.loginbox{backdrop-filter:blur(12px)}@keyframes alignDrop{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}@keyframes alignCard{from{opacity:0;transform:translateY(18px) rotateX(2deg)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+
+<body class="has-module-rail">
+
+<aside class="module-rail" aria-label="Módulos ASTRA">
+    <a class="rail-brand" data-route="control.html" href="#" title="Control ASTRA">A</a>
+    <a data-route="control.html" href="#" title="Marcador">⚽</a>
+    <a data-route="penales.html" href="#" title="Penales">🥅</a>
+    <a class="active" data-route="alineaciones.html" href="#" title="Alineaciones">🧾</a>
+    <a data-route="rotulo.html" href="#" title="Rótulo">🏷️</a>
+    <a data-route="noticias.html" href="#" title="Noticias">📰</a>
+    <span class="rail-spacer"></span>
+</aside>
+<script>const moduleMatch=encodeURIComponent(new URLSearchParams(location.search).get("match")||"default");document.querySelectorAll(".module-rail [data-route]").forEach(a=>a.href=a.dataset.route+"?match="+moduleMatch);</script>
+
+<div class="wrap">
+
+    <div class="top">
+        <div>
+            <h1>ALINEACIONES</h1>
+            <div class="sub">
+                Editá jugadores y decidí cuándo enviar las alineaciones al aire.
+            </div>
+        </div>
+
+        <button class="secondary" id="back">
+            ← MARCADOR
+        </button>
+    </div>
+
+    <div class="grid">
+
+        <section class="card">
+            <input
+                class="teamname"
+                id="teamA"
+                placeholder="EQUIPO A"
+            >
+            <div id="playersA"></div>
+        </section>
+
+        <section class="card">
+            <input
+                class="teamname"
+                id="teamB"
+                placeholder="EQUIPO B"
+            >
+            <div id="playersB"></div>
+        </section>
+
+    </div>
+
+    <div class="card excel">
+        <div class="sub">
+            Excel: <b>Equipo</b>, <b>Numero</b>, <b>Nombre</b>.
+            Se aceptan hasta 11 jugadores por equipo.
+        </div>
+
+        <div class="row">
+            <button class="secondary" id="downloadTemplate">
+                DESCARGAR PLANTILLA
+            </button>
+
+            <button class="secondary filebtn">
+                SUBIR PLANTILLA
+                <input
+                    type="file"
+                    id="uploadFile"
+                    accept=".xlsx,.xls,.csv"
+                >
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <button id="toggleShow">
+            MOSTRAR
+        </button>
+
+        <button class="secondary" id="overlay">
+            ABRIR OVERLAY
+        </button>
+
+        <button class="secondary" id="copy">
+            COPIAR LINK OBS
+        </button>
+    </div>
+
+    <input id="link" readonly>
+
+    <div class="status" id="status">
+        Esperando conexión...
+    </div>
+
+</div>
+
+<div class="login" id="login">
+
+    <div class="loginbox">
+
+        <h2>ACCESO</h2>
+
+        <input
+            id="email"
+            type="email"
+            placeholder="Correo"
+        >
+
+        <input
+            id="password"
+            type="password"
+            placeholder="Contraseña"
+        >
+
+        <button id="loginBtn">
+            ENTRAR
+        </button>
+
+        <div id="error"></div>
+
+    </div>
+
+</div>
+
+<script>
+(() => {
+
+const FIREBASE_CONFIG={
+    apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
+    authDomain:"astraprods.firebaseapp.com",
+    databaseURL:"https://astraprods-default-rtdb.firebaseio.com",
+    projectId:"astraprods"
+};
+
+if(!firebase.apps.length){
+    firebase.initializeApp(FIREBASE_CONFIG);
+}
+
+const auth=firebase.auth();
+const db=firebase.database();
+const ref=db.ref("alineaciones");
+
+const emptyPlayers=()=>Array.from(
+    {length:11},
+    ()=>({num:"",name:""})
+);
+
+const defaults={
+    teamA:{
+        name:"EQUIPO A",
+        players:emptyPlayers()
+    },
+    teamB:{
+        name:"EQUIPO B",
+        players:emptyPlayers()
+    },
+    visible:false,
+    updatedAt:0
+};
+
+let state=JSON.parse(JSON.stringify(defaults));
+let listening=false;
+let ignoreNextRender=false;
+
+const $=id=>document.getElementById(id);
+
+function save(data){
+
+    ref.update({
+        ...data,
+        updatedAt:firebase.database.ServerValue.TIMESTAMP
+    }).catch(err=>{
+
+        console.error(err);
+        $("status").textContent="Error de Firebase";
+
+    });
+
+}
+
+function normalizedTeam(team,defaultName){
+
+    return {
+        name:team?.name||defaultName,
+        players:Array.isArray(team?.players)
+            ? team.players
+            : emptyPlayers()
+    };
+
+}
+
+function render(){
+
+    if(ignoreNextRender){
+        ignoreNextRender=false;
+        return;
+    }
+
+    $("teamA").value=state.teamA.name;
+    $("teamB").value=state.teamB.name;
+
+    drawPlayers(
+        "playersA",
+        state.teamA.players,
+        "teamA"
+    );
+
+    drawPlayers(
+        "playersB",
+        state.teamB.players,
+        "teamB"
+    );
+
+    $("toggleShow").textContent=
+        state.visible
+        ? "OCULTAR DEL AIRE"
+        : "MOSTRAR EN AIRE";
+
+    $("toggleShow").classList.toggle(
+        "off",
+        !!state.visible
+    );
+
+    $("status").textContent=
+        state.visible
+        ? "● Alineaciones EN AIRE"
+        : "● Alineaciones ocultas";
+}
+
+function drawPlayers(containerId,players,teamKey){
+
+    const container=$(containerId);
+    container.innerHTML="";
+
+    const list=players?.length
+        ? players
+        : emptyPlayers();
+
+    list.forEach((player,index)=>{
+
+        const row=document.createElement("div");
+        row.className="player";
+
+        const num=document.createElement("input");
+        num.className="num";
+        num.placeholder="#";
+        num.value=player?.num||"";
+
+        const name=document.createElement("input");
+        name.className="name";
+        name.placeholder="Jugador "+(index+1);
+        name.value=player?.name||"";
+
+        function commit(){
+
+            const current=JSON.parse(
+                JSON.stringify(
+                    state[teamKey]?.players||emptyPlayers()
+                )
+            );
+
+            current[index]={
+                num:num.value.trim(),
+                name:name.value.trim()
+            };
+
+            state[teamKey].players=current;
+
+            save({
+                [teamKey+"/players"]:current
+            });
+
+        }
+
+        /*
+         * IMPORTANTE:
+         * Guardamos al salir del campo.
+         * Ya no guardamos cada tecla.
+         */
+        num.addEventListener("blur",commit);
+        name.addEventListener("blur",commit);
+
+        row.appendChild(num);
+        row.appendChild(name);
+
+        container.appendChild(row);
+
+    });
+
+}
+
+function startListen(){
+
+    if(listening)return;
+    listening=true;
+
+    ref.on("value",snap=>{
+
+        const data=snap.val()||{};
+
+        state={
+            ...defaults,
+            ...data,
+
+            teamA:normalizedTeam(
+                data.teamA,
+                "EQUIPO A"
+            ),
+
+            teamB:normalizedTeam(
+                data.teamB,
+                "EQUIPO B"
+            )
+        };
+
+        render();
+
+    },err=>{
+
+        console.error(err);
+        $("status").textContent="Error: "+err.message;
+
+    });
+
+}
+
+$("teamA").addEventListener("change",e=>{
+
+    const value=e.target.value.trim()||"EQUIPO A";
+
+    state.teamA.name=value;
+
+    save({
+        "teamA/name":value
+    });
+
+});
+
+$("teamB").addEventListener("change",e=>{
+
+    const value=e.target.value.trim()||"EQUIPO B";
+
+    state.teamB.name=value;
+
+    save({
+        "teamB/name":value
+    });
+
+});
+
+$("toggleShow").onclick=()=>{
+
+    state.visible=!state.visible;
+
+    save({
+        visible:state.visible
+    });
+
+    render();
+
+};
+
+$("downloadTemplate").onclick=()=>{
+
+    const rows=[
+        ["Equipo","Numero","Nombre"]
+    ];
+
+    for(let i=1;i<=11;i++){
+        rows.push(["A",i,""]);
+    }
+
+    for(let i=1;i<=11;i++){
+        rows.push(["B",i,""]);
+    }
+
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    const wb=XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        wb,
+        ws,
+        "Alineaciones"
+    );
+
+    XLSX.writeFile(
+        wb,
+        "plantilla_alineaciones.xlsx"
+    );
+
+};
+
+$("uploadFile").addEventListener("change",async e=>{
+
+    const file=e.target.files[0];
+
+    if(!file)return;
+
+    try{
+
+        const buffer=await file.arrayBuffer();
+
+        const wb=XLSX.read(
+            buffer,
+            {type:"array"}
+        );
+
+        const ws=wb.Sheets[
+            wb.SheetNames[0]
+        ];
+
+        const rows=XLSX.utils
+            .sheet_to_json(ws,{header:1})
+            .slice(1);
+
+        const teamA=emptyPlayers();
+        const teamB=emptyPlayers();
+
+        let indexA=0;
+        let indexB=0;
+
+        rows.forEach(row=>{
+
+            const team=String(
+                row[0]||""
+            ).trim().toUpperCase();
+
+            const num=String(
+                row[1]??""
+            ).trim();
+
+            const name=String(
+                row[2]||""
+            ).trim();
+
+            if(!name)return;
+
+            if(team==="B"){
+
+                if(indexB<11){
+                    teamB[indexB]={
+                        num,
+                        name
+                    };
+                    indexB++;
+                }
+
+            }else{
+
+                if(indexA<11){
+                    teamA[indexA]={
+                        num,
+                        name
+                    };
+                    indexA++;
+                }
+
+            }
+
+        });
+
+        state.teamA.players=teamA;
+        state.teamB.players=teamB;
+
+        await ref.update({
+            "teamA/players":teamA,
+            "teamB/players":teamB,
+            updatedAt:firebase.database.ServerValue.TIMESTAMP
+        });
+
+        render();
+
+        $("status").textContent=
+            "Plantilla cargada ✓";
+
+    }catch(err){
+
+        console.error(err);
+
+        $("status").textContent=
+            "No se pudo leer el archivo.";
+
+    }
+
+    e.target.value="";
+
+});
+
+function overlayUrl(){
+
+    return new URL(
+        "overlays/overlays_alineaciones.html",
+        location.href
+    ).href;
+
+}
+
+$("link").value=overlayUrl();
+
+$("copy").onclick=async()=>{
+
+    try{
+
+        await navigator.clipboard.writeText(
+            $("link").value
+        );
+
+        $("status").textContent=
+            "Link copiado ✓";
+
+    }catch(e){
+
+        $("link").select();
+        document.execCommand("copy");
+
+    }
+
+};
+
+$("overlay").onclick=()=>{
+    window.open(overlayUrl(),"_blank");
+};
+
+$("back").onclick=()=>{
+    location.href="control.html";
+};
+
+$("loginBtn").onclick=async()=>{
+
+    $("error").textContent="";
+
+    try{
+
+        await auth.signInWithEmailAndPassword(
+            $("email").value.trim(),
+            $("password").value
+        );
+
+    }catch(e){
+
+        $("error").textContent=
+            e.code||"No se pudo iniciar sesión";
+
+    }
+
+};
+
+auth.onAuthStateChanged(user=>{
+
+    $("login").style.display=
+        user?"none":"flex";
+
+    if(user){
+        startListen();
+    }
+
+});
+
+})();
+</script>
+
+</body>
+</html>
