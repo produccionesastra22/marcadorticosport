@@ -79,13 +79,23 @@ body.has-module-rail .preview-stage,body.has-module-rail .preview{border-color:#
 @media(max-width:700px){
   .wrap{width:min(94vw,560px);padding:22px 0}
   .card{padding:14px}
-  .row{flex-wrap:wrap}
-  .row>*{min-width:140px}
-  .module-rail,.rail{inset:auto 0 0;width:100%;height:60px;flex-direction:row;justify-content:center;padding:6px 8px;gap:4px;border-right:0;border-top:1px solid #202735;box-shadow:0 -12px 30px rgba(0,0,0,.2)}
+  .row{flex-wrap:wrap;gap:6px}
+  .row>*{min-width:0;flex:1 1 0}
+  .module-rail,.rail{inset:auto 0 0;width:100%;height:60px;flex-direction:row;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:6px 8px;gap:4px;border-right:0;border-top:1px solid #202735;box-shadow:0 -12px 30px rgba(0,0,0,.2)}
+  .module-rail::-webkit-scrollbar,.rail::-webkit-scrollbar{display:none}
   .module-rail a,.rail .nav button,.rail-bottom button{width:42px;height:44px;font-size:17px;flex:0 0 42px}.module-rail .rail-brand,.module-rail .rail-spacer,.rail .brand{display:none}.module-rail a.active:before,.rail .nav button.active:before{left:50%;bottom:-6px;width:22px;height:3px;transform:translateX(-50%)}
-  .rail .nav,.rail .rail-bottom{display:flex;gap:4px;width:auto;margin:0}.rail .rail-bottom{margin-left:4px}
+  .rail .nav,.rail .rail-bottom{display:flex;flex-direction:row!important;flex:0 0 auto;gap:4px;width:auto;margin:0}.rail .rail-bottom{margin-left:4px}
+  .app{display:block!important}
   .app>.rail{position:fixed;top:auto;height:60px}
-  body.has-module-rail{padding-left:0;padding-bottom:68px}body.has-module-rail .wrap{width:94vw}
+  body.has-module-rail{padding-left:0;padding-bottom:74px}body.has-module-rail .wrap{width:94vw;padding:14px 12px 20px!important}
+  body.has-module-rail .top{align-items:flex-start;gap:8px;margin-bottom:12px}
+  body.has-module-rail .title,body.has-module-rail h1{font-size:20px!important}
+  body.has-module-rail .sub,body.has-module-rail .subtitle{font-size:10px!important}
+  body.has-module-rail .top button{width:auto;min-width:0;white-space:nowrap}
+  body.has-module-rail .summary{gap:6px;margin:10px 0}
+  body.has-module-rail .stat{padding:9px 5px}
+  body.has-module-rail .bigactions{gap:7px;margin:12px 0}
+  body.has-module-rail .big{height:76px;font-size:18px}
 }
 
 /* Neutral visual language shared by control pages. */
