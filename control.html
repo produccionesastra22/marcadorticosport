@@ -359,7 +359,7 @@ function renderApp(){
   $("start").textContent=t.running?"⏸ En marcha":"▶ Iniciar";
   $("timerState").textContent=phase(t)+" · "+(t.running?"corriendo":"detenido")+(t.extraActive?" · TIEMPO EXTRA +"+fmt(extraSeconds()):"");
   $("scorePhase").textContent=phase(t)+" · "+(t.running?"corriendo":"detenido");
-  $("extraStatus").textContent=t.extraActive?`ACTIVO · +${fmt(extraSeconds())}`+(Number(t.extraMinutes)>0?` (anunciado +${t.extraMinutes}′)`:""):"Sin activar";
+  $("extraStatus").textContent=t.extraActive?`ACTIVO · +${fmt(extraSeconds())}`+(Number(t.extraMinutes)>0?` (anunciado +${t.extraMinutes}′)` : "") : "Sin activar";
   $("extraTimer").textContent=fmt(extraSeconds());
   $("extraMinutesDisplay").textContent=Number(t.extraMinutes)||0;
   $("addedBadgeMinutes").textContent=Number(t.extraMinutes)||0;
@@ -370,6 +370,20 @@ function renderApp(){
   $("kScore").textContent=`${s.score1||0}–${s.score2||0}`;$("kClock").textContent=fmt(seconds());$("kPhase").textContent=phase(t);
   renderProduction();
   renderPreview(false);
+}
+function renderClock(){
+  const t=window.ASTRA.getState().timer||{};
+  const current=seconds();
+  $("timer").textContent=fmt(current);
+  $("timerState").textContent=phase(t)+" · "+(t.running?"corriendo":"detenido")+(t.extraActive?" · TIEMPO EXTRA +"+fmt(extraSeconds()):"");
+  $("scorePhase").textContent=phase(t)+" · "+(t.running?"corriendo":"detenido");
+  const extraLabel=t.extraActive?`ACTIVO · +${fmt(extraSeconds())}`:"Sin activar";
+  $("extraStatus").textContent=extraLabel;
+  $("extraTimer").textContent=fmt(extraSeconds());
+  $("kClock").textContent=fmt(current);
+  $("pv_clock").textContent=fmt(current);
+  $("pv_extra").textContent=t.extraActive?`+${fmt(extraSeconds())}`:"";
+  requestAnimationFrame(renderClock);
 }
 function getLayout(k){const base={...defaultsA.layout[k],...((window.ASTRA.getState().layout||{})[k]||{})};return draftLayout[k]?{...base,...draftLayout[k]}:base}
 const layoutLabels={name1:"Nombre local",name2:"Nombre visitante",score1:"Marcador local",score2:"Marcador visitante",clock:"Cronómetro",extra:"Tiempo añadido",logo1:"Logo local",logo2:"Logo visitante"};
@@ -546,6 +560,6 @@ $("preview").addEventListener("pointerdown",e=>{
 });
 $("preview").addEventListener("pointermove",e=>{if(!drag)return;const dx=(e.clientX-drag.startX)/drag.r.width*100,dy=(e.clientY-drag.startY)/drag.r.height*100,q=getLayout(drag.k);q.x=Math.max(0,Math.min(100-q.w,drag.x+dx));q.y=Math.max(0,Math.min(100-q.h,drag.y+dy));draftLayout[drag.k]=q;applyElement(drag.k,q);if($("target").value===drag.k){$("rx").value=q.x;$("ry").value=q.y;updateEditor()}});
 $("preview").addEventListener("pointerup",e=>{if(drag){document.getElementById("pv_"+drag.k)?.classList.remove("dragging");drag=null}});
-urls();renderApp();loadEditor();
+urls();renderApp();loadEditor();renderClock();
 </script>
 </body></html>

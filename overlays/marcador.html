@@ -82,8 +82,14 @@ function renderApp(){
   $("img_logo2").src=state.team2Logo||"";
   applyLayout();
 }
-setInterval(()=>{renderApp()},1000);
+function renderClock(){
+  $("el_clock").textContent=fmt(seconds());
+  const state=window.ASTRA.getState();
+  $("el_extra").textContent=state.timer.extraActive?`+${fmt(extraSeconds())}`:"";
+  requestAnimationFrame(renderClock);
+}
 renderApp();
+renderClock();
 </script>
 </body>
 </html>
