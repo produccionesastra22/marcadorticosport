@@ -20,9 +20,14 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradi
 <a class="card sport" id="volleyball"><div class="icon">🏐</div><div class="name">Control de voleibol</div><div class="desc">Sets, puntos, tie-break, saque y marcador para transmisión.</div></a>
 <a class="card tools" id="volleyballOverlay"><div class="icon">📺</div><div class="name">Overlay voleibol</div><div class="desc">Fuente transparente para OBS con marcador por sets.</div></a>
 </div></section>
+<section class="module-section"><div class="section-head"><h2>Producción · overlays separados</h2><span>Fuentes autónomas para OBS</span></div><div class="cards">
+<a class="card tools" id="countdownOverlay"><div class="icon">⏱️</div><div class="name">Cuenta regresiva</div><div class="desc">Aperturas, tiempos, pausas y avisos al aire.</div></a>
+<a class="card tools" id="statsOverlay"><div class="icon">📊</div><div class="name">Estadísticas</div><div class="desc">Tiros, corners y métricas del partido.</div></a>
+<a class="card tools" id="sponsorOverlay"><div class="icon">🤝</div><div class="name">Patrocinadores</div><div class="desc">Marca y activación por sponsor en una capa independiente.</div></a>
+</div></section>
 <section class="module-section"><div class="section-head"><h2>Noticias · corporativo</h2><span>Identidad y contenido al aire</span></div><div class="cards">
 <a class="card news" id="lineups"><div class="icon">🧾</div><div class="name">Alineaciones</div><div class="desc">Plantillas y presentación animada de equipos.</div></a>
-<a class="card news" id="rotulo"><div class="icon">🏷️</div><div class="name">Rótulos</div><div class="desc">Nombre, cargo y lower third de identificación.</div></a>
+<a class="card news" id="rotulo"><div class="icon">🏷️</div><div class="name">Lower Third</div><div class="desc">Nombre, cargo y identificación con diseño premium.</div></a>
 <a class="card news" id="news"><div class="icon">📰</div><div class="name">Noticias · Lower Third</div><div class="desc">Titulares, logo de canal y gráficos informativos.</div></a>
 </div></section>
 <div class="footer">ASTRA Producciones · Centro de producción en vivo</div>
@@ -31,6 +36,9 @@ const $=id=>document.getElementById(id); const p=new URLSearchParams(location.se
 $("control").href="control.html?match="+encodeURIComponent(m);$("penales").href="penales.html?match="+encodeURIComponent(m);
 $("overlay").href="overlays/marcador.html?match="+encodeURIComponent(m);
 $("overlayPen").href="overlays/penales.html?match="+encodeURIComponent(m);
+$("countdownOverlay").href="overlays/cuenta-regresiva.html?match="+encodeURIComponent(m);
+$("statsOverlay").href="overlays/estadisticas.html?match="+encodeURIComponent(m);
+$("sponsorOverlay").href="overlays/patrocinadores.html?match="+encodeURIComponent(m);
 $("lineups").href="alineaciones.html?match="+encodeURIComponent(m);
 $("rotulo").href="rotulo.html?match="+encodeURIComponent(m);
 $("news").href="noticias.html?match="+encodeURIComponent(m);

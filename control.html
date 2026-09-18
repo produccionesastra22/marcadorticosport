@@ -44,9 +44,9 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
   <div class="brand">A</div>
   <nav class="nav">
     <button class="active" data-tab="match" title="Partido">⚽</button>
+    <button data-tab="production" title="Producción">◎</button>
     <button data-tab="design" title="Diseño">✦</button>
     <button data-tab="obs" title="OBS">▣</button>
-    <button data-tab="production" title="Producción">◈</button>
   </nav>
   <div class="rail-bottom"><button id="openPen" title="Penales">🥅</button><button id="openLineups" title="Alineaciones">🧾</button><button id="openRotulo" title="Rótulo">🏷️</button><button id="openNewsRail" title="Noticias / Lower Third">📰</button><button id="logout" title="Cerrar sesión">↪</button></div>
 </aside>
@@ -86,18 +86,69 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
 
   <section class="card">
     <div class="card-head"><h2>Accesos rápidos</h2></div>
-    <div class="row"><button class="btn secondary" id="goDesign">✦ Diseñar overlay</button><button class="btn secondary" id="goObs">▣ Links OBS</button></div>
-    <div class="row"><button class="btn secondary" id="openPen2">🥅 Control de penales</button><button class="btn secondary" id="openNews">📰 Noticias / Lower Third</button></div>
-<div class="row"><button class="btn secondary" id="openLineupsQuick">🧾 Alineaciones</button><button class="btn secondary" id="openRotuloQuick">🏷️ Rótulo</button></div>
+    <div class="row"><button class="btn secondary" id="goProduction">◎ Producción</button><button class="btn secondary" id="goDesign">✦ Diseñar overlay</button></div>
+    <div class="row"><button class="btn secondary" id="goObs">▣ Links OBS</button><button class="btn secondary" id="openPen2">🥅 Control de penales</button></div>
+    <div class="row"><button class="btn secondary" id="openNews">📰 Noticias / Lower Third</button><button class="btn secondary" id="openLineupsQuick">🧾 Alineaciones</button></div>
+    <div class="row"><button class="btn secondary" id="openRotuloQuick">🏷️ Rótulo</button><button class="btn secondary" id="goMatch">⚽ Partido</button></div>
   </section>
 </div>
 </section>
 
 <section class="view" id="view-production">
-<div class="production-nav"><button class="active" data-production-panel="countdown">Cuenta regresiva</button><button data-production-panel="stats">Estadísticas</button><button data-production-panel="sponsors">Patrocinadores</button></div><div class="production-grid">
-<section class="card production-card production-panel" data-production-view="countdown"><div class="card-head"><h2>Cuenta regresiva</h2><span class="hint" id="countdownStatus">Detenida</span></div><div class="countdown-label">PRÓXIMO MOMENTO AL AIRE</div><div class="countdown-display" id="countdownDisplay">00:00</div><div class="quick"><input id="countdownMinutes" type="number" min="0" placeholder="Minutos"><input id="countdownSeconds" type="number" min="0" max="59" placeholder="Segundos"><button class="btn secondary" id="countdownConfirm">✓ Confirmar</button></div><div class="row"><button class="btn" id="countdownStart">▶ Iniciar</button><button class="btn secondary" id="countdownPause">⏸ Pausar</button><button class="btn secondary" id="countdownReset">↻ Limpiar</button></div><div class="production-confirm" id="countdownConfirmStatus">Primero confirmá el tiempo.</div></section>
-<section class="card production-card production-panel is-hidden" data-production-view="stats"><div class="card-head"><h2>Estadísticas de fútbol</h2><span class="hint">editar y confirmar cada dato</span></div><div class="stat-grid"><div class="stat-control"><span>Tiros local</span><b id="shots1">0</b><input id="shots1Input" type="number" min="0"><button data-stat-confirm="shots1">✓</button></div><div class="stat-control"><span>Tiros visitante</span><b id="shots2">0</b><input id="shots2Input" type="number" min="0"><button data-stat-confirm="shots2">✓</button></div><div class="stat-control"><span>Corners local</span><b id="corners1">0</b><input id="corners1Input" type="number" min="0"><button data-stat-confirm="corners1">✓</button></div><div class="stat-control"><span>Corners visitante</span><b id="corners2">0</b><input id="corners2Input" type="number" min="0"><button data-stat-confirm="corners2">✓</button></div></div><div class="production-note">Cada ✓ confirma solo esa estadística y la envía al overlay.</div><div class="source-row"><input id="statsSourceUrl" placeholder="URL de API/proxy JSON"><button class="btn secondary" id="syncStats">↻ Sincronizar</button></div></section>
-<section class="card full production-panel is-hidden" data-production-view="sponsors"><div class="card-head"><h2>Patrocinadores dinámicos</h2><span class="hint" id="sponsorsStatus">guardados y activables</span></div><div id="sponsorList"></div><div class="row"><button class="btn secondary" id="addSponsor">＋ Agregar patrocinador</button><button class="btn" id="saveSponsors">✓ Guardar cambios</button><button class="btn secondary" id="clearSponsors">Desactivar todos</button></div><div class="production-note">Cada fila tiene su propio ✓. Desactivar no borra el patrocinador ni su logo.</div></section>
+<div class="cards">
+<section class="card full production-card">
+  <div class="card-head"><h2>Producción</h2><span class="hint">Cuenta regresiva · estadísticas · patrocinadores</span></div>
+  <div class="production-nav">
+    <button class="active" data-production-tab="countdown">Cuenta atrás</button>
+    <button data-production-tab="stats">Estadísticas</button>
+    <button data-production-tab="sponsors">Patrocinadores</button>
+  </div>
+
+  <div class="production-panel" id="prod-countdown">
+    <div class="countdown-display" id="prodCountdownDisplay">00:00</div>
+    <div class="countdown-label">Tiempo de la cuenta regresiva</div>
+    <div class="row" style="margin-top:10px">
+      <input id="countdownSeconds" type="number" min="0" step="1" value="15" placeholder="Segundos">
+      <button class="btn" id="countdownSet">Fijar</button>
+    </div>
+    <div class="row">
+      <button class="btn" id="countdownStart">▶ Iniciar</button>
+      <button class="btn secondary" id="countdownPause">⏸ Pausar</button>
+      <button class="btn secondary" id="countdownReset">↺ Reset</button>
+    </div>
+    <div class="row">
+      <button class="btn" id="countdownSubmit">✓ Enviar</button>
+    </div>
+    <div class="production-confirm" id="countdownStatus">Listo para iniciar</div>
+  </div>
+
+  <div class="production-panel is-hidden" id="prod-stats">
+    <div class="stat-grid">
+      <div class="stat-control"><span>Tiros local</span><b id="statsShots1">0</b><div class="row"><button data-stat="shots1" data-delta="-1">−</button><button data-stat="shots1" data-delta="1">+</button></div></div>
+      <div class="stat-control"><span>Tiros visitante</span><b id="statsShots2">0</b><div class="row"><button data-stat="shots2" data-delta="-1">−</button><button data-stat="shots2" data-delta="1">+</button></div></div>
+      <div class="stat-control"><span>Corners local</span><b id="statsCorners1">0</b><div class="row"><button data-stat="corners1" data-delta="-1">−</button><button data-stat="corners1" data-delta="1">+</button></div></div>
+      <div class="stat-control"><span>Corners visitante</span><b id="statsCorners2">0</b><div class="row"><button data-stat="corners2" data-delta="-1">−</button><button data-stat="corners2" data-delta="1">+</button></div></div>
+    </div>
+    <div class="source-row" style="margin-top:12px">
+      <input id="statsSourceUrl" placeholder="URL de referencia o fuente" value="">
+      <button class="btn secondary" id="saveStatsSource">Guardar</button>
+    </div>
+    <div class="row">
+      <button class="btn" id="statsSubmit">✓ Enviar estadisticas</button>
+    </div>
+    <div class="production-confirm" id="statsStatus">Estadísticas sincronizadas</div>
+  </div>
+
+  <div class="production-panel is-hidden" id="prod-sponsors">
+    <div class="sponsor-row"><input type="checkbox" id="sponsorEnabled0"><input id="sponsorName0" placeholder="Nombre sponsor"><input id="sponsorLogo0" placeholder="URL del logo"><button class="btn secondary" data-sponsor-save="0">Guardar</button></div>
+    <div class="sponsor-row"><input type="checkbox" id="sponsorEnabled1"><input id="sponsorName1" placeholder="Nombre sponsor"><input id="sponsorLogo1" placeholder="URL del logo"><button class="btn secondary" data-sponsor-save="1">Guardar</button></div>
+    <div class="sponsor-row"><input type="checkbox" id="sponsorEnabled2"><input id="sponsorName2" placeholder="Nombre sponsor"><input id="sponsorLogo2" placeholder="URL del logo"><button class="btn secondary" data-sponsor-save="2">Guardar</button></div>
+    <div class="row">
+      <button class="btn" id="sponsorsSubmit">✓ Enviar patrocinadores</button>
+    </div>
+    <div class="production-confirm" id="sponsorStatus">Patrocinadores listos para publicarse</div>
+  </div>
+</section>
 </div>
 </section>
 
@@ -250,12 +301,49 @@ const {save,fmt,seconds,extraSeconds,serverNow}=window.ASTRA;
 const $=window.ASTRA.$, defaultsA=window.ASTRA.defaults;
 let selectedColor="#fff", drag=null;
 let draftLayout={}; // cambios de diseño aún no guardados: tienen prioridad sobre lo que llega de Firebase
-let sponsorDraftState=null;
 let teamNamesDraft=null;
 let teamNamesDirty=false;
 
 function toast(msg="Guardado"){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),1200)}
 function phase(t){return t.phase==="second"?"2T":t.phase==="finished"?"FINAL":t.phase==="firstEnded"?"DESCANSO":"1T"}
+function countdownDisplayValue(){
+  const c = window.ASTRA.getState().production?.countdown || defaultsA.production.countdown;
+  const base = Number(c.baseSeconds) || 0;
+  if (!c.active) return base;
+  return Math.max(0, base - Math.floor((Date.now() - (Number(c.startedAt) || 0)) / 1000));
+}
+function syncInputIfIdle(id, value){
+  const el = $(id);
+  if (!el || document.activeElement === el) return;
+  el.value = value;
+}
+function renderProduction(){
+  const p = window.ASTRA.getState().production || defaultsA.production;
+  const countdown = p.countdown || defaultsA.production.countdown;
+  const stats = p.stats || defaultsA.production.stats;
+  const sponsors = Array.isArray(p.sponsors) && p.sponsors.length ? p.sponsors : defaultsA.production.sponsors;
+
+  $("prodCountdownDisplay").textContent = fmt(countdownDisplayValue());
+  syncInputIfIdle("countdownSeconds", String(Number(countdown.baseSeconds) || 0));
+  $("countdownStatus").textContent = countdown.active ? "Cuenta regresiva en marcha" : "Listo para iniciar";
+
+  const statMap = {shots1:"statsShots1", shots2:"statsShots2", corners1:"statsCorners1", corners2:"statsCorners2"};
+  Object.entries(statMap).forEach(([key, nodeId]) => {
+    $(nodeId).textContent = Number(stats[key]) || 0;
+  });
+  syncInputIfIdle("statsSourceUrl", stats.sourceUrl || "");
+  $("statsStatus").textContent = "Estadísticas sincronizadas";
+
+  sponsors.forEach((s, i) => {
+    const enabled = $(`sponsorEnabled${i}`);
+    const name = $(`sponsorName${i}`);
+    const logo = $(`sponsorLogo${i}`);
+    if (enabled && !document.activeElement?.matches?.(`#sponsorEnabled${i}`)) enabled.checked = !!s.enabled;
+    if (name && document.activeElement !== name) name.value = s.name || "";
+    if (logo && document.activeElement !== logo) logo.value = s.logo || "";
+  });
+  $("sponsorStatus").textContent = "Patrocinadores listos para publicarse";
+}
 function renderApp(){
   const s=window.ASTRA.getState(), t=s.timer||{};
   $("s1").textContent=s.score1||0;$("s2").textContent=s.score2||0;
@@ -265,8 +353,8 @@ function renderApp(){
     teamNamesDraft.team1=s.team1Name||"LOCAL";
     teamNamesDraft.team2=s.team2Name||"VISITANTE";
   }
-  $("team1").value=teamNamesDraft.team1;
-  $("team2").value=teamNamesDraft.team2;
+  syncInputIfIdle("team1", teamNamesDraft.team1);
+  syncInputIfIdle("team2", teamNamesDraft.team2);
   $("timer").textContent=fmt(seconds());
   $("start").textContent=t.running?"⏸ En marcha":"▶ Iniciar";
   $("timerState").textContent=phase(t)+" · "+(t.running?"corriendo":"detenido")+(t.extraActive?" · TIEMPO EXTRA +"+fmt(extraSeconds()):"");
@@ -277,23 +365,12 @@ function renderApp(){
   $("addedBadgeMinutes").textContent=Number(t.extraMinutes)||0;
   $("addedBadge").classList.toggle("show",!!t.extraActive);
   $("extraAnnounced").textContent=t.extraActive?`+${Number(t.extraMinutes)||0}′ anunciados`:"Sin anunciar";
-  $("logo1").value=s.team1Logo||"";$("logo2").value=s.team2Logo||"";
+  syncInputIfIdle("logo1", s.team1Logo||"");
+  syncInputIfIdle("logo2", s.team2Logo||"");
   $("kScore").textContent=`${s.score1||0}–${s.score2||0}`;$("kClock").textContent=fmt(seconds());$("kPhase").textContent=phase(t);
-  renderPreview(false);
   renderProduction();
+  renderPreview(false);
 }
-function countdownSeconds(){const c=window.ASTRA.getState().production?.countdown||{};if(!c.active)return Math.max(0,Number(c.baseSeconds)||0);return Math.max(0,(Number(c.baseSeconds)||0)-Math.floor((serverNow()-(Number(c.startedAt)||0))/1000))}
-function renderSponsors(list){const box=$("sponsorList");if(document.activeElement&&box.contains(document.activeElement))return;box.innerHTML=(list||[]).map((s,i)=>`<div class="sponsor-row" data-sponsor-row="${i}"><input type="checkbox" data-sponsor-field="enabled" ${s.enabled?"checked":""}><input data-sponsor-field="name" value="${String(s.name||"").replace(/"/g,"&quot;")}" placeholder="Nombre del patrocinador"><input data-sponsor-field="logo" value="${String(s.logo||"").replace(/"/g,"&quot;")}" placeholder="URL directa del logo"><button class="btn secondary" data-sponsor-confirm="${i}">✓</button></div>`).join("");box.querySelectorAll("[data-sponsor-confirm]").forEach(button=>button.onclick=()=>{const i=Number(button.dataset.sponsorConfirm),draft=sponsorDraft();productionSave({sponsors:draft}).then(()=>{$("sponsorsStatus").textContent=`Patrocinador ${i+1} confirmado ✓`})})}
-function renderProduction(){const p=window.ASTRA.getState().production||defaultsA.production,c=p.countdown||defaultsA.production.countdown,stats=p.stats||defaultsA.production.stats;$("countdownDisplay").textContent=fmt(countdownSeconds());$("countdownStatus").textContent=c.active?"Corriendo":countdownSeconds()?"Pausada":"Detenida";["shots1","shots2","corners1","corners2"].forEach(k=>{$(k).textContent=Math.max(0,Number(stats[k])||0);if(document.activeElement!==$(k+"Input"))$(k+"Input").value=Math.max(0,Number(stats[k])||0)});$("statsSourceUrl").value=stats.sourceUrl||"";renderSponsors(sponsorDraftState||p.sponsors||[])}
-function productionSave(patch){return save({production:{...window.ASTRA.getState().production,...patch}})}
-function countdownSave(patch){return productionSave({countdown:{...window.ASTRA.getState().production.countdown,...patch}})}
-function updateStat(key,delta){const stats={...window.ASTRA.getState().production.stats,[key]:Math.max(0,(Number(window.ASTRA.getState().production.stats?.[key])||0)+delta)};productionSave({stats})}
-function sponsorDraft(){return Array.from(document.querySelectorAll("[data-sponsor-row]")).map(row=>({name:row.querySelector('[data-sponsor-field="name"]').value.trim(),logo:row.querySelector('[data-sponsor-field="logo"]').value.trim(),enabled:row.querySelector('[data-sponsor-field="enabled"]').checked}))}
-$("addSponsor").onclick=()=>{sponsorDraftState=[...(sponsorDraftState||window.ASTRA.getState().production.sponsors||[]),{name:"",logo:"",enabled:false}];renderSponsors(sponsorDraftState)};
-$("saveSponsors").onclick=()=>productionSave({sponsors:sponsorDraft()}).then(()=>{$("sponsorsStatus").textContent="Todos los cambios guardados ✓";sponsorDraftState=null});$("clearSponsors").onclick=()=>{const disabled=sponsorDraft().map(s=>({...s,enabled:false}));productionSave({sponsors:disabled}).then(()=>{sponsorDraftState=disabled;renderSponsors(disabled);$("sponsorsStatus").textContent="Todos desactivados ✓"})};
-document.querySelectorAll("[data-production-panel]").forEach(button=>button.onclick=()=>{const panel=button.dataset.productionPanel;document.querySelectorAll("[data-production-panel]").forEach(item=>item.classList.toggle("active",item===button));document.querySelectorAll("[data-production-view]").forEach(view=>view.classList.toggle("is-hidden",view.dataset.productionView!==panel))});
-$("countdownConfirm").onclick=()=>{const baseSeconds=Math.max(0,Number($("countdownMinutes").value)||0)*60+Math.max(0,Math.min(59,Number($("countdownSeconds").value)||0));countdownSave({active:false,baseSeconds,startedAt:0}).then(()=>$("countdownConfirmStatus").textContent="Tiempo confirmado ✓")};$("countdownStart").onclick=()=>{if(countdownSeconds()<=0)return;countdownSave({active:true,startedAt:firebase.database.ServerValue.TIMESTAMP})};$("countdownPause").onclick=()=>{if(window.ASTRA.getState().production.countdown.active)countdownSave({active:false,baseSeconds:countdownSeconds(),startedAt:0})};$("countdownReset").onclick=()=>{countdownSave({active:false,baseSeconds:0,startedAt:0});$("countdownConfirmStatus").textContent="Tiempo limpiado"};
-document.querySelectorAll("[data-stat-confirm]").forEach(b=>b.onclick=()=>{const key=b.dataset.statConfirm,value=Math.max(0,Number($(key+"Input").value)||0);productionSave({stats:{...window.ASTRA.getState().production.stats,[key]:value}}).then(()=>toast("Estadística confirmada ✓"))});$("addSponsor").onclick=()=>{const list=sponsorDraft();list.push({name:"",logo:"",enabled:false});renderSponsors(list)};$("saveSponsors").onclick=()=>productionSave({sponsors:sponsorDraft()}).then(()=>$("sponsorsStatus").textContent="Todos los cambios guardados ✓");$("clearSponsors").onclick=()=>productionSave({sponsors:sponsorDraft().map(s=>({...s,enabled:false}))});$("syncStats").onclick=async()=>{const url=$("statsSourceUrl").value.trim();if(!url)return;try{const data=await fetch(url).then(r=>r.json());const stats={...window.ASTRA.getState().production.stats,...data,sourceUrl:url};await productionSave({stats});toast("Estadísticas sincronizadas ✓")}catch(e){toast("No se pudo sincronizar la fuente")}};
 function getLayout(k){const base={...defaultsA.layout[k],...((window.ASTRA.getState().layout||{})[k]||{})};return draftLayout[k]?{...base,...draftLayout[k]}:base}
 const layoutLabels={name1:"Nombre local",name2:"Nombre visitante",score1:"Marcador local",score2:"Marcador visitante",clock:"Cronómetro",extra:"Tiempo añadido",logo1:"Logo local",logo2:"Logo visitante"};
 function ensureQuickLayout(){const box=$("quickLayout");if(box.children.length)return;box.innerHTML='<div class="quick-layout-head"><span>Elemento</span><span>X</span><span>Y</span><span>Ancho</span><span>Alto</span><span>Tamaño</span></div>'+Object.keys(defaultsA.layout).map(k=>`<div class="quick-layout-row" data-quick-row="${k}"><strong>${layoutLabels[k]}</strong><input data-quick-key="x" type="number" min="0" max="100" step=".1"><input data-quick-key="y" type="number" min="0" max="100" step=".1"><input data-quick-key="w" type="number" min="1" max="100" step=".1"><input data-quick-key="h" type="number" min="1" max="100" step=".1"><input data-quick-key="fontSize" type="number" min=".5" max="12" step=".1"></div>`).join("");box.querySelectorAll("input[data-quick-key]").forEach(input=>input.oninput=()=>{const row=input.closest("[data-quick-row]"),k=row.dataset.quickRow,q=getLayout(k);q[input.dataset.quickKey]=Number(input.value);draftLayout[k]=q;applyElement(k,q);if($("target").value===k)loadEditor()})}
@@ -389,9 +466,75 @@ function openRotulo(){location.href="rotulo.html?match="+encodeURIComponent(new 
 function openNews(){location.href="noticias.html?match="+encodeURIComponent(new URLSearchParams(location.search).get("match")||"default")}
 $("openLineups").onclick=openLineups;$("openRotulo").onclick=openRotulo;$("openNewsRail").onclick=openNews;
 $("openLineupsQuick").onclick=openLineups;$("openRotuloQuick").onclick=openRotulo;$("openNews").onclick=openNews;
-function tab(name){document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+name));$("pageTitle").textContent={match:"Partido",design:"Diseño del overlay",obs:"OBS · Browser Sources",production:"Producción"}[name]||"Partido";if(name==="design")renderPreview(true);if(name==="production")renderProduction()}
+function tab(name){document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+name));$("pageTitle").textContent={match:"Partido",production:"Producción",design:"Diseño del overlay",obs:"OBS · Browser Sources"}[name]||"Partido";if(name==="design")renderPreview(true)}
+function productionTab(name){document.querySelectorAll("[data-production-tab]").forEach(b=>b.classList.toggle("active",b.dataset.productionTab===name));document.querySelectorAll(".production-panel").forEach(v=>v.classList.toggle("is-hidden",v.id!==`prod-${name}`));}
+document.querySelectorAll("[data-production-tab]").forEach(b=>b.onclick=()=>productionTab(b.dataset.productionTab));
+$("countdownSet").onclick=async()=>{
+  const value = Math.max(0, Number($("countdownSeconds").value) || 0);
+  await save({"production/countdown/baseSeconds": value, "production/countdown/active": false, "production/countdown/startedAt": 0});
+  $("countdownStatus").textContent = "Cuenta regresiva lista";
+};
+$("countdownSubmit").onclick=async()=>{
+  const value = Math.max(0, Number($("countdownSeconds").value) || 0);
+  await save({"production/countdown/baseSeconds": value, "production/countdown/active": false, "production/countdown/startedAt": 0});
+  $("countdownStatus").textContent = "Cuenta regresiva enviada";
+};
+$("countdownStart").onclick=async()=>{
+  const c = window.ASTRA.getState().production?.countdown || defaultsA.production.countdown;
+  const base = Number(c.baseSeconds) || Number($("countdownSeconds").value) || 0;
+  if (c.active) return;
+  await save({"production/countdown/baseSeconds": base, "production/countdown/active": true, "production/countdown/startedAt": firebase.database.ServerValue.TIMESTAMP});
+  $("countdownStatus").textContent = "Cuenta regresiva en marcha";
+};
+$("countdownPause").onclick=async()=>{
+  const value = countdownDisplayValue();
+  await save({"production/countdown/baseSeconds": value, "production/countdown/active": false, "production/countdown/startedAt": 0});
+  $("countdownStatus").textContent = "Cuenta regresiva pausada";
+};
+$("countdownReset").onclick=async()=>{
+  const value = Math.max(0, Number($("countdownSeconds").value) || 0);
+  await save({"production/countdown/baseSeconds": value, "production/countdown/active": false, "production/countdown/startedAt": 0});
+  $("countdownStatus").textContent = "Cuenta regresiva reiniciada";
+};
+document.querySelectorAll("[data-stat]").forEach(btn=>btn.onclick=async()=>{
+  const key = btn.dataset.stat;
+  const prev = Number(window.ASTRA.getState().production?.stats?.[key] || 0);
+  const next = Math.max(0, prev + Number(btn.dataset.delta));
+  await save({[`production/stats/${key}`]: next});
+  $("statsStatus").textContent = `Estadística ${key} guardada`;
+});
+$("statsSubmit").onclick=async()=>{
+  const sourceUrl = $("statsSourceUrl").value.trim();
+  await save({"production/stats/sourceUrl": sourceUrl});
+  $("statsStatus").textContent = "Estadísticas enviadas";
+};
+$("saveStatsSource").onclick=async()=>{
+  const sourceUrl = $("statsSourceUrl").value.trim();
+  await save({"production/stats/sourceUrl": sourceUrl});
+  $("statsStatus").textContent = "Fuente guardada";
+};
+function saveSponsor(index){
+  const payload = {
+    name: $(`sponsorName${index}`).value.trim(),
+    logo: $(`sponsorLogo${index}`).value.trim(),
+    enabled: $(`sponsorEnabled${index}`).checked
+  };
+  return save({[`production/sponsors/${index}`]: payload});
+}
+document.querySelectorAll("[data-sponsor-save]").forEach(btn => btn.onclick = async()=>{
+  const idx = Number(btn.dataset.sponsorSave);
+  await saveSponsor(idx);
+  $("sponsorStatus").textContent = `Sponsor ${idx + 1} guardado`;
+});
+$("sponsorsSubmit").onclick=async()=>{
+  for (let i=0; i<3; i++) {
+    await saveSponsor(i);
+  }
+  $("sponsorStatus").textContent = "Patrocinadores enviados";
+};
+
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
-$("goDesign").onclick=()=>tab("design");$("goObs").onclick=()=>tab("obs");
+$("goProduction").onclick=()=>tab("production");$("goDesign").onclick=()=>tab("design");$("goObs").onclick=()=>tab("obs");$("goMatch").onclick=()=>tab("match");
 $("logout").onclick=()=>window.ASTRA.auth.signOut();
 $("loginBtn").onclick=async()=>{try{await window.ASTRA.auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value);$("error").style.display="none"}catch(e){$("error").textContent="No se pudo iniciar sesión.";$("error").style.display="block"}};
 window.renderApp=renderApp;
@@ -403,6 +546,6 @@ $("preview").addEventListener("pointerdown",e=>{
 });
 $("preview").addEventListener("pointermove",e=>{if(!drag)return;const dx=(e.clientX-drag.startX)/drag.r.width*100,dy=(e.clientY-drag.startY)/drag.r.height*100,q=getLayout(drag.k);q.x=Math.max(0,Math.min(100-q.w,drag.x+dx));q.y=Math.max(0,Math.min(100-q.h,drag.y+dy));draftLayout[drag.k]=q;applyElement(drag.k,q);if($("target").value===drag.k){$("rx").value=q.x;$("ry").value=q.y;updateEditor()}});
 $("preview").addEventListener("pointerup",e=>{if(drag){document.getElementById("pv_"+drag.k)?.classList.remove("dragging");drag=null}});
-urls();renderApp();loadEditor();setInterval(()=>{renderApp()},500);
+urls();renderApp();loadEditor();
 </script>
 </body></html>

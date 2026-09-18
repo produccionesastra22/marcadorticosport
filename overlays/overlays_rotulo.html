@@ -28,18 +28,23 @@ html,body{
     bottom:8vh;
 
     display:flex;
+    align-items:stretch;
 
-    min-width:300px;
-    max-width:70vw;
+    min-width:320px;
+    max-width:72vw;
 
-    background:#111;
+    background:linear-gradient(135deg, rgba(17,24,35,0.96), rgba(12,16,23,0.94));
+    border:1px solid rgba(122,164,255,0.32);
     border-left:8px solid #4e7fff;
+    border-radius:18px 18px 18px 10px;
+    box-shadow:0 18px 54px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.06);
+    overflow:hidden;
 
     transform:translateX(-120%);
     opacity:0;
 
     transition:
-        transform .35s ease,
+        transform .35s cubic-bezier(.22,1,.36,1),
         opacity .25s ease;
 }
 
@@ -48,27 +53,80 @@ html,body{
     opacity:1;
 }
 
+#card::before{
+    content:"";
+    position:absolute;
+    inset:0 auto 0 0;
+    width:96px;
+    background:linear-gradient(180deg, rgba(78,127,255,0.20), rgba(78,127,255,0));
+    pointer-events:none;
+}
+
+.badge{
+    position:relative;
+    z-index:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:72px;
+    min-width:72px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    border-right:1px solid rgba(255,255,255,0.08);
+    transform:scale(var(--logo-scale,1));
+    transform-origin:center;
+}
+
+.badge span{
+    display:inline-block;
+    padding:8px 10px;
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:999px;
+    font-size:10px;
+    letter-spacing:2px;
+    font-weight:900;
+    color:#dbe8ff;
+    text-transform:uppercase;
+    background:rgba(255,255,255,0.02);
+    backdrop-filter:blur(2px);
+}
+
+.badge img{
+    display:none;
+    width:48px;
+    height:48px;
+    object-fit:contain;
+}
+
 .body{
-    padding:13px 28px 13px 16px;
+    position:relative;
+    z-index:1;
+    padding:16px 26px 16px 18px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
 }
 
 .name{
     font-family:Arial,Helvetica,sans-serif;
-    font-size:clamp(20px,2.4vw,36px);
+    font-size:clamp(22px,2.6vw,38px);
     font-weight:900;
-    line-height:1.05;
+    line-height:0.98;
+    letter-spacing:0.04em;
     color:#fff;
     text-transform:uppercase;
+    text-shadow:0 6px 18px rgba(0,0,0,0.20);
 }
 
 .cargo{
-    margin-top:5px;
+    margin-top:6px;
 
     font-family:Arial,Helvetica,sans-serif;
     font-size:clamp(11px,1.1vw,17px);
-    font-weight:bold;
-
-    color:#ddd;
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#d7e5ff;
+    opacity:0.9;
 }
 
 #login{
@@ -162,6 +220,8 @@ html,body{
 
 <div id="card">
 
+    <div class="badge" id="badge"><img id="logo"><span id="logoText">ASTRA</span></div>
+
     <div class="body">
 
         <div class="name" id="name"></div>
@@ -199,6 +259,12 @@ let listening=false;
 let wasVisible=false;
 
 function render(data){
+
+    const logoScale=Number(data.logoScale)||1;
+    $("badge").style.setProperty("--logo-scale",String(logoScale));
+    $("logo").src=data.logo||"";
+    $("logo").style.display=data.logo?"block":"none";
+    $("logoText").style.display=data.logo?"none":"block";
 
     $("name").textContent=
         data.name||"";
