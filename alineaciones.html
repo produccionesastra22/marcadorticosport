@@ -355,6 +355,10 @@ const {auth,db}=window.ASTRA;
 const ref=window.ASTRA.createRef("alineaciones");
 
 const defaults=window.ASTRA.clone(window.ASTRA.moduleDefaults.alineaciones);
+const emptyPlayers=()=>Array.from(
+    {length:11},
+    ()=>({num:"",name:""})
+);
 
 let state=JSON.parse(JSON.stringify(defaults));
 let listening=false;
