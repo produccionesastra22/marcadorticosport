@@ -447,8 +447,6 @@ function startListen(){
 $("login").style.display="none";
 auth.signInAnonymously().then(startListen).catch(e=>console.error("Firebase auth:",e.code||e.message));
 
-};
-
 })();
 </script>
 
