@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="es"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="../assets/theme.css?v=20260918-4">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="../assets/firebase.js"></script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent!important}
 body{font-family:Montserrat,Arial,sans-serif;color:#fff}.board{position:absolute;inset:7vh 5vw;display:flex;flex-direction:column;justify-content:center;gap:28px}
@@ -14,9 +15,9 @@ body{font-family:Montserrat,Arial,sans-serif;color:#fff}.board{position:absolute
 .name{font-size:clamp(24px,4vw,64px);font-weight:900;line-height:1.05;text-transform:uppercase}.score{font-size:clamp(52px,8vw,120px);font-weight:900;line-height:1;margin-top:8px}
 .vs{font-size:clamp(18px,2vw,32px);font-weight:800;opacity:.55}.slots{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 .slot{width:clamp(30px,3vw,52px);height:clamp(30px,3vw,52px);border:2px solid rgba(255,255,255,.35);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:clamp(15px,1.5vw,25px);font-weight:900;background:rgba(0,0,0,.12)}
-.goal{background:rgba(53,208,127,.25);border-color:#35d07f}.miss{background:rgba(233,84,103,.22);border-color:#e95467}
+.goal{background:rgba(53,208,127,.25);border-color:var(--accent)}.miss{background:rgba(233,84,103,.22);border-color:var(--accent)}
 .footer{text-align:center;font-size:clamp(10px,1vw,16px);letter-spacing:2px;opacity:.6;text-transform:uppercase}
-#login{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:#090d14;color:#fff;font-family:Inter,system-ui,sans-serif}#login .box{width:min(360px,90vw);padding:24px;border:1px solid #273044;border-radius:18px;background:#121824}#login h1{font-size:20px;margin:0 0 8px}#login p{font-size:12px;color:#9aa5b8;line-height:1.5}#login input{width:100%;height:42px;margin:5px 0;background:#090d14;border:1px solid #303a4e;color:#fff;border-radius:10px;padding:0 11px}#login button{width:100%;height:42px;margin-top:8px;border:0;border-radius:10px;background:#4f7cff;color:#fff;font-weight:800}.err{font-size:11px;color:#ff7184;margin-top:9px;min-height:16px}
+#login{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:#090d14;color:#fff;font-family:Inter,system-ui,sans-serif}#login .box{width:min(360px,90vw);padding:24px;border:1px solid #273044;border-radius:18px;background:#121824}#login h1{font-size:20px;margin:0 0 8px}#login p{font-size:12px;color:#9aa5b8;line-height:1.5}#login input{width:100%;height:42px;margin:5px 0;background:#090d14;border:1px solid #303a4e;color:#fff;border-radius:10px;padding:0 11px}#login button{width:100%;height:42px;margin-top:8px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-weight:800}.err{font-size:11px;color:#ff7184;margin-top:9px;min-height:16px}
 </style></head><body><div id="login"><div class="box"><h1>Acceso al overlay</h1><p>Inicia sesión con la cuenta autorizada para ver este overlay en OBS.</p><input id="loginEmail" type="email" placeholder="Correo"><input id="loginPassword" type="password" placeholder="Contraseña"><button id="loginBtn">Entrar</button><div class="err" id="loginErr"></div></div></div>
 <div class="board"><div class="header">MODO PENALES</div><div class="teams">
 <div class="team"><div class="name" id="n1">LOCAL</div><div class="score" id="s1">0</div><div class="slots" id="k1"></div></div>
@@ -26,18 +27,13 @@ body{font-family:Montserrat,Arial,sans-serif;color:#fff}.board{position:absolute
 <script>
 // ASTRA · Firebase bootstrap
 (() => {
-  const FIREBASE_CONFIG={apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",authDomain:"astraprods.firebaseapp.com",databaseURL:"https://astraprods-default-rtdb.firebaseio.com",projectId:"astraprods"};
-  const params=new URLSearchParams(location.search),matchId=params.get("match")||params.get("uuid")||"default";
-  if(!window.firebase)throw new Error("Firebase SDK no cargado.");if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
-  const auth=firebase.auth(),db=firebase.database(),ref=db.ref("marcadorSimple/"+matchId);let state={team1Name:"LOCAL",team2Name:"VISITANTE",score1:0,score2:0,timer:{phase:"first",baseSeconds:0,running:false,startedAt:0,extraMinutes:0,extraActive:false},penalties:{active:false,team1Name:"LOCAL",team2Name:"VISITANTE",kicks1:[null,null,null,null,null],kicks2:[null,null,null,null,null],visibleKicks:5},layout:{}},offset=0,listening=false;
-  const $=id=>document.getElementById(id),serverNow=()=>Date.now()+offset,pad=n=>String(n).padStart(2,"0");
-  const seconds=()=>{const t=state.timer||{};if(!t.running)return Math.max(0,Number(t.baseSeconds)||0);return Math.max(0,(Number(t.baseSeconds)||0)+Math.floor((serverNow()-(Number(t.startedAt)||0))/1000))};
-  const fmt=s=>`${pad(Math.floor(Math.max(0,s)/60))}:${pad(Math.floor(Math.max(0,s)%60))}`;
+  const {auth,db,matchId,ref}=window.ASTRA;let state=window.ASTRA.clone(window.ASTRA.defaults),offset=0,listening=false;
+  const $=id=>document.getElementById(id),serverNow=()=>window.ASTRA.serverNow(offset),seconds=()=>window.ASTRA.secondsForTimer(state.timer,offset),fmt=window.ASTRA.fmt;
   function startListen(){if(listening)return;listening=true;ref.on("value",snap=>{const d=snap.val()||{};state={...state,...d,timer:{...state.timer,...(d.timer||{})},penalties:{...state.penalties,...(d.penalties||{})},layout:{...state.layout,...(d.layout||{})}};if(window.renderApp)window.renderApp()},err=>{$("loginErr").textContent=err.code==="PERMISSION_DENIED"?"Firebase rechazó la lectura de este UUID.":err.message;});}
   db.ref(".info/serverTimeOffset").on("value",s=>offset=Number(s.val()||0));
-  window.ASTRA={$,db,auth,ref,defaults:{penalties:{visibleKicks:5}},seconds,fmt,serverNow,getState:()=>state,matchId};
-  auth.onAuthStateChanged(user=>{$("login").style.display=user?"none":"flex";if(user)startListen();});
-  $("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("loginEmail").value.trim(),$("loginPassword").value)}catch(e){$("loginErr").textContent=e.code||"No se pudo iniciar sesión";}};
+  Object.assign(window.ASTRA,{$,db,auth,ref,seconds,fmt,serverNow,getState:()=>state,matchId});
+  $("login").style.display="none";
+  auth.signInAnonymously().then(startListen).catch(e=>console.error("Firebase auth:",e.code||e.message));
 })();
 </script><script>
 const $=window.ASTRA.$, defaults=window.ASTRA.defaults;

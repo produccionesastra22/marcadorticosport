@@ -9,24 +9,25 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="assets/firebase.js"></script>
 <style>
-.stat-control{grid-template-columns:1fr 48px 64px auto}.stat-control input{height:30px;padding:0 5px;text-align:center}.stat-control button{width:auto;height:28px;padding:0 8px;font-size:10px;font-weight:800}.sponsor-row{grid-template-columns:auto 1fr 1.5fr auto}.sponsor-row button{height:30px;padding:0 8px}.sponsor-row input[type=checkbox]{width:17px;height:17px}.production-confirm{color:#31d39a;font-size:9px;margin-top:6px}
+.stat-control{grid-template-columns:1fr 48px 64px auto}.stat-control input{height:30px;padding:0 5px;text-align:center}.stat-control button{width:auto;height:28px;padding:0 8px;font-size:10px;font-weight:800}.sponsor-row{grid-template-columns:auto 1fr 1.5fr auto}.sponsor-row button{height:30px;padding:0 8px}.sponsor-row input[type=checkbox]{width:17px;height:17px}.production-confirm{color:var(--accent);font-size:9px;margin-top:6px}
 *{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;background:#080b11;color:#f6f8fc;font-family:Inter,system-ui,sans-serif}
 body{overflow-x:hidden}.app{min-height:100vh;display:grid;grid-template-columns:64px minmax(0,1fr)}
 .rail{position:sticky;top:0;height:100vh;background:#0d1119;border-right:1px solid #202735;display:flex;flex-direction:column;align-items:center;padding:10px 7px;z-index:5}
-.brand{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#5b8cff,#6c4dff);font-weight:900;box-shadow:0 8px 24px #315fff33;margin-bottom:18px}
+.brand{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,var(--accent),var(--accent-strong));font-weight:900;box-shadow:0 8px 24px var(--accent-soft);margin-bottom:18px}
 .nav{display:grid;gap:7px;width:100%}.nav button{position:relative;width:50px;height:50px;border:0;background:transparent;color:#7f8ba0;border-radius:13px;font-size:19px;cursor:pointer}.nav button:hover,.nav button.active{background:#1a2130;color:#fff}.nav button.active:before{content:"";position:absolute;left:-7px;top:14px;width:3px;height:22px;border-radius:3px;background:#5b8cff}
 .rail-bottom{margin-top:auto;display:grid;gap:7px}.rail-bottom button{width:50px;height:42px;border:1px solid #242c3a;background:#111722;color:#aab5c7;border-radius:11px;cursor:pointer}
 .main{min-width:0;padding:16px 18px 24px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.heading{min-width:0}.eyebrow{font-size:9px;letter-spacing:2px;color:#6e8fd4;font-weight:800}.title{font:800 22px/1.1 Montserrat,sans-serif;letter-spacing:-.5px;margin-top:4px}.sub{font-size:11px;color:#778399;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.top-actions{display:flex;align-items:center;gap:7px}.pill{display:flex;align-items:center;gap:7px;border:1px solid #252e3d;background:#101620;border-radius:20px;padding:7px 10px;font-size:10px;color:#9ca8ba;white-space:nowrap}.dot{width:7px;height:7px;border-radius:50%;background:#f0ad4e}.dot.ok{background:#35d07f}.btn{border:0;border-radius:10px;background:#4e7fff;color:#fff;height:36px;padding:0 12px;font-weight:800;font-size:11px;cursor:pointer}.btn.secondary{background:#1a2130;color:#cbd4e3}.btn.danger{background:#762d3c}.btn:active{transform:translateY(1px)}
-.view{display:none}.view.active{display:block}.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#10151e;border:1px solid #222b39;border-radius:15px;padding:14px;box-shadow:0 12px 40px #0003}.card.full{grid-column:1/-1}.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:11px}.card h2{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:#aeb8c9;margin:0}.hint{font-size:9px;color:#68758a}
-label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{width:100%;height:37px;border:1px solid #2b3545;border-radius:9px;background:#090d14;color:#f5f7fb;padding:0 9px;outline:0;font:600 11px Inter}input:focus,select:focus{border-color:#4e7fff;box-shadow:0 0 0 2px #4e7fff18}
+.top-actions{display:flex;align-items:center;gap:7px}.pill{display:flex;align-items:center;gap:7px;border:1px solid #252e3d;background:#101620;border-radius:20px;padding:7px 10px;font-size:12px;color:#9ca8ba;white-space:nowrap}.dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}.dot.ok{background:var(--accent)}.btn{border:0;border-radius:10px;background:var(--accent-strong);color:#fff;height:36px;padding:0 12px;font-weight:800;font-size:12px;cursor:pointer}.btn.secondary{background:#1a2130;color:#cbd4e3}.btn.danger{background:#762d3c}.btn:active{transform:translateY(1px)}
+.view{display:none}.view.active{display:block}.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#10151e;border:1px solid #222b39;border-radius:15px;padding:14px;box-shadow:0 12px 40px #0003}.card.full{grid-column:1/-1}.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:11px}.card h2{font-size:12px;letter-spacing:1.3px;text-transform:uppercase;color:#aeb8c9;margin:0}.hint{font-size:12px;color:#8c9bad}
+label{display:block;font-size:12px;color:#9aa8b8;margin:0 0 5px}input,select{width:100%;height:37px;border:1px solid #2b3545;border-radius:9px;background:#090d14;color:#f5f7fb;padding:0 9px;outline:0;font:600 12px Inter}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
 .teams{display:grid;grid-template-columns:1fr 1fr;gap:8px}.scoreboard{display:grid;grid-template-columns:1fr 52px 1fr;align-items:center;gap:8px;margin-top:10px}.scorebox{text-align:center}.scorebox .num{font:900 52px/1 Montserrat}.scorebox button{width:100%;height:30px;border:0;border-radius:8px;background:#1c2432;color:#fff;font-size:18px;font-weight:900;cursor:pointer}.scorebox button:hover{background:#273248}.vs{text-align:center;color:#566176;font-size:10px;font-weight:900}
 .timerbox{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px}.timer{font:900 48px/1 Montserrat;letter-spacing:1px;font-variant-numeric:tabular-nums}.timer-state{font-size:9px;color:#78859a;margin-top:4px}.timer-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}.timer-actions button{height:34px}.quick{display:flex;gap:6px;margin-top:7px}.quick input{height:34px}.quick .btn{height:34px;padding:0 9px}
-.match-card{background:linear-gradient(145deg,#121b27,#0d141d);border-color:#304258;padding:18px}.match-card .card-head{margin-bottom:15px}.match-live{display:inline-flex;align-items:center;gap:6px;color:#82e8b8;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase}.match-live:before{content:"";width:7px;height:7px;border-radius:50%;background:#31d39a;box-shadow:0 0 0 4px #31d39a22}.scoreboard-pro{display:grid;grid-template-columns:minmax(0,1fr) 180px minmax(0,1fr);align-items:center;gap:18px}.score-team{min-width:0}.score-team:last-child{text-align:right}.score-team label{letter-spacing:1.4px}.score-team input{height:42px;font-size:13px;font-weight:800}.score-center{text-align:center}.score-phase{font-size:9px;color:#8495ab;font-weight:800;letter-spacing:1.4px;text-transform:uppercase}.scoreline{display:flex;align-items:center;justify-content:center;gap:10px;margin:7px 0 9px;font:900 64px/.9 Montserrat;font-variant-numeric:tabular-nums}.scoreline span{font-size:30px;color:#53657a}.score-actions{display:flex;justify-content:center;gap:6px}.score-actions button{width:42px;height:30px;border:1px solid #34465c;border-radius:8px;background:#1a2635;color:#fff;font-size:16px;font-weight:900;cursor:pointer}.score-actions button:hover{background:#29405b}.score-actions .score-add{background:#2e7fe0;border-color:#55a7ff}.score-note{margin-top:14px;padding-top:10px;border-top:1px solid #263443;color:#7f90a5;font-size:9px;text-align:center}@media(max-width:760px){.scoreboard-pro{grid-template-columns:1fr 110px 1fr;gap:8px}.scoreline{font-size:46px;gap:5px}.scoreline span{font-size:22px}.score-team input{font-size:11px}}
-.timer-card,.extra-card{min-height:270px}.timer-card .card-head,.extra-card .card-head{margin-bottom:14px}.timerbox{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#0b121b;border:1px solid #243549;border-radius:11px;padding:13px}.timer-label,.extra-label{font-size:8px;letter-spacing:1.5px;color:#7188a0;font-weight:900;text-transform:uppercase}.timer-state{margin-top:5px}.timer-actions{grid-template-columns:repeat(3,1fr);margin-top:9px}.timer-actions button{height:34px}.timer-actions .active-control{background:#245b8d;color:#fff;border-color:#55a7ff}.timer-calibration{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.timer-calibration button{height:30px;padding:0 6px;font-size:10px}.added-badge{display:none;align-items:center;gap:5px;padding:7px 9px;border:1px solid #806b38;border-radius:8px;background:#3a301c;color:#ffdc7a;font:800 12px Montserrat;white-space:nowrap}.added-badge.show{display:flex}.added-badge small{font:800 8px Inter;color:#d2b96f}.extra-readout{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#0b121b;border:1px solid #243549;border-radius:11px;padding:13px;margin-bottom:9px}.extra-time{font:900 38px/1 Montserrat;color:#ffdc67;font-variant-numeric:tabular-nums}.extra-detail{text-align:right;font-size:9px;color:#91a4b8;line-height:1.5}.extra-detail strong{display:block;color:#f7fbff;font-size:11px}.extra-presets{display:flex;gap:6px;margin-bottom:8px}.extra-presets button{flex:1;height:30px;border:1px solid #34465c;border-radius:8px;background:#1a2635;color:#c7d3df;font-size:10px;font-weight:800;cursor:pointer}.extra-presets button:hover{background:#29405b}.extra-card .quick{margin-top:0}.extra-card .row{margin-top:9px}
-.production-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.production-card{min-height:250px}.countdown-display{font:900 46px/1 Montserrat;color:#ffcf67;font-variant-numeric:tabular-nums;margin:8px 0}.countdown-label{font-size:9px;color:#93a7bb;letter-spacing:1px;text-transform:uppercase}.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.stat-control{display:grid;grid-template-columns:1fr auto;align-items:center;gap:7px;background:#0b121b;border:1px solid #26394e;border-radius:8px;padding:8px}.stat-control span{font-size:9px;color:#9eb1c2}.stat-control b{font:800 18px Montserrat}.stat-control button{width:26px;height:25px;padding:0;background:#1e3044;border:1px solid #38536c;color:#fff;border-radius:6px;cursor:pointer}.sponsor-row{display:grid;grid-template-columns:auto 1fr 1.5fr;gap:7px;align-items:center;margin-top:7px}.sponsor-row input{height:32px}.sponsor-row input[type=checkbox]{width:17px;height:17px;accent-color:#31d39a}.production-note{font-size:9px;color:#7890a5;line-height:1.5;margin-top:9px}.source-row{display:flex;gap:7px}.source-row input{height:32px;font-size:9px}.source-row button{height:32px;white-space:nowrap}@media(max-width:760px){.production-grid{grid-template-columns:1fr}}
-.production-nav{display:flex;gap:7px;margin-bottom:10px}.production-nav button{flex:1;height:38px;border:1px solid #2f455b;border-radius:8px;background:#121e2b;color:#a9bac9;font-size:10px;font-weight:900;cursor:pointer}.production-nav button.active{background:#2e7fe0;border-color:#55a7ff;color:#fff}.production-panel.is-hidden{display:none}
+.match-card{background:linear-gradient(145deg,#121b27,#0d141d);border-color:#304258;padding:18px}.match-card .card-head{margin-bottom:15px}.match-live{display:inline-flex;align-items:center;gap:6px;color:#82e8b8;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase}.match-live:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent)22}.scoreboard-pro{display:grid;grid-template-columns:minmax(0,1fr) 180px minmax(0,1fr);align-items:center;gap:18px}.score-team{min-width:0}.score-team:last-child{text-align:right}.score-team label{letter-spacing:1.4px}.score-team input{height:42px;font-size:13px;font-weight:800}.score-center{text-align:center}.score-phase{font-size:9px;color:#8495ab;font-weight:800;letter-spacing:1.4px;text-transform:uppercase}.scoreline{display:flex;align-items:center;justify-content:center;gap:10px;margin:7px 0 9px;font:900 64px/.9 Montserrat;font-variant-numeric:tabular-nums}.scoreline span{font-size:30px;color:#53657a}.score-actions{display:flex;justify-content:center;gap:6px}.score-actions button{width:42px;height:30px;border:1px solid #34465c;border-radius:8px;background:#1a2635;color:#fff;font-size:16px;font-weight:900;cursor:pointer}.score-actions button:hover{background:#29405b}.score-actions .score-add{background:var(--accent);border-color:var(--accent)}.score-note{margin-top:14px;padding-top:10px;border-top:1px solid #263443;color:#7f90a5;font-size:9px;text-align:center}@media(max-width:760px){.scoreboard-pro{grid-template-columns:1fr 110px 1fr;gap:8px}.scoreline{font-size:46px;gap:5px}.scoreline span{font-size:22px}.score-team input{font-size:11px}}
+.timer-card,.extra-card{min-height:270px}.timer-card .card-head,.extra-card .card-head{margin-bottom:14px}.timerbox{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#0b121b;border:1px solid #243549;border-radius:11px;padding:13px}.timer-label,.extra-label{font-size:8px;letter-spacing:1.5px;color:#7188a0;font-weight:900;text-transform:uppercase}.timer-state{margin-top:5px}.timer-actions{grid-template-columns:repeat(3,1fr);margin-top:9px}.timer-actions button{height:34px}.timer-actions .active-control{background:#245b8d;color:#fff;border-color:var(--accent)}.timer-calibration{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.timer-calibration button{height:30px;padding:0 6px;font-size:10px}.added-badge{display:none;align-items:center;gap:5px;padding:7px 9px;border:1px solid #806b38;border-radius:8px;background:#3a301c;color:#ffdc7a;font:800 12px Montserrat;white-space:nowrap}.added-badge.show{display:flex}.added-badge small{font:800 8px Inter;color:#d2b96f}.extra-readout{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#0b121b;border:1px solid #243549;border-radius:11px;padding:13px;margin-bottom:9px}.extra-time{font:900 38px/1 Montserrat;color:#ffdc67;font-variant-numeric:tabular-nums}.extra-detail{text-align:right;font-size:9px;color:#91a4b8;line-height:1.5}.extra-detail strong{display:block;color:#f7fbff;font-size:11px}.extra-presets{display:flex;gap:6px;margin-bottom:8px}.extra-presets button{flex:1;height:30px;border:1px solid #34465c;border-radius:8px;background:#1a2635;color:#c7d3df;font-size:10px;font-weight:800;cursor:pointer}.extra-presets button:hover{background:#29405b}.extra-card .quick{margin-top:0}.extra-card .row{margin-top:9px}
+.production-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.production-card{min-height:250px}.countdown-display{font:900 46px/1 Montserrat;color:#ffcf67;font-variant-numeric:tabular-nums;margin:8px 0}.countdown-label{font-size:9px;color:#93a7bb;letter-spacing:1px;text-transform:uppercase}.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.stat-control{display:grid;grid-template-columns:1fr auto;align-items:center;gap:7px;background:#0b121b;border:1px solid #26394e;border-radius:8px;padding:8px}.stat-control span{font-size:9px;color:#9eb1c2}.stat-control b{font:800 18px Montserrat}.stat-control button{width:26px;height:25px;padding:0;background:#1e3044;border:1px solid #38536c;color:#fff;border-radius:6px;cursor:pointer}.sponsor-row{display:grid;grid-template-columns:auto 1fr 1.5fr;gap:7px;align-items:center;margin-top:7px}.sponsor-row input{height:32px}.sponsor-row input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent)}.production-note{font-size:9px;color:#7890a5;line-height:1.5;margin-top:9px}.source-row{display:flex;gap:7px}.source-row input{height:32px;font-size:9px}.source-row button{height:32px;white-space:nowrap}@media(max-width:760px){.production-grid{grid-template-columns:1fr}}
+.production-nav{display:flex;gap:7px;margin-bottom:10px}.production-nav button{flex:1;height:38px;border:1px solid #2f455b;border-radius:8px;background:#121e2b;color:#a9bac9;font-size:10px;font-weight:900;cursor:pointer}.production-nav button.active{background:var(--accent);border-color:var(--accent);color:#fff}.production-panel.is-hidden{display:none}
 .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.kpi .item{background:#0b1017;border:1px solid #202936;border-radius:10px;text-align:center;padding:10px 4px}.kpi b{display:block;font:800 20px Montserrat}.kpi span{font-size:8px;color:#68758a}
 .link{display:flex;gap:6px;margin-top:7px}.link input{font-size:9px;color:#9aa7ba}.link .btn{height:34px;min-width:66px}.row{display:flex;gap:7px;margin-top:8px}.row>*{flex:1}
 .preview-wrap{background:#080b10;border:1px solid #202936;border-radius:11px;padding:8px}.preview{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#131b28,#090d14);border-radius:7px;overflow:hidden}.preview:after{content:"LIVE PREVIEW · 16:9";position:absolute;right:7px;bottom:5px;font-size:7px;letter-spacing:1px;color:#59677c}.stage-el{position:absolute;white-space:nowrap;font-family:Montserrat;font-weight:800;text-transform:uppercase;line-height:1;cursor:grab;user-select:none}.stage-el.dragging{cursor:grabbing;outline:1px dashed #70a0ff;outline-offset:2px}.stage-el img{width:100%;height:100%;object-fit:contain}.design-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:9px;margin-top:9px}.control-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.control-grid .wide{grid-column:1/-1}.range{display:grid;grid-template-columns:1fr 54px;gap:7px;align-items:center}.range input[type=range]{height:auto;padding:0}.range output{height:30px;border:1px solid #293344;border-radius:8px;background:#0a0f16;display:grid;place-items:center;font-size:9px;color:#aeb8ca}
@@ -35,6 +36,7 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
 .login{position:fixed;inset:0;background:#06090eec;display:none;place-items:center;padding:18px;z-index:50}.loginbox{width:min(360px,100%);background:#111721;border:1px solid #293344;border-radius:18px;padding:20px;box-shadow:0 30px 100px #0009}.loginbox h1{font:800 20px Montserrat;margin:0}.loginbox p{font-size:10px;color:#7c899d;line-height:1.5}.loginbox input{margin-top:7px}.loginbox .btn{width:100%;margin-top:8px}.error{display:none;color:#ff788a;font-size:10px;margin-top:8px}
 @media(max-width:760px){.app{grid-template-columns:58px 1fr}.rail{padding:9px 5px}.rail button{width:46px}.main{padding:12px}.cards{grid-template-columns:1fr}.card.full{grid-column:auto}.design-grid{grid-template-columns:1fr}.top .sub{display:none}.title{font-size:19px}.top-actions .btn{display:none}}
 @media(min-width:761px) and (max-width:980px){.cards{grid-template-columns:1fr}.design-grid{grid-template-columns:1fr}}
+.eyebrow{font-size:11px}.sub,.timer-state,.timer-label,.extra-label,.extra-detail,.countdown-label,.production-note,.quick-layout-note,.hint,.card h2,.production-confirm,.kpi span,.score-phase,.match-live,.stat-control span,.quick-layout-head{font-size:11px}.btn,button{font-size:12px}.timer-actions button,.timer-calibration button,.extra-presets button,.production-nav button{font-size:11px}
 </style>
 <link rel="stylesheet" href="assets/theme.css?v=20260918-3">
 </head>
@@ -43,12 +45,12 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
 <aside class="rail">
   <div class="brand">A</div>
   <nav class="nav">
-    <button class="active" data-tab="match" title="Partido">⚽</button>
-    <button data-tab="production" title="Producción">◎</button>
-    <button data-tab="design" title="Diseño">✦</button>
-    <button data-tab="obs" title="OBS">▣</button>
+    <button class="active" data-tab="match" title="Partido" aria-label="Partido">⚽</button>
+    <button data-tab="production" title="Producción" aria-label="Producción">◎</button>
+    <button data-tab="design" title="Diseño" aria-label="Diseño">✦</button>
+    <button data-tab="obs" title="OBS" aria-label="OBS">▣</button>
   </nav>
-  <div class="rail-bottom"><button id="openPen" title="Penales">🥅</button><button id="openLineups" title="Alineaciones">🧾</button><button id="openRotulo" title="Rótulo">🏷️</button><button id="openNewsRail" title="Noticias / Lower Third">📰</button><button id="logout" title="Cerrar sesión">↪</button></div>
+  <div class="rail-bottom"><button id="openPen" title="Penales" aria-label="Penales">🥅</button><button id="openLineups" title="Alineaciones" aria-label="Alineaciones">🧾</button><button id="openRotulo" title="Rótulo" aria-label="Rótulo">🏷️</button><button id="openNewsRail" title="Noticias / Lower Third" aria-label="Noticias / Lower Third">📰</button><button id="logout" title="Cerrar sesión" aria-label="Cerrar sesión">↪</button></div>
 </aside>
 <main class="main">
 <header class="top">
@@ -159,7 +161,7 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
   <div class="card-head"><h2>Diseñador</h2><span class="hint">arrastrá elementos en la previsualización</span></div>
   <div class="preview-wrap"><div class="preview" id="preview">
     <div class="stage-el" id="pv_name1">LOCAL</div><div class="stage-el" id="pv_name2">VISITANTE</div><div class="stage-el" id="pv_score1">0</div><div class="stage-el" id="pv_score2">0</div><div class="stage-el" id="pv_clock">00:00</div><div class="stage-el" id="pv_extra"></div>
-    <div class="stage-el" id="pv_logo1"><img id="pv_img_logo1"></div><div class="stage-el" id="pv_logo2"><img id="pv_img_logo2"></div>
+    <div class="stage-el" id="pv_logo1"><img id="pv_img_logo1" alt="Logo del equipo local"></div><div class="stage-el" id="pv_logo2"><img id="pv_img_logo2" alt="Logo del equipo visitante"></div>
   </div></div>
   <div class="card-head" style="margin-top:12px"><h2>Edición rápida</h2><span class="hint">todos los elementos en una sola vista</span></div>
   <div class="quick-layout" id="quickLayout"></div>
@@ -174,7 +176,7 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
       <div class="range"><label>Tamaño<input id="rf" type="range" min=".5" max="12" step=".1"></label><output id="of">0vw</output></div>
       <div><label>Peso</label><select id="weight"><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option><option>900</option></select></div>
       <div><label>Alineación</label><select id="align"><option value="left">Izq.</option><option value="center">Centro</option><option value="right">Der.</option></select></div>
-      <div class="wide"><label>Color</label><div class="swatches" id="swatches"><button class="swatch" data-color="#ffffff" style="background:#fff"></button><button class="swatch" data-color="#000000" style="background:#000"></button><button class="swatch" data-color="#4e7fff" style="background:#4e7fff"></button><button class="swatch" data-color="#35d07f" style="background:#35d07f"></button><button class="swatch" data-color="#ffcf4d" style="background:#ffcf4d"></button><button class="swatch" data-color="#ff6077" style="background:#ff6077"></button></div></div>
+      <div class="wide"><label>Color</label><div class="swatches" id="swatches"><button class="swatch" data-color="#ffffff" aria-label="Color blanco" style="background:#fff"></button><button class="swatch" data-color="#000000" aria-label="Color negro" style="background:#000"></button><button class="swatch" data-color="#4e7fff" aria-label="Color azul" style="background:var(--accent)"></button><button class="swatch" data-color="#35d07f" aria-label="Color verde" style="background:var(--accent)"></button><button class="swatch" data-color="#ffcf4d" aria-label="Color amarillo" style="background:#ffcf4d"></button><button class="swatch" data-color="#ff6077" aria-label="Color rojo" style="background:#ff6077"></button></div></div>
     </div>
     <div>
       <div class="control-grid">
@@ -182,7 +184,7 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
         <div class="wide"><label>Logo visitante · URL directa</label><input id="logo2"></div>
       </div>
       <div class="savebar"><button class="btn" id="saveLayout">✓ Guardar elemento</button><button class="btn secondary" id="resetLayout">↻ Restablecer</button></div>
-      <div class="savebar"><button class="btn" id="saveAllLayout" style="background:#35d07f">✓✓ Guardar todo el diseño</button></div>
+      <div class="savebar"><button class="btn" id="saveAllLayout" style="background:var(--accent)">✓✓ Guardar todo el diseño</button></div>
       <div class="hint" style="margin-top:8px;line-height:1.5">Consejo: seleccioná un elemento y arrastralo. Los cambios se ven en vivo. "Guardar elemento" guarda solo lo seleccionado; "Guardar todo el diseño" guarda de una sola vez la posición de todos los elementos (incluidos los que arrastraste sin guardar todavía).</div>
     </div>
   </div>
@@ -215,63 +217,17 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
 <script>
 // ASTRA · Firebase bootstrap
 (() => {
-  const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
-    authDomain: "astraprods.firebaseapp.com",
-    databaseURL: "https://astraprods-default-rtdb.firebaseio.com",
-    projectId: "astraprods"
-  };
-
-  const defaults = {
-    team1Name: "LOCAL", team2Name: "VISITANTE",
-    team1Logo: "", team2Logo: "", score1: 0, score2: 0,
-    timer: {phase:"first",baseSeconds:0,running:false,startedAt:0,extraMinutes:0,extraActive:false,extraStartSeconds:0},
-    production: {countdown:{active:false,baseSeconds:0,startedAt:0},stats:{shots1:0,shots2:0,corners1:0,corners2:0,sourceUrl:""},sponsors:[{name:"",logo:"",enabled:false},{name:"",logo:"",enabled:false},{name:"",logo:"",enabled:false}]},
-    penalties: {active:false,team1Name:"LOCAL",team2Name:"VISITANTE",kicks1:[null,null,null,null,null],kicks2:[null,null,null,null,null],visibleKicks:5},
-    layout: {
-      name1:{x:10,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"left"},
-      name2:{x:60,y:38,w:30,h:8,fontSize:3,color:"#ffffff",fontWeight:800,align:"right"},
-      score1:{x:28,y:48,w:15,h:12,fontSize:6,color:"#ffffff",fontWeight:900,align:"center"},
-      score2:{x:57,y:48,w:15,h:12,fontSize:6,color:"#ffffff",fontWeight:900,align:"center"},
-      clock:{x:40,y:20,w:20,h:10,fontSize:5,color:"#ffffff",fontWeight:900,align:"center"},
-      extra:{x:46,y:30,w:8,h:6,fontSize:2.2,color:"#ffffff",fontWeight:800,align:"center"},
-      logo1:{x:5,y:35,w:12,h:12,fontSize:1,color:"#ffffff",fontWeight:700,align:"center"},
-      logo2:{x:83,y:35,w:12,h:12,fontSize:1,color:"#ffffff",fontWeight:700,align:"center"}
-    }
-  };
-
-  const params = new URLSearchParams(location.search);
-  const matchId = params.get("match") || "default";
-
-  if (!window.firebase) throw new Error("Firebase SDK no cargado.");
-  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-
-  const auth = firebase.auth();
-  const db = firebase.database();
-  const ref = db.ref("marcadorSimple/" + matchId);
+  const {auth,db,matchId,ref}=window.ASTRA;
+  const defaults=window.ASTRA.clone(window.ASTRA.defaults);
+  defaults.production=window.ASTRA.clone(window.ASTRA.moduleDefaults.production);
   let state = JSON.parse(JSON.stringify(defaults));
   let offset = 0;
 
   const $ = id => document.getElementById(id);
-  const pad = n => String(n).padStart(2,"0");
-  const serverNow = () => Date.now() + offset;
-
-  function seconds() {
-    if (!state.timer.running) return Math.max(0, Number(state.timer.baseSeconds)||0);
-    return Math.max(0,
-      (Number(state.timer.baseSeconds)||0) +
-      Math.floor((serverNow()-(Number(state.timer.startedAt)||0))/1000)
-    );
-  }
-  const fmt = s => {
-    s = Math.max(0, Math.floor(s));
-    return `${pad(Math.floor(s/60))}:${pad(s%60)}`;
-  };
-  function extraSeconds() {
-    const t = state.timer;
-    if (!t.extraActive) return 0;
-    return Math.max(0, seconds() - (Number(t.extraStartSeconds) || 0));
-  }
+  const serverNow = () => window.ASTRA.serverNow(offset);
+  const seconds = () => window.ASTRA.secondsForTimer(state.timer, offset);
+  const fmt = window.ASTRA.fmt;
+  const extraSeconds = () => window.ASTRA.extraSecondsForTimer(state.timer, offset);
   const save = patch => ref.update(patch).catch(e=>{ const t=document.getElementById("toast"); if(t){t.textContent="Error: "+(e.code||"Firebase");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);} throw e; });
 
   let listening=false;
@@ -291,11 +247,7 @@ label{display:block;font-size:9px;color:#78859a;margin:0 0 5px}input,select{widt
   }
   db.ref(".info/serverTimeOffset").on("value", s => offset=Number(s.val()||0));
 
-  window.ASTRA = {
-    $, db, auth, ref, defaults, save, seconds, fmt, extraSeconds, serverNow, startListen,
-    getState: () => state,
-    get offset(){ return offset; }
-  };
+  Object.assign(window.ASTRA,{ $,db,auth,ref,defaults,save,seconds,fmt,extraSeconds,serverNow,startListen,getState:()=>state,get offset(){return offset;}});
 })();
 
 const {save,fmt,seconds,extraSeconds,serverNow}=window.ASTRA;

@@ -2,11 +2,11 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="../assets/theme.css?v=20260918-4">
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><script src="../assets/firebase.js"></script>
 
 <style>
 
@@ -241,7 +241,7 @@ html,body{
 
 </style>
 <style>
-html,body{background:transparent!important}.stage-noise{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 0%,rgba(53,138,218,.2),transparent 42%),linear-gradient(90deg,transparent 0 49.7%,rgba(255,255,255,.08) 49.7% 50.3%,transparent 50.3%);opacity:.55}.cols{position:relative;gap:clamp(20px,5vw,80px);align-items:start}.col{position:relative;padding:18px 0}.col:before{content:"";position:absolute;inset:0 -18px;background:linear-gradient(180deg,rgba(7,18,30,.9),rgba(7,14,23,.58));border:1px solid rgba(107,169,215,.28);border-radius:14px;box-shadow:0 20px 55px rgba(0,0,0,.35);z-index:-1}.col h2{margin:0 14px 16px;padding:12px 14px;border:0;border-left:5px solid #55a7ff;border-bottom:1px solid rgba(120,190,240,.35);background:linear-gradient(90deg,rgba(38,111,175,.42),rgba(10,25,40,.15));font-size:clamp(18px,2.2vw,32px);letter-spacing:1px;text-shadow:0 3px 18px #000;text-align:left}.right h2{border-left:0;border-right:5px solid #ec6171;text-align:right;background:linear-gradient(270deg,rgba(145,46,65,.42),rgba(10,25,40,.15))}.player{min-height:44px;margin:0 14px 8px;padding:8px 12px;background:linear-gradient(90deg,rgba(17,42,64,.94),rgba(8,20,32,.94));border:1px solid rgba(116,177,220,.28);border-radius:8px;box-shadow:0 7px 18px rgba(0,0,0,.2);font-size:clamp(13px,1.35vw,20px);letter-spacing:.2px;animation:playerIn .48s cubic-bezier(.2,.8,.2,1) both}.right .player{background:linear-gradient(270deg,rgba(60,27,39,.94),rgba(18,19,30,.94));border-color:rgba(236,97,113,.3)}.num{border:0;border-radius:7px;background:#55a7ff;color:#06111d;box-shadow:0 0 18px rgba(85,167,255,.24)}.right .num{background:#ec6171;color:#21080e}.player:hover{filter:brightness(1.2)}@keyframes playerIn{from{opacity:0;transform:translateY(18px) scale(.98);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}@media(prefers-reduced-motion:reduce){.player{animation:none}}
+html,body{background:transparent!important}.stage-noise{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 0%,rgba(53,138,218,.2),transparent 42%),linear-gradient(90deg,transparent 0 49.7%,rgba(255,255,255,.08) 49.7% 50.3%,transparent 50.3%);opacity:.55}.cols{position:relative;gap:clamp(20px,5vw,80px);align-items:start}.col{position:relative;padding:18px 0}.col:before{content:"";position:absolute;inset:0 -18px;background:linear-gradient(180deg,rgba(7,18,30,.9),rgba(7,14,23,.58));border:1px solid rgba(107,169,215,.28);border-radius:14px;box-shadow:0 20px 55px rgba(0,0,0,.35);z-index:-1}.col h2{margin:0 14px 16px;padding:12px 14px;border:0;border-left:5px solid var(--accent);border-bottom:1px solid rgba(120,190,240,.35);background:linear-gradient(90deg,rgba(38,111,175,.42),rgba(10,25,40,.15));font-size:clamp(18px,2.2vw,32px);letter-spacing:1px;text-shadow:0 3px 18px #000;text-align:left}.right h2{border-left:0;border-right:5px solid var(--accent);text-align:right;background:linear-gradient(270deg,rgba(145,46,65,.42),rgba(10,25,40,.15))}.player{min-height:44px;margin:0 14px 8px;padding:8px 12px;background:linear-gradient(90deg,rgba(17,42,64,.94),rgba(8,20,32,.94));border:1px solid rgba(116,177,220,.28);border-radius:8px;box-shadow:0 7px 18px rgba(0,0,0,.2);font-size:clamp(13px,1.35vw,20px);letter-spacing:.2px;animation:playerIn .48s cubic-bezier(.2,.8,.2,1) both}.right .player{background:linear-gradient(270deg,rgba(60,27,39,.94),rgba(18,19,30,.94));border-color:rgba(236,97,113,.3)}.num{border:0;border-radius:7px;background:var(--accent);color:#06111d;box-shadow:0 0 18px rgba(85,167,255,.24)}.right .num{background:var(--accent);color:#21080e}.player:hover{filter:brightness(1.2)}@keyframes playerIn{from{opacity:0;transform:translateY(18px) scale(.98);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}@media(prefers-reduced-motion:reduce){.player{animation:none}}
 </style>
 </head>
 
@@ -308,22 +308,8 @@ html,body{background:transparent!important}.stage-noise{position:fixed;inset:0;p
 <script>
 (() => {
 
-const FIREBASE_CONFIG={
-    apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
-    authDomain:"astraprods.firebaseapp.com",
-    databaseURL:"https://astraprods-default-rtdb.firebaseio.com",
-    projectId:"astraprods"
-};
-
-if(!firebase.apps.length){
-    firebase.initializeApp(FIREBASE_CONFIG);
-}
-
-const auth=firebase.auth();
-const db=firebase.database();
-
-const ref=
-    db.ref("alineaciones");
+const {auth,db}=window.ASTRA;
+const ref=window.ASTRA.createRef("alineaciones");
 
 const $=id=>
     document.getElementById(id);
@@ -458,35 +444,8 @@ function startListen(){
 
 }
 
-auth.onAuthStateChanged(user=>{
-
-    $("login").style.display=
-        user?"none":"flex";
-
-    if(user){
-        startListen();
-    }
-
-});
-
-$("loginBtn").onclick=async()=>{
-
-    $("error").textContent="";
-
-    try{
-
-        await auth.signInWithEmailAndPassword(
-            $("loginEmail").value.trim(),
-            $("loginPassword").value
-        );
-
-    }catch(e){
-
-        $("error").textContent=
-            e.code||
-            "No se pudo iniciar sesión";
-
-    }
+$("login").style.display="none";
+auth.signInAnonymously().then(startListen).catch(e=>console.error("Firebase auth:",e.code||e.message));
 
 };
 

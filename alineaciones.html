@@ -8,6 +8,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="assets/firebase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
@@ -221,7 +222,7 @@ button.off{
 </style>
 <link rel="stylesheet" href="assets/theme.css?v=20260918-3">
 <style>
-.wrap{position:relative}.wrap:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 0%,rgba(65,150,230,.15),transparent 34%),linear-gradient(135deg,transparent 0 48%,rgba(85,167,255,.035) 48% 49%,transparent 49% 100%);z-index:-1}.top{animation:alignDrop .55s cubic-bezier(.2,.8,.2,1) both}.grid{perspective:900px}.grid .card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(18,29,42,.96),rgba(10,17,25,.98));border-color:#30465d;box-shadow:0 20px 60px rgba(0,0,0,.24);animation:alignCard .65s cubic-bezier(.2,.8,.2,1) both}.grid .card:nth-child(2){animation-delay:.08s}.grid .card:before{content:"STARTING XI";display:block;color:#63b4ff;font-size:9px;font-weight:900;letter-spacing:2px;margin-bottom:12px}.teamname{background:#0a1119!important;border-color:#38506a!important}.player{padding:4px;border:1px solid transparent;border-radius:8px;transition:background .18s,border-color .18s,transform .18s}.player:hover{background:#17283a;border-color:#315675;transform:translateX(3px)}.player input{background:#0a1119!important;border-color:#2c4054!important;border-radius:7px}.excel{background:linear-gradient(145deg,#101c29,#0d141d);border-color:#2b4057;animation:alignCard .7s .16s both}.status{color:#75a6ce}.loginbox{backdrop-filter:blur(12px)}@keyframes alignDrop{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}@keyframes alignCard{from{opacity:0;transform:translateY(18px) rotateX(2deg)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+.wrap{position:relative}.wrap:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 0%,rgba(65,150,230,.15),transparent 34%),linear-gradient(135deg,transparent 0 48%,rgba(85,167,255,.035) 48% 49%,transparent 49% 100%);z-index:-1}.top{animation:alignDrop .55s cubic-bezier(.2,.8,.2,1) both}.grid{perspective:900px}.grid .card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(18,29,42,.96),rgba(10,17,25,.98));border-color:#30465d;box-shadow:0 20px 60px rgba(0,0,0,.24);animation:alignCard .65s cubic-bezier(.2,.8,.2,1) both}.grid .card:nth-child(2){animation-delay:.08s}.grid .card:before{content:"STARTING XI";display:block;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:2px;margin-bottom:12px}.teamname{background:#0a1119!important;border-color:#38506a!important}.player{padding:4px;border:1px solid transparent;border-radius:8px;transition:background .18s,border-color .18s,transform .18s}.player:hover{background:#17283a;border-color:#315675;transform:translateX(3px)}.player input{background:#0a1119!important;border-color:#2c4054!important;border-radius:7px}.excel{background:linear-gradient(145deg,#101c29,#0d141d);border-color:#2b4057;animation:alignCard .7s .16s both}.status{color:#75a6ce}.loginbox{backdrop-filter:blur(12px)}@keyframes alignDrop{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}@keyframes alignCard{from{opacity:0;transform:translateY(18px) rotateX(2deg)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 
@@ -350,38 +351,10 @@ button.off{
 <script>
 (() => {
 
-const FIREBASE_CONFIG={
-    apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
-    authDomain:"astraprods.firebaseapp.com",
-    databaseURL:"https://astraprods-default-rtdb.firebaseio.com",
-    projectId:"astraprods"
-};
+const {auth,db}=window.ASTRA;
+const ref=window.ASTRA.createRef("alineaciones");
 
-if(!firebase.apps.length){
-    firebase.initializeApp(FIREBASE_CONFIG);
-}
-
-const auth=firebase.auth();
-const db=firebase.database();
-const ref=db.ref("alineaciones");
-
-const emptyPlayers=()=>Array.from(
-    {length:11},
-    ()=>({num:"",name:""})
-);
-
-const defaults={
-    teamA:{
-        name:"EQUIPO A",
-        players:emptyPlayers()
-    },
-    teamB:{
-        name:"EQUIPO B",
-        players:emptyPlayers()
-    },
-    visible:false,
-    updatedAt:0
-};
+const defaults=window.ASTRA.clone(window.ASTRA.moduleDefaults.alineaciones);
 
 let state=JSON.parse(JSON.stringify(defaults));
 let listening=false;

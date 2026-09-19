@@ -2,11 +2,11 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="../assets/theme.css?v=20260918-4">
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><script src="../assets/firebase.js"></script>
 
 <style>
 
@@ -35,7 +35,7 @@ html,body{
 
     background:linear-gradient(135deg, rgba(17,24,35,0.96), rgba(12,16,23,0.94));
     border:1px solid rgba(122,164,255,0.32);
-    border-left:8px solid #4e7fff;
+    border-left:8px solid var(--accent);
     border-radius:18px 18px 18px 10px;
     box-shadow:0 18px 54px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.06);
     overflow:hidden;
@@ -220,7 +220,7 @@ html,body{
 
 <div id="card">
 
-    <div class="badge" id="badge"><img id="logo"><span id="logoText">ASTRA</span></div>
+    <div class="badge" id="badge"><img id="logo" alt="Logo del patrocinador"><span id="logoText">ASTRA</span></div>
 
     <div class="body">
 
@@ -235,22 +235,8 @@ html,body{
 <script>
 (() => {
 
-const FIREBASE_CONFIG={
-    apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
-    authDomain:"astraprods.firebaseapp.com",
-    databaseURL:"https://astraprods-default-rtdb.firebaseio.com",
-    projectId:"astraprods"
-};
-
-if(!firebase.apps.length){
-    firebase.initializeApp(FIREBASE_CONFIG);
-}
-
-const auth=firebase.auth();
-const db=firebase.database();
-
-const ref=
-    db.ref("rotulo");
+const {auth,db}=window.ASTRA;
+const ref=window.ASTRA.createRef("rotulo");
 
 const $=id=>
     document.getElementById(id);
@@ -328,37 +314,8 @@ function startListen(){
 
 }
 
-auth.onAuthStateChanged(user=>{
-
-    $("login").style.display=
-        user?"none":"flex";
-
-    if(user){
-        startListen();
-    }
-
-});
-
-$("loginBtn").onclick=async()=>{
-
-    $("error").textContent="";
-
-    try{
-
-        await auth.signInWithEmailAndPassword(
-            $("loginEmail").value.trim(),
-            $("loginPassword").value
-        );
-
-    }catch(e){
-
-        $("error").textContent=
-            e.code||
-            "No se pudo iniciar sesión";
-
-    }
-
-};
+$("login").style.display="none";
+auth.signInAnonymously().then(startListen).catch(e=>console.error("Firebase auth:",e.code||e.message));
 
 })();
 </script>

@@ -4,6 +4,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="assets/firebase.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#070a10;color:#fff;font-family:Inter,system-ui,sans-serif}.wrap{width:min(820px,94vw);margin:auto;padding:30px 0}.top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;gap:14px}.title{font-size:clamp(30px,5vw,44px);font-weight:900;letter-spacing:-1.5px}.sub,.small{color:#8e98aa;font-size:11px;line-height:1.5}
 input{width:100%;height:44px;background:#090c11;color:#fff;border:1px solid #303848;border-radius:10px;padding:8px;font-size:15px}
@@ -13,21 +14,21 @@ button.secondary{background:#252c39}button.danger{background:#7b2938}button:disa
 .summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
 .stat{background:#0d1119;border:1px solid #252b38;border-radius:12px;padding:12px;text-align:center}.stat b{display:block;font-size:28px}
 .row{display:flex;gap:7px;margin-top:9px}.row>*{flex:1}
-.banner{border-radius:12px;padding:13px 16px;margin-bottom:12px;font-weight:900;font-size:14px;text-align:left;background:#141b28;border:1px solid #253049;color:#9cb3ff;transition:.2s}.statusbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:10px 0 14px;color:#8e98aa;font-size:10px}.statusbar strong{color:#31d39a;font-weight:800}
-.banner.win{background:#123625;border-color:#35d07f;color:#8dfbc2}
+.banner{border-radius:12px;padding:13px 16px;margin-bottom:12px;font-weight:900;font-size:14px;text-align:left;background:#141b28;border:1px solid #253049;color:#9cb3ff;transition:.2s}.statusbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:10px 0 14px;color:#8e98aa;font-size:10px}.statusbar strong{color:var(--accent);font-weight:800}
+.banner.win{background:#123625;border-color:var(--accent);color:#8dfbc2}
 .bigactions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
 .big{height:96px;font-size:24px;border-radius:18px;letter-spacing:.5px}
-.big.goal{background:#1a5c3c;border:3px solid #35d07f;color:#fff}
+.big.goal{background:#1a5c3c;border:3px solid var(--accent);color:#fff}
 .big.goal:active{background:#217048}
-.big.miss{background:#5c2230;border:3px solid #e95467;color:#fff}
+.big.miss{background:#5c2230;border:3px solid var(--accent);color:#fff}
 .big.miss:active{background:#702b39}
 .history{margin-top:4px}
 .histrow{display:flex;align-items:center;gap:10px;margin:9px 0}
 .histrow>span:first-child{width:90px;font-weight:800;font-size:12px;color:#9aa5b8;flex-shrink:0}
 .histrow>div{display:flex;gap:6px;flex-wrap:wrap}
 .dot{width:32px;height:32px;border-radius:9px;background:#141b28;border:2px solid #2a3345;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#7c879b}
-.dot.goal{background:#236d4c;border-color:#35d07f;color:#fff}
-.dot.miss{background:#702b39;border-color:#e95467;color:#fff}
+.dot.goal{background:#236d4c;border-color:var(--accent);color:#fff}
+.dot.miss{background:#702b39;border-color:var(--accent);color:#fff}
 @media(max-width:700px){.title{font-size:28px}.big{height:88px;font-size:20px}.top{flex-direction:column}.top #back{width:100%}.statusbar{align-items:flex-start;flex-direction:column}}
 .login{position:fixed;inset:0;background:#070a10;display:none;align-items:center;justify-content:center}.loginbox{width:340px;background:#141923;border:1px solid #252b38;border-radius:18px;padding:22px}.loginbox input{margin:5px 0}.loginbox button{width:100%;margin-top:8px}
 </style>
@@ -49,32 +50,14 @@ button.secondary{background:#252c39}button.danger{background:#7b2938}button:disa
 <script>
 // ASTRA · Firebase bootstrap
 (() => {
-  const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
-    authDomain: "astraprods.firebaseapp.com",
-    databaseURL: "https://astraprods-default-rtdb.firebaseio.com",
-    projectId: "astraprods"
-  };
-  const defaults = {
-    team1Name: "LOCAL", team2Name: "VISITANTE",
-    team1Logo: "", team2Logo: "", score1: 0, score2: 0,
-    timer: {phase:"first",baseSeconds:0,running:false,startedAt:0,extraMinutes:0,extraActive:false,extraStartSeconds:0},
-    penalties: {active:false,team1Name:"LOCAL",team2Name:"VISITANTE",kicks1:[null,null,null,null,null],kicks2:[null,null,null,null,null],visibleKicks:5},
-    layout: {}
-  };
-  const params = new URLSearchParams(location.search);
-  const matchId = params.get("match") || "default";
-  if (!window.firebase) throw new Error("Firebase SDK no cargado.");
-  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-  const auth = firebase.auth();
-  const db = firebase.database();
-  const ref = db.ref("marcadorSimple/" + matchId);
+  const defaults = window.ASTRA.clone(window.ASTRA.defaults);
+  const {auth,db,matchId,ref}=window.ASTRA;
   let state = JSON.parse(JSON.stringify(defaults));
   const $ = id => document.getElementById(id);
   const save = patch => ref.update(patch).catch(e=>{console.error(e);alert(e.code==="PERMISSION_DENIED"?"Firebase rechazó el acceso. Revisá las reglas de marcadorSimple.":(e.code||"Error de Firebase"));throw e});
   let listening=false;
   function startListen(){if(listening)return;listening=true;ref.on("value",snap=>{const d=snap.val()||{};state={...defaults,...d,timer:{...defaults.timer,...(d.timer||{})},penalties:{...defaults.penalties,...(d.penalties||{})}};if(window.renderApp)window.renderApp()},err=>{console.error(err);alert(err.code==="PERMISSION_DENIED"?"Firebase rechazó el acceso a este UUID.":err.message);});}
-  window.ASTRA = { $, db, auth, ref, defaults, save, startListen, getState: () => state };
+  Object.assign(window.ASTRA,{ $,db,auth,ref,defaults,save,startListen,getState:()=>state });
 })();
 </script><script>
 const $=window.ASTRA.$,auth=window.ASTRA.auth,save=window.ASTRA.save,defaultsA=window.ASTRA.defaults;
