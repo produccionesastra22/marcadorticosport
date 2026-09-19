@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ASTRA · Patrocinadores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="assets/firebase.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;background:#080b11;color:#f6f8fc;font-family:Inter,system-ui,sans-serif}body{overflow-x:hidden}.app{min-height:100vh;display:grid;grid-template-columns:64px minmax(0,1fr)}
+.rail{position:sticky;top:0;height:100vh;background:#0d1119;border-right:1px solid #202735;display:flex;flex-direction:column;align-items:center;padding:10px 7px;z-index:5}
+.brand{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,var(--accent),var(--accent-strong));font-weight:900;box-shadow:0 8px 24px var(--accent-soft);margin-bottom:18px}
+.nav{display:grid;gap:7px;width:100%}.nav button{position:relative;width:50px;height:50px;border:0;background:transparent;color:#7f8ba0;border-radius:13px;font-size:19px;cursor:pointer}.nav button:hover,.nav button.active{background:#1a2130;color:#fff}.nav button.active:before{content:"";position:absolute;left:-7px;top:14px;width:3px;height:22px;border-radius:3px;background:#5b8cff}
+.rail-bottom{margin-top:auto;display:grid;gap:7px}.rail-bottom button{width:50px;height:42px;border:1px solid #242c3a;background:#111722;color:#aab5c7;border-radius:11px;cursor:pointer}
+.main{min-width:0;padding:16px 18px 24px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.heading{min-width:0}.eyebrow{font-size:9px;letter-spacing:2px;color:#6e8fd4;font-weight:800}.title{font:800 22px/1.1 Montserrat,sans-serif;letter-spacing:-.5px;margin-top:4px}.sub{font-size:11px;color:#778399;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.top-actions{display:flex;align-items:center;gap:7px}.pill{display:flex;align-items:center;gap:7px;border:1px solid #252e3d;background:#101620;border-radius:20px;padding:7px 10px;font-size:12px;color:#9ca8ba;white-space:nowrap}.dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}.dot.ok{background:var(--accent)}.btn{border:0;border-radius:10px;background:var(--accent-strong);color:#fff;height:36px;padding:0 12px;font-weight:800;font-size:12px;cursor:pointer}.btn.secondary{background:#1a2130;color:#cbd4e3}.btn.warning{background:rgba(255,206,107,.16);border:1px solid rgba(255,206,107,.4);color:#ffce6b}.btn:active{transform:translateY(1px)}
+.view{display:block}.cards{display:grid;grid-template-columns:1.2fr .8fr;gap:10px}.card{background:#10151e;border:1px solid #222b39;border-radius:15px;padding:14px;box-shadow:0 12px 40px #0003}.card.full{grid-column:1/-1}.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:11px}.card h2{font-size:12px;letter-spacing:1.3px;text-transform:uppercase;color:#aeb8c9;margin:0}.hint{font-size:12px;color:#8c9bad}
+label{display:block;font-size:12px;color:#9aa8b8;margin:0 0 5px}input{width:100%;height:37px;border:1px solid #2b3545;border-radius:9px;background:#090d14;color:#f5f7fb;padding:0 9px;outline:0;font:600 12px Inter}input:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.slot-grid{display:grid;gap:14px}.slot{background:rgba(15,25,36,.85);border:1px solid #2b4057;border-radius:14px;padding:16px}.slot-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}.slot-head h3{margin:0;font-size:12px;letter-spacing:2px;color:#8ca1b8;text-transform:uppercase}.switch{display:flex;align-items:center;gap:9px;font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:#8ca1b8}.switch input{accent-color:var(--accent);width:18px;height:18px}.field{display:grid;gap:6px;margin-bottom:10px}.field label{font-size:11px;font-weight:700;letter-spacing:1.2px;color:#8ca1b8;text-transform:uppercase}.field input{height:42px;border-radius:10px;border:1px solid #2b4057;background:#0d1825;color:#edf5ff;padding:0 12px;outline:none}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.preview{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:420px;padding:22px;background:linear-gradient(180deg,rgba(18,29,41,.9),rgba(9,15,22,.9));border:1px solid #2b4057;border-radius:18px;box-shadow:0 22px 60px rgba(0,0,0,.35)}
+.mini-brand{display:flex;align-items:center;gap:16px;padding:14px 18px;border-radius:16px;background:linear-gradient(135deg,rgba(17,27,40,.9),rgba(9,15,22,.85));border:1px solid rgba(108,169,255,.35);min-width:min(100%,430px)}
+.mini-badge{display:grid;place-items:center;width:60px;height:60px;border-radius:16px;background:transparent;box-shadow:none}
+.mini-badge img{width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.18))}
+.mini-copy{display:flex;flex-direction:column;gap:4px}.mini-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#9eb8d6;font-weight:700}.mini-name{font-size:clamp(18px,2vw,28px);font-weight:900;letter-spacing:.06em}.preview-note{margin-top:18px;color:#8ca1b8;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;max-width:440px;text-align:center}
+.size-controls,.rotation-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid #26394e}.size-control,.rotation-control{display:grid;gap:6px}.size-control label,.rotation-control label{display:flex;justify-content:space-between;gap:8px;margin:0;font-size:10px;color:#8ca1b8;text-transform:uppercase;letter-spacing:1px}.size-control output{color:#66e1b1;font-weight:800}.size-control input[type=range],.slot-scale{height:24px;padding:0;accent-color:var(--accent)}.rotation-control input,.rotation-control select{height:34px}.rotation-toggle{display:flex;align-items:center;gap:8px;color:#b9c8d7;font-size:11px}.rotation-toggle input{width:17px;height:17px;accent-color:var(--accent)}.slot-scale-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;margin-top:4px}.slot-scale-label{font-size:10px;color:#8ca1b8}.slot-scale-value{font-size:10px;color:#66e1b1;font-weight:800}
+@media(max-width:760px){.app{grid-template-columns:58px 1fr}.rail{padding:9px 5px}.rail button{width:46px}.main{padding:12px}.cards{grid-template-columns:1fr}.top .sub{display:none}.title{font-size:19px}.top-actions .btn{display:none}} 
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="rail">
+    <div class="brand">A</div>
+    <nav class="nav">
+      <button title="Partido" aria-label="Partido" data-page="control.html">⚽</button>
+      <button title="Producción" aria-label="Producción" class="active" data-page="patrocinadores-control.html">◎</button>
+      <button title="Diseño" aria-label="Diseño" data-page="control.html#design">✦</button>
+      <button title="OBS" aria-label="OBS" data-page="index.html">▣</button>
+    </nav>
+    <div class="rail-bottom">
+      <button title="Penales" aria-label="Penales" data-page="penales.html">🥅</button>
+      <button title="Alineaciones" aria-label="Alineaciones" data-page="alineaciones.html">🧾</button>
+      <button title="Rótulo" aria-label="Rótulo" data-page="rotulo.html">🏷️</button>
+      <button title="Noticias" aria-label="Noticias" data-page="noticias.html">📰</button>
+      <button title="Cerrar sesión" aria-label="Cerrar sesión" id="logout">↪</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div class="heading"><div class="eyebrow">ASTRA PRODS · PRODUCCIÓN</div><div class="title">Patrocinadores</div><div class="sub">Carga rápida de marcas, logo y activación para la capa final.</div></div>
+      <div class="top-actions"><div class="pill"><i class="dot ok" id="dot"></i><span id="connectionStatus">Conectado</span></div><button class="btn secondary" id="openOverlay">↗ Overlay</button></div>
+    </header>
+
+    <section class="view">
+      <div class="cards">
+        <section class="card full">
+          <div class="card-head"><h2>Patrocinadores</h2><span class="hint">Slots activos</span></div>
+          <div class="slot-grid" id="slots"></div>
+          <div class="actions">
+            <button type="button" class="btn secondary" id="addSponsor">+ Agregar sponsor</button>
+            <button type="button" class="btn" id="saveAll">Guardar todo</button>
+            <button type="button" class="btn secondary" id="enableAll">Activar todos</button>
+            <button type="button" class="btn secondary" id="disableAll">Desactivar todos</button>
+            <button type="button" class="btn warning" id="clearAll">Vaciar</button>
+          </div>
+          <div class="size-controls">
+            <div class="size-control"><label for="logoScale">Tamaño del logo <output id="logoScaleValue">130%</output></label><input id="logoScale" type="range" min="50" max="180" step="5" value="130"></div>
+            <div class="size-control"><label for="sponsorScale">Tamaño del patrocinio <output id="sponsorScaleValue">100%</output></label><input id="sponsorScale" type="range" min="60" max="160" step="5" value="100"></div>
+          </div>
+          <div class="rotation-controls">
+            <label class="rotation-toggle"><input id="autoRotate" type="checkbox"> Rotación automática</label>
+            <div class="rotation-control"><label for="rotationSeconds">Cambiar cada</label><select id="rotationSeconds"><option value="5">5 segundos</option><option value="10">10 segundos</option><option value="15">15 segundos</option><option value="30">30 segundos</option><option value="60">1 minuto</option></select></div>
+          </div>
+        </section>
+
+        <aside class="card preview">
+          <div class="mini-brand" id="miniBrand">
+            <div class="mini-badge"><img id="miniLogo" alt="logo" src=""></div>
+            <div class="mini-copy">
+              <span class="mini-label">Patrocinado por</span>
+              <span class="mini-name" id="miniName">SIN SPONSOR</span>
+            </div>
+          </div>
+          <div class="preview-note">Este es un preview rápido del overlay que va a OBS.</div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  const match = params.get('match') || 'default';
+  const route = (page) => {
+    const base = page.includes('?') ? page : page + '?match=' + encodeURIComponent(match);
+    location.href = base;
+  };
+
+  document.querySelectorAll('[data-page]').forEach((button) => {
+    button.addEventListener('click', () => route(button.dataset.page));
+  });
+
+  document.getElementById('openOverlay').addEventListener('click', () => {
+    location.href = 'overlays/patrocinadores.html?match=' + encodeURIComponent(match);
+  });
+
+  document.getElementById('logout').addEventListener('click', () => {
+    if (window.ASTRA && window.ASTRA.auth) {
+      window.ASTRA.auth.signOut();
+    }
+  });
+
+  const astra = window.ASTRA || {};
+  const auth = astra.auth;
+  const save = astra.save;
+  const ref = typeof astra.createMatchRef === 'function' ? astra.createMatchRef('production/sponsors') : null;
+  const configRef = typeof astra.createMatchRef === 'function' ? astra.createMatchRef('production/sponsorsConfig') : null;
+  const slotsContainer = document.getElementById('slots');
+  let baseSponsors = [
+    { name: '', logo: '', enabled: false },
+    { name: '', logo: '', enabled: false },
+    { name: '', logo: '', enabled: false }
+  ];
+
+  function buildSlots() {
+    slotsContainer.innerHTML = baseSponsors.map((_, index) => `
+      <div class="slot" data-index="${index}">
+        <div class="slot-head">
+          <h3>Sponsor ${index + 1}</h3>
+          <button type="button" class="btn warning remove-sponsor" data-remove-sponsor="${index}">Quitar</button>
+          <label class="switch"><input type="checkbox" data-enable="${index}"><span>Activo</span></label>
+        </div>
+        <div class="field"><label>Nombre</label><input type="text" data-name="${index}" placeholder="Ej: Local Sport"></div>
+        <div class="field"><label>Logo URL</label><input type="text" data-logo="${index}" placeholder="https://...png"></div>
+        <div class="slot-scale-row"><label class="slot-scale-label" for="slotScale${index}">Tamaño de este logo</label><span class="slot-scale-value" data-scale-value="${index}">160%</span></div>
+        <input class="slot-scale" id="slotScale${index}" data-scale="${index}" type="range" min="50" max="220" step="5" value="160">
+      </div>
+    `).join('');
+  }
+
+  function normalizeSponsors(data) {
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object') {
+      return Object.keys(data)
+        .map((key) => data[key] || null)
+        .filter(Boolean)
+        .slice(0, 3);
+    }
+    return baseSponsors;
+  }
+
+  function loadSponsors(data) {
+    const sponsors = normalizeSponsors(data);
+    const normalized = (sponsors.length ? sponsors : baseSponsors).map((_, index) => ({
+      name: sponsors[index]?.name || '',
+      logo: sponsors[index]?.logo || '',
+      enabled: !!sponsors[index]?.enabled
+      ,logoScale: Math.max(50, Math.min(220, Number(sponsors[index]?.logoScale) || 160))
+    }));
+    baseSponsors = normalized.length ? normalized : [{ name: '', logo: '', enabled: false }];
+    buildSlots();
+
+    baseSponsors.forEach((slot, index) => {
+      const nameInput = document.querySelector(`[data-name="${index}"]`);
+      const logoInput = document.querySelector(`[data-logo="${index}"]`);
+      const enableInput = document.querySelector(`[data-enable="${index}"]`);
+
+      if (nameInput) nameInput.value = slot.name;
+      if (logoInput) logoInput.value = slot.logo;
+      if (enableInput) enableInput.checked = slot.enabled;
+      const scaleInput = document.querySelector(`[data-scale="${index}"]`);
+      const scaleValue = document.querySelector(`[data-scale-value="${index}"]`);
+      if (scaleInput) scaleInput.value = slot.logoScale;
+      if (scaleValue) scaleValue.textContent = `${slot.logoScale}%`;
+    });
+
+    const active = baseSponsors.find((slot) => slot.enabled && (slot.name || slot.logo)) || baseSponsors[0] || { name: '', logo: '', enabled: false };
+    document.getElementById('miniName').textContent = active.name || 'SIN SPONSOR';
+    document.getElementById('miniLogo').src = active.logo || '';
+  }
+
+  function collectSponsors() {
+    return baseSponsors.map((_, index) => ({
+      name: document.querySelector(`[data-name="${index}"]`)?.value.trim() || '',
+      logo: document.querySelector(`[data-logo="${index}"]`)?.value.trim() || '',
+      enabled: document.querySelector(`[data-enable="${index}"]`)?.checked || false
+      ,logoScale: Number(document.querySelector(`[data-scale="${index}"]`)?.value) || 160
+    }));
+  }
+
+  function addSponsor() {
+    baseSponsors = collectSponsors();
+    baseSponsors.push({ name: '', logo: '', enabled: false });
+    buildSlots();
+    loadSponsors(baseSponsors);
+  }
+
+  function removeSponsor(index) {
+    if (baseSponsors.length <= 1) return;
+    baseSponsors = collectSponsors().filter((_, currentIndex) => currentIndex !== index);
+    buildSlots();
+    loadSponsors(baseSponsors);
+  }
+
+  async function saveAll() {
+    const sponsors = collectSponsors();
+    if (!ref || !configRef) throw new Error('Firebase no está disponible');
+    await Promise.all([
+      ref.set(sponsors),
+      configRef.set({
+        logoScale: Number(document.getElementById('logoScale')?.value) || 100,
+        sponsorScale: Number(document.getElementById('sponsorScale')?.value) || 100,
+        rotationEnabled: !!document.getElementById('autoRotate')?.checked,
+        rotationSeconds: Number(document.getElementById('rotationSeconds')?.value) || 10
+      })
+    ]);
+    const savedSponsors = normalizeSponsors((await ref.once('value')).val());
+    const savedConfig = await configRef.once('value');
+    if (savedSponsors[0]?.name !== sponsors[0]?.name) throw new Error('Firebase no confirmó los patrocinadores');
+    if (!savedConfig.exists()) throw new Error('Firebase no confirmó los tamaños');
+    const connectionStatus = document.getElementById('connectionStatus');
+    if (connectionStatus) {
+      connectionStatus.textContent = 'Enviado';
+      connectionStatus.style.color = '#66e1b1';
+    }
+  }
+
+  function toggleAll(enabled) {
+    document.querySelectorAll('[data-enable]').forEach((input) => {
+      input.checked = enabled;
+    });
+  }
+
+  function clearAll() {
+    document.querySelectorAll('[data-name]').forEach((input) => { input.value = ''; });
+    document.querySelectorAll('[data-logo]').forEach((input) => { input.value = ''; });
+    document.querySelectorAll('[data-enable]').forEach((input) => { input.checked = false; });
+  }
+
+  function renderScale(config) {
+    const logoScale = Math.max(50, Math.min(180, Number(config?.logoScale) || 130));
+    const sponsorScale = Math.max(60, Math.min(160, Number(config?.sponsorScale) || 100));
+    const logoInput = document.getElementById('logoScale');
+    const sponsorInput = document.getElementById('sponsorScale');
+    if (logoInput && document.activeElement !== logoInput) logoInput.value = logoScale;
+    if (sponsorInput && document.activeElement !== sponsorInput) sponsorInput.value = sponsorScale;
+    document.getElementById('logoScaleValue').textContent = `${logoScale}%`;
+    document.getElementById('sponsorScaleValue').textContent = `${sponsorScale}%`;
+    document.getElementById('miniLogo').style.transform = `scale(${logoScale / 100})`;
+    document.getElementById('miniBrand').style.transform = `scale(${sponsorScale / 100})`;
+    const rotate = document.getElementById('autoRotate');
+    const interval = document.getElementById('rotationSeconds');
+    if (rotate && document.activeElement !== rotate) rotate.checked = !!config?.rotationEnabled;
+    if (interval && document.activeElement !== interval) interval.value = String(Number(config?.rotationSeconds) || 10);
+  }
+
+  function renderDraftPreview() {
+    const activeIndex = Array.from(document.querySelectorAll('[data-enable]')).findIndex((input) => input.checked);
+    const index = activeIndex >= 0 ? activeIndex : 0;
+    const name = document.querySelector(`[data-name="${index}"]`)?.value.trim() || '';
+    const logo = document.querySelector(`[data-logo="${index}"]`)?.value.trim() || '';
+    const logoScale = Number(document.querySelector(`[data-scale="${index}"]`)?.value) || 160;
+    document.getElementById('miniName').textContent = name || 'SIN SPONSOR';
+    document.getElementById('miniLogo').src = logo;
+    document.getElementById('miniLogo').style.transform = `scale(${logoScale / 100})`;
+    const scaleValue = document.querySelector(`[data-scale-value="${index}"]`);
+    if (scaleValue) scaleValue.textContent = `${logoScale}%`;
+  }
+
+  document.addEventListener('input', (event) => {
+    if (event.target.matches('[data-name], [data-logo], [data-scale]')) renderDraftPreview();
+  });
+  document.addEventListener('change', (event) => {
+    if (event.target.matches('[data-enable]')) renderDraftPreview();
+  });
+
+  const bindClick = (id, callback) => {
+    const element = document.getElementById(id);
+    if (element) element.addEventListener('click', callback);
+  };
+
+  const runAction = (action) => async () => {
+    try {
+      await action();
+    } catch (error) {
+      const connectionStatus = document.getElementById('connectionStatus');
+      if (connectionStatus) {
+        connectionStatus.textContent = 'Error al guardar';
+        connectionStatus.style.color = '#ff788a';
+      }
+      console.error(error);
+    }
+  };
+
+  bindClick('saveAll', runAction(saveAll));
+  bindClick('enableAll', runAction(() => toggleAll(true)));
+  bindClick('disableAll', runAction(() => toggleAll(false)));
+  bindClick('clearAll', clearAll);
+  bindClick('addSponsor', addSponsor);
+  document.addEventListener('click', (event) => {
+    const removeButton = event.target.closest('[data-remove-sponsor]');
+    if (removeButton) removeSponsor(Number(removeButton.dataset.removeSponsor));
+  });
+
+  ['logoScale', 'sponsorScale'].forEach((id) => {
+    const input = document.getElementById(id);
+    if (input) input.addEventListener('input', () => renderScale({ logoScale: document.getElementById('logoScale').value, sponsorScale: document.getElementById('sponsorScale').value }));
+  });
+
+  auth.signInAnonymously()
+    .then(() => {
+      buildSlots();
+      if (!ref) throw new Error('Firebase no está disponible');
+      ref.on('value', (snapshot) => {
+        const sponsors = snapshot.val() || [];
+        loadSponsors(sponsors);
+      });
+      if (configRef) configRef.on('value', (snapshot) => renderScale(snapshot.val() || {}));
+    })
+    .catch(() => {
+      buildSlots();
+      const connectionStatus = document.getElementById('connectionStatus');
+      if (connectionStatus) {
+        connectionStatus.textContent = 'Sin conexión';
+        connectionStatus.style.color = '#ffce6b';
+      }
+    });
+})();
+</script>
+</body>
+</html>

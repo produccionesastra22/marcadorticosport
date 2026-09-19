@@ -1,1 +1,87 @@
-<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="../assets/theme.css?v=20260918-4"><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><script src="../assets/firebase.js"></script><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent!important;font-family:Inter,Arial,sans-serif;color:#fff}.sponsor{position:absolute;right:3.5vw;bottom:4vh;display:none;align-items:center;gap:14px;padding:12px 18px 12px 12px;background:linear-gradient(135deg,rgba(11,18,26,.96),rgba(17,27,40,.9));border:1px solid rgba(116,167,255,.45);border-radius:14px;box-shadow:0 18px 44px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.08);text-transform:uppercase;backdrop-filter:blur(3px)}.sponsor.show{display:flex}.sponsor-badge{display:grid;place-items:center;width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#7aa7ff,#3d79ff);box-shadow:0 10px 20px rgba(74,129,255,.35)}.sponsor img{width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))}.sponsor span{font-size:clamp(12px,1.3vw,22px);font-weight:900;letter-spacing:1.2px}.sponsor .label{font-size:9px;letter-spacing:2px;color:#9bb8d8;opacity:.92}.sponsor .meta{display:flex;flex-direction:column;gap:2px}.login{display:none}</style></head><body><div class="sponsor" id="sponsor"><div class="sponsor-badge"><img id="logo" alt="Logo del patrocinador"></div><div class="meta"><span class="label">Patrocinado por</span><span id="name"></span></div></div><div class="login" id="login"></div><script>(()=>{const {auth}=window.ASTRA,ref=window.ASTRA.createMatchRef("production/sponsors"),$=id=>document.getElementById(id);function draw(s){const item=(Array.isArray(s)?s:[]).find(x=>x&&x.enabled&&(x.name||x.logo));$("name").textContent=item?.name||"";$("logo").src=item?.logo||"";$("logo").style.display=item?.logo?"block":"none";$("sponsor").classList.toggle("show",!!item)}auth.signInAnonymously().then(()=>ref.on("value",s=>draw(s.val()||[]))).catch(()=>{})})();</script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Patrocinadores</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="../assets/firebase.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent!important;font-family:Montserrat,Arial,sans-serif;color:#fff}.sponsor{position:absolute;right:5vw;bottom:5vh;display:block;visibility:hidden;opacity:0;transform:translateY(12px) scale(.98);transform-origin:right bottom;transition:opacity .35s ease,transform .35s ease,visibility .35s ease}.sponsor.show{visibility:visible;opacity:1;transform:translateY(0) scale(1)}.sponsor-box{display:flex;align-items:center;gap:24px;width:560px;min-height:128px;padding:18px 24px;border-radius:18px;background:rgba(10,18,28,.84);border:1px solid rgba(118,170,255,.35);box-shadow:0 18px 40px rgba(0,0,0,.3);transition:box-shadow .35s ease}.logo-wrap{flex:0 0 104px;display:grid;place-items:center;width:104px;height:104px;border-radius:18px;background:linear-gradient(135deg,#8cc4ff,#4d8cf8);overflow:visible;transition:transform .35s ease,background .35s ease}.logo-wrap img{width:80px;height:80px;object-fit:contain;transform-origin:center;transition:transform .35s ease,opacity .35s ease}.copy{min-width:0;display:flex;flex:1;flex-direction:column;gap:5px}.label{font-size:10px;letter-spacing:2px;color:#9fc9ed;font-weight:800}.name{width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:36px;line-height:1;font-weight:900;letter-spacing:.025em;white-space:nowrap}@media(max-width:620px){.sponsor-box{width:min(560px,calc(100vw - 32px));gap:14px;padding:14px 16px}.logo-wrap{flex-basis:78px;width:78px;height:78px;border-radius:15px}.logo-wrap img{width:60px;height:60px}}
+</style>
+<style>.logo-wrap{background:transparent;box-shadow:none}.label{font-size:14px;letter-spacing:2.4px;line-height:1.1}.name{transition:none!important}</style>
+</head>
+<body>
+<div class="sponsor" id="sponsor"><div class="sponsor-box"><div class="logo-wrap"><img id="logo" alt=""></div><div class="copy"><div class="label">Patrocinado por</div><div class="name" id="name"></div></div></div></div>
+<script>
+(() => {
+  const sponsorElement = document.getElementById('sponsor');
+  const logo = document.getElementById('logo');
+  const name = document.getElementById('name');
+  const astra = window.ASTRA;
+  const sponsorsRef = astra.createMatchRef('production/sponsors');
+  const configRef = astra.createMatchRef('production/sponsorsConfig');
+  let sponsors = [];
+  let config = { logoScale: 130, sponsorScale: 100 };
+  let rotationIndex = 0;
+  let lastRotation = Date.now();
+  let fittedName = '';
+
+  const normalize = (value) => {
+    if (Array.isArray(value)) return value;
+    if (value && typeof value === 'object') return Object.keys(value).map((key) => value[key]).filter(Boolean);
+    return [];
+  };
+
+  const draw = () => {
+    const activeSponsors = normalize(sponsors).filter((item) => item && item.enabled && (item.name || item.logo));
+    if (!activeSponsors.length) {
+      sponsorElement.classList.remove('show');
+      sponsorElement.style.setProperty('opacity', '0', 'important');
+      sponsorElement.style.setProperty('visibility', 'hidden', 'important');
+      return;
+    }
+    if (config.rotationEnabled && activeSponsors.length > 1) {
+      const interval = Math.max(1, Number(config.rotationSeconds) || 10) * 1000;
+      if (Date.now() - lastRotation >= interval) {
+        rotationIndex = (rotationIndex + 1) % activeSponsors.length;
+        lastRotation = Date.now();
+      }
+    } else {
+      rotationIndex = 0;
+    }
+    const active = activeSponsors[rotationIndex % activeSponsors.length];
+    sponsorElement.classList.toggle('show', !!active);
+    sponsorElement.style.setProperty('opacity', '1', 'important');
+    sponsorElement.style.setProperty('visibility', 'visible', 'important');
+    if (fittedName !== (active.name || '')) {
+      fittedName = active.name || '';
+      name.textContent = fittedName;
+      name.style.fontSize = '36px';
+      let fontSize = 36;
+      while (name.scrollWidth > name.clientWidth && fontSize > 20) {
+        fontSize -= 1;
+        name.style.fontSize = `${fontSize}px`;
+      }
+    }
+    logo.src = active.logo || '';
+    logo.style.display = active.logo ? 'block' : 'none';
+    const logoScale = Math.max(50, Math.min(220, Number(active.logoScale) || Number(config.logoScale) || 130));
+    logo.style.transform = `scale(${logoScale / 100})`;
+    sponsorElement.style.transform = `scale(${Math.max(60, Math.min(160, Number(config.sponsorScale) || 100)) / 100})`;
+  };
+
+  astra.auth.signInAnonymously()
+    .then(() => {
+      sponsorsRef.on('value', (snapshot) => { sponsors = snapshot.val() || []; draw(); });
+        configRef.on('value', (snapshot) => { config = { ...config, ...(snapshot.val() || {}) }; rotationIndex = 0; lastRotation = Date.now(); draw(); });
+    })
+    .catch(() => {});
+
+      setInterval(draw, 250);
+})();
+</script>
+</body>
+</html>

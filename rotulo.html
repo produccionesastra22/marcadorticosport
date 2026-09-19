@@ -8,7 +8,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="assets/firebase.js"></script>
 
 <style>
 *{box-sizing:border-box}
@@ -149,9 +148,9 @@ button.off{
     margin-top:8px;
 }
 </style>
-<link rel="stylesheet" href="assets/theme.css?v=20260918-3">
+<link rel="stylesheet" href="assets/theme.css">
 <style>
-.wrap{width:min(780px,calc(94vw - 64px))}.editor-card{background:linear-gradient(145deg,#101d2d,#0d1722);border-color:#384f6f;box-shadow:0 18px 50px rgba(0,0,0,.25)}.preview-panel{margin-bottom:10px;padding:14px;background:#0d1722;border:1px solid #2d4359;border-radius:12px}.preview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;color:#a9b9ca;font-size:9px;font-weight:900;letter-spacing:1.5px}.preview-head span{color:#6c8298;font-weight:600;letter-spacing:0}.preview-stage{position:relative;aspect-ratio:16/6;background:radial-gradient(circle at 78% 30%,rgba(86,123,255,.28),transparent 25%),linear-gradient(135deg,#0a1424,#101b28 58%,#090d13);border:1px solid #2c4056;border-radius:9px;overflow:hidden}.preview-stage:after{content:"TRANSMISIÓN EN VIVO";position:absolute;top:16%;right:7%;font-size:8px;letter-spacing:2px;color:#7ea1c7}.preview-lower{position:absolute;left:6%;right:6%;bottom:15%;display:flex;align-items:stretch;min-height:76px;background:linear-gradient(135deg,rgba(15,23,32,.97),rgba(10,17,25,.95));border:1px solid rgba(108,147,180,.52);border-left:8px solid var(--accent);border-radius:10px;box-shadow:0 18px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04);overflow:hidden}.preview-accent{width:10px;background:linear-gradient(180deg,#8ab1ff,var(--accent))}.preview-badge{display:flex;align-items:center;justify-content:center;width:72px;min-width:72px;background:rgba(255,255,255,.04);border-right:1px solid rgba(255,255,255,.08)}.preview-badge img{display:none;max-width:48px;max-height:48px;object-fit:contain;transform:scale(var(--logo-scale,1));transform-origin:center}.preview-badge span{font-size:10px;font-weight:900;letter-spacing:2px}.preview-copy{padding:12px 18px}.preview-name{font:900 clamp(18px,3vw,32px)/1 Arial;text-transform:uppercase;letter-spacing:.06em}.preview-cargo{margin-top:6px;color:#d8e4f0;font:bold clamp(10px,1.2vw,15px)/1 Arial;letter-spacing:.1em;text-transform:uppercase}.preview-live{position:absolute;left:7%;bottom:5%;font-size:8px;color:#9bb3c9;letter-spacing:1.5px;text-transform:uppercase}@media(max-width:700px){.wrap{width:94vw}.preview-lower{left:4%;right:4%;min-height:62px}.preview-copy{padding:9px 12px}}
+.wrap{width:min(780px,calc(94vw - 64px))}.editor-card{background:linear-gradient(145deg,#101d2d,#0d1722);border-color:#384f6f;box-shadow:0 18px 50px rgba(0,0,0,.25)}.preview-panel{margin-bottom:10px;padding:14px;background:#0d1722;border:1px solid #2d4359;border-radius:12px}.preview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;color:#a9b9ca;font-size:9px;font-weight:900;letter-spacing:1.5px}.preview-head span{color:#6c8298;font-weight:600;letter-spacing:0}.preview-stage{position:relative;aspect-ratio:16/6;background:radial-gradient(circle at 78% 30%,rgba(86,123,255,.28),transparent 25%),linear-gradient(135deg,#0a1424,#101b28 58%,#090d13);border:1px solid #2c4056;border-radius:9px;overflow:hidden}.preview-stage:after{content:"TRANSMISIÓN EN VIVO";position:absolute;top:16%;right:7%;font-size:8px;letter-spacing:2px;color:#7ea1c7}.preview-lower{position:absolute;left:6%;right:6%;bottom:15%;display:flex;align-items:stretch;min-height:76px;background:linear-gradient(135deg,rgba(15,23,32,.97),rgba(10,17,25,.95));border:1px solid rgba(108,147,180,.52);border-left:8px solid #4e7fff;border-radius:10px;box-shadow:0 18px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04);overflow:hidden}.preview-accent{width:10px;background:linear-gradient(180deg,#8ab1ff,#4e7fff)}.preview-copy{padding:12px 18px}.preview-name{font:900 clamp(18px,3vw,32px)/1 Arial;text-transform:uppercase;letter-spacing:.06em}.preview-cargo{margin-top:6px;color:#d8e4f0;font:bold clamp(10px,1.2vw,15px)/1 Arial;letter-spacing:.1em;text-transform:uppercase}.preview-live{position:absolute;left:7%;bottom:5%;font-size:8px;color:#9bb3c9;letter-spacing:1.5px;text-transform:uppercase}@media(max-width:700px){.wrap{width:94vw}.preview-lower{left:4%;right:4%;min-height:62px}.preview-copy{padding:9px 12px}}
 </style>
 </head>
 
@@ -193,10 +192,6 @@ button.off{
             <option value="Helvetica">Helvetica</option>
             <option value="Verdana">Verdana</option>
         </select>
-        <label>URL DEL LOGO</label>
-        <input id="logo" type="url" placeholder="https://tusitio.com/logo.png">
-        <label>TAMAÑO DEL LOGO / BADGE</label>
-        <input id="logoScale" type="range" min="0.6" max="1.8" step="0.05" value="1">
 
         <div class="status" id="status">Esperando conexión...</div>
 
@@ -207,7 +202,6 @@ button.off{
         <div class="preview-stage">
             <div class="preview-lower" id="previewCard">
                 <div class="preview-accent" id="previewAccent"></div>
-                <div class="preview-badge" id="previewBadge"><img id="previewLogo" alt="Logo de rótulo"><span id="previewLogoText">ASTRA</span></div>
                 <div class="preview-copy"><div class="preview-name" id="previewName">Nombre completo</div><div class="preview-cargo" id="previewCargo">Periodista deportivo</div></div>
             </div>
             <div class="preview-live">ASTRA · RÓTULO</div>
@@ -244,10 +238,30 @@ button.off{
 <script>
 (() => {
 
-const {auth,db}=window.ASTRA;
-const ref=window.ASTRA.createRef("rotulo");
+const FIREBASE_CONFIG={
+    apiKey:"AIzaSyA71rh4uzcNOueb48-FegayRueExfmI9tw",
+    authDomain:"astraprods.firebaseapp.com",
+    databaseURL:"https://astraprods-default-rtdb.firebaseio.com",
+    projectId:"astraprods"
+};
 
-const defaults=window.ASTRA.clone(window.ASTRA.moduleDefaults.rotulo);
+if(!firebase.apps.length){
+    firebase.initializeApp(FIREBASE_CONFIG);
+}
+
+const auth=firebase.auth();
+const db=firebase.database();
+const ref=db.ref("rotulo");
+
+const defaults={
+    name:"",
+    cargo:"",
+    color1:"#4e7fff",
+    color2:"#111111",
+    font:"Arial",
+    visible:false,
+    updatedAt:0
+};
 
 let state={...defaults};
 let listening=false;
@@ -276,8 +290,6 @@ function render(){
     $("color1").value=state.color1||"#4e7fff";
     $("color2").value=state.color2||"#111111";
     $("font").value=state.font||"Arial";
-    $("logo").value=state.logo||"";
-    $("logoScale").value=String(state.logoScale ?? 1);
     renderPreview();
 
     $("toggleShow").textContent=
@@ -295,17 +307,11 @@ function renderPreview(){
     const color1=$("color1").value||"#4e7fff";
     const color2=$("color2").value||"#111111";
     const font=$("font").value||"Arial";
-    const logoScale=Number($("logoScale").value)||1;
-    const logo=$("logo").value.trim();
     $("previewName").textContent=name;
     $("previewCargo").textContent=cargo;
     $("previewAccent").style.background=color1;
     $("previewCard").style.borderLeftColor=color1;
     $("previewCard").style.background=color2;
-    $("previewBadge").style.setProperty("--logo-scale", String(logoScale));
-    $("previewLogo").src=logo;
-    $("previewLogo").style.display=logo?"block":"none";
-    $("previewLogoText").style.display=logo?"none":"block";
     $("previewName").style.fontFamily=font+",Helvetica,sans-serif";
     $("previewCargo").style.fontFamily=font+",Helvetica,sans-serif";
 }
@@ -334,17 +340,16 @@ function startListen(){
     });
 }
 
-["name","cargo","color1","color2","font","logo","logoScale"].forEach(id=>{
+["name","cargo","color1","color2","font"].forEach(id=>{
 
     $(id).addEventListener("input",renderPreview);
 
     $(id).addEventListener("change",e=>{
 
-        const nextValue = id === "logoScale" ? Number(e.target.value) : e.target.value;
-        state[id]=nextValue;
+        state[id]=e.target.value;
 
         save({
-            [id]:nextValue
+            [id]:e.target.value
         });
 
     });

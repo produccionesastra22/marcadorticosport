@@ -18,8 +18,8 @@
 (() => {
   const time = document.getElementById('time');
   const state = document.getElementById('state');
-  const astra = window.ASTRA;
-  const ref = astra.createMatchRef('production/countdown');
+  const { auth, createMatchRef } = window.ASTRA;
+  const ref = createMatchRef('production/countdown');
   let countdown = { active: false, baseSeconds: 0, startedAt: 0 };
 
   const format = (value) => {
@@ -36,7 +36,7 @@
     state.textContent = countdown.active ? (remaining ? 'EN MARCHA' : 'FINALIZADO') : (remaining ? 'EN PAUSA' : 'LISTO');
   };
 
-  astra.auth.signInAnonymously()
+  auth.signInAnonymously()
     .then(() => ref.on('value', (snapshot) => {
       const data = snapshot.val() || {};
       countdown = {
